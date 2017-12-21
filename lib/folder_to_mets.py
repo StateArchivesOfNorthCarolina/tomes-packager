@@ -13,6 +13,8 @@ Todo:
     to get an etree._Element; stringify() will now take an _Element arg; and
     create a new method to write directly to file. Also, make build() public
     now. You'll need to update the example, too.
+	* You probably want to force this format for time: '%Y-%m-%d %H:%M:%SZ' once you
+        specify UTC as the timezone. If you don't, the "Z" is invalid.
 """
 
 # import modules.
@@ -70,7 +72,7 @@ class FolderToMETS():
         subs = {"eaxs_id": "{eaxs_id}", 
                "eaxs_cdate": "{eaxs_cdate}",
                "tagged_eaxs_cdate" : "{tagged_eaxs_cdate}",
-               "mets_ctime": datetime.now().isoformat(),
+               "mets_ctime": datetime.utcnow().isoformat(),
                "darcmail_version":"darcmail_version",
                "tomes_tool_version":"tomes_tool_version"}
 
