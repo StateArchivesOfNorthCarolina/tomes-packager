@@ -10,6 +10,9 @@ todo:
     same type.
     - the 2nd line of the template should probably be a template ID for logging
     and debugging.
+    - don't you need to make this recursive so that a templated element can exist
+    as a child of another templated element? Or do we not need that in the real
+    world?
 """
 
 ### sample XML.
