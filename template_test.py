@@ -35,7 +35,11 @@ y
 <event>
     <!-- This event will only survive if its template call passes. -->
     <date>{x}</date>
-    <time>{z}</time>
+    <time>{y}</time>
+    <!-- TOMES_TEMPLATE_CALL
+    asdf
+    -->
+    <location id="{z}" />
 </event>
 
 <event>
@@ -69,7 +73,7 @@ def call_template(x, gbs):
     for line in lines[1:]:
         if line == "":
             continue
-        if line in gbs:
+        if line.strip() in gbs:
             print("Found key: {}".format(line))
             report.append(True)
         else:
