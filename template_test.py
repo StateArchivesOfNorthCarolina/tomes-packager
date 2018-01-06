@@ -30,7 +30,7 @@ x
 y
 -->
 <event>
-    <!-- This event will only survive if it's template call passes. -->
+    <!-- This event will only survive if its template call passes. -->
     <date>{x}</date>
     <time>{z}</time>
 </event>
@@ -56,7 +56,7 @@ def is_template_call(c):
         return False
 
 
-### Is it a TOMES template? Do the tests all pass?
+### Do the template tests all pass?
 def call_template(x, gbs):
     " test conditions, return bool "
 
