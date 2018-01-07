@@ -1,4 +1,5 @@
 from lxml import etree
+import yaml
 
 """
 todo:
@@ -24,42 +25,69 @@ xdoc = """<premis>
 Try it. I dare you.
 
 e.g.
-    <! - - TOMES_TEMPLATE_CALL
-    x
-    y
+    <! - -
+    TOMES_TEMPLATE: 0
+    if_exists: [x,y]
     - - >
     <premis />
 -->
-<!-- TOMES_TEMPLATE_CALL
-x
-y
+<!--
+TOMES_TEMPLATE: 1
+if_exists: [x,y]
 -->
 <event>
     <!-- This event will only survive if its template call passes. -->
     <date>{x}</date>
-    <time>{y}</time>
-    <!-- TOMES_TEMPLATE_CALL
-    zWon'tAppearBecauseThisKeyDoesn'tExist
+    <!--
+    TOMES_TEMPLATE: 1.5
+    if_exists: [y]
+    -->
+    <time val="{y}" />
+    <!--
+    TOMES_TEMPLATE: 2
+    if_exists: [zWon'tAppearBecauseThisKeyDoesn'tExist]
     -->
     <location id="{z}" />
 </event>
 
 <event>
     <!-- This event is not template dependent and will ALWAYS show. -->
-    <date>{x}</date> <!-- User error: using a variable in a non templated section. -->
+    <date>{x}</date> <!-- User error: using a variable in a non-templated section. -->
     <time>foo</time>
 </event>
 </premis>"""
 xtree = etree.fromstring(xdoc)
 
+### beautifier per: http://blog.humaneguitarist.org/2011/11/12/pretty-printing-xml-with-python-lxml-and-xslt/
+### ... because pretty_print gets wierd with line breaks and stuff.
+def prettify(someXML):
+  #for more on lxml/XSLT see: http://lxml.de/xpathxslt.html#xslt-result-objects
+  xslt_tree = etree.fromstring("""
+    <!-- XSLT taken from Comment 4 by Michael Kay found here:
+    http://www.dpawson.co.uk/xsl/sect2/pretty.html#d8621e19 -->
+    <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:output method="xml" indent="yes" encoding="UTF-8"/>
+      <xsl:strip-space elements="*"/>
+      <xsl:template match="/">
+        <xsl:copy-of select="."/>
+      </xsl:template>
+    </xsl:stylesheet>""")
+  transform = etree.XSLT(xslt_tree)
+  result = transform(someXML)
+  return result
+
 
 ### Is the comment a template call?
 def is_template_call(node):
-    br = node.text.find("\n") 
-    if br == -1:
+    try:
+        template = yaml.load(node.text.encode())
+    except yaml.scanner.ScannerError as err:
         return False
-    elif node.text[:br].strip() == "TOMES_TEMPLATE_CALL" \
-         and type(node.getnext()).__name__ == "_Element":
+    if isinstance(template, dict) \
+       and "TOMES_TEMPLATE" in template \
+       and type(node.getnext()).__name__ == "_Element":
+            template_id = template["TOMES_TEMPLATE"]
+            print("Found template with id: {}".format(template_id))
             return True
     else:
         return False
@@ -69,18 +97,18 @@ def is_template_call(node):
 def call_template(node, gbs):
 
     report = []
-    
-    lines = node.text.split("\n")
-    for line in lines[1:]:
-        line = line.strip()
-        if line == "":
-            continue
-        if line in gbs:
-            print("Found key: {}".format(line))
-            report.append(True)
-        else:
-            print("Missing key: {}".format(line))
-            report.append(False)
+    template = yaml.load(node.text.encode())
+
+    try:
+        for cond in template["if_exists"]:
+            if cond in gbs:
+                print("Found key: {}".format(cond))
+                report.append(True)
+            else:
+                print("Missing key: {}".format(cond))
+                report.append(False)
+    except KeyError as err:
+        return False
 
     if set(report) == {True}:
         passed = True
@@ -109,9 +137,8 @@ def work():
             node.text = None
 
 work()
-print("----------\n")    
-xdoc = etree.tostring(xtree, pretty_print=True)
-print(xdoc.decode())
+print("----------\n")
+print(prettify(xtree))
     
 
 
