@@ -9,6 +9,10 @@ Todo:
     * create template/YAML parser function.
     * create element update/replace function.
     * check for yaml.scanner.ScannerError, etc.
+    * the pymets API should be something like this in terms of templates:
+        pm = PYMETS()
+        t = pm.templatize("t.xml", events={}) # returns etree._Element with all updates.
+        pm.root.append(t)
 """
 
 # XML snippet with TOMES_* attribute markup.
