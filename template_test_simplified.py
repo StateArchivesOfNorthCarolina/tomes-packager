@@ -40,6 +40,7 @@ xdoc = """<?xml version="1.0" encoding="UTF-8"?>
                             get deleted VS an XML comment.">{a}-{b} is the value I seek!
                             </premis:objectIdentifierValue>
                         </premis:objectIdentifier>
+                        <!-- This is a comment. -->
                         <premis:significantProperties>
                             <premis:significantPropertiesValue>
                             </premis:significantPropertiesValue>
