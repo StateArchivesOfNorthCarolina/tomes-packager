@@ -5,6 +5,7 @@ from lxml import etree
 Todo:
     * add support for attributes and multiple attributes:
         <foo FILL="..." ATTRIBUTES="[{'at1':'{a}', 'at2':'{b}foo'}, Comment.]" />
+    * add support for templated comments?
     * create template/YAML parser function.
     * create element update/replace function.
     * check for yaml.scanner.ScannerError, etc.
