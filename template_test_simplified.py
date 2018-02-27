@@ -6,6 +6,9 @@ Todo:
     * add support for attributes and multiple attributes:
         <foo FILL="..." ATTRIBUTES="[{'at1':'{a}', 'at2':'{b}foo'}, Comment.]" />
     * add support for templated comments?
+        - No, but DO get rid of comment support in the attributes and freely allow
+        comments anywhere that start like "<!-- TOMES_TEMPLATE_COMMENT" and just
+        delete ALL of those.
     * create template/YAML parser function.
     * create element update/replace function.
     * check for yaml.scanner.ScannerError, etc.
