@@ -4,11 +4,7 @@ from lxml import etree
 """
 Todo:
     * add support for attributes and multiple attributes:
-        <foo FILL="..." ATTRIBUTES="[{'at1':'{a}', 'at2':'{b}foo'}, Comment.]" />
-    * add support for templated comments?
-        - No, but DO get rid of comment support in the attributes and freely allow
-        comments anywhere that start like "<!-- TOMES_TEMPLATE_COMMENT" and just
-        delete ALL of those.
+        <foo FILL="..." ATTRIBUTES="{'at1':'{a}', 'at2':'{b}foo'}" />
     * create template/YAML parser function.
     * create element update/replace function.
     * check for yaml.scanner.ScannerError, etc.
@@ -27,8 +23,7 @@ xdoc = """<?xml version="1.0" encoding="UTF-8"?>
     "http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/version111/mets.xsd">
     <mets:metsHdr/>
     <mets:amdSec ID="amdSec_1">
-    <mets:techMD ID="techMD_1" TOMES_TEMPLATE="[{'a': 1, 'b': True}, Nice to comment here 
-    because unlike an XML comment this will get removed.]">
+    <mets:techMD ID="techMD_1" TOMES_TEMPLATE="{'a': 1, 'b': True}">
         <mets:mdWrap MDTYPE="PREMIS:OBJECT">
             <mets:xmlData>
                 <premis:premis xmlns:premis="http://www.loc.gov/premis/v3" version="3.0" 
@@ -42,7 +37,8 @@ xdoc = """<?xml version="1.0" encoding="UTF-8"?>
                             TOMES_TEMPLATE_FILL="true">{a}-{b} is the value I seek!
                             </premis:objectIdentifierValue>
                         </premis:objectIdentifier>
-                        <!-- This is a comment. -->
+                        <!-- TOMES_TEMPLATE_COMMENT This will be removed. -->
+                        <!-- This will stay. -->
                         <premis:significantProperties>
                             <premis:significantPropertiesValue>
                             </premis:significantPropertiesValue>
@@ -60,22 +56,30 @@ xdoc = """<?xml version="1.0" encoding="UTF-8"?>
 
 # establish template attributes and XPATHs.
 template_signifier = "TOMES_TEMPLATE" 
-template_fill = "TOMES_TEMPLATE_FILL" # pymets constructor will eventually take TEMPLATE and
-                                      # FILL attribute names.
+template_fill = "TOMES_TEMPLATE_FILL"
+template_comment = "TOMES_TEMPLATE_COMMENT"
 sig_path = "//*[@{}]".format(template_signifier)
 fill_path = "//*[@{}='true']".format(template_fill)
+comm_path = "//comment()[contains(.,'{}')]".format(template_comment)
+## NOTE: pymets constructor will eventually take TEMPLATE, FILL, and COMMENT names as overrides to its defaults: PYMETS_TEMPLATE, etc.
 
 # these are the events that will be passed in.
 events = {"a": 1, "b": True, "c": False}
 
 # parse @xdoc.
 root = etree.fromstring(xdoc.encode())
+
+# remove comments.
+for el in root.xpath(comm_path):
+    el.getparent().remove(el)
+
+# fill in values.
 for el in root.xpath(sig_path):
 
     # parse template.
     atts = dict(el.items())
     atts = yaml.load(atts[template_signifier])
-    atts = atts[0] # item 1: conditions; optional item 2: comment.
+    atts = atts
 
     # do the conditions match what's in @events?
     tests = []
@@ -105,7 +109,7 @@ for el in root.xpath(sig_path):
         # parse template: does this look familiar? Move this into a function.
         atts = dict(el.items())
         atts = yaml.load(atts[template_signifier])
-        atts = atts[0] # item 1: conditions; optional item 2: comment.
+        atts = atts
         
         # format child text.
         cel.text = cel.text.format(**atts)
@@ -126,6 +130,7 @@ for el in root.xpath(sig_path):
 
 # get XML string again.
 xdoc = etree.tostring(root, pretty_print=True).decode()
+print(xdoc)
 
 # validate but exempt xsi:type validatation that libxml2 can't handle.
 # this is due to PREMIS design issue (IMO).
