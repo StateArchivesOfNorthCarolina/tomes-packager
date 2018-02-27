@@ -39,8 +39,7 @@ xdoc = """<?xml version="1.0" encoding="UTF-8"?>
                             valueURI="http://id.loc.gov/vocabulary/identifiers/local">
                             local</premis:objectIdentifierType>
                             <premis:objectIdentifierValue
-                            TOMES_TEMPLATE_FILL="Anything goes, such as comments that will
-                            get deleted VS an XML comment.">{a}-{b} is the value I seek!
+                            TOMES_TEMPLATE_FILL="true">{a}-{b} is the value I seek!
                             </premis:objectIdentifierValue>
                         </premis:objectIdentifier>
                         <!-- This is a comment. -->
@@ -64,7 +63,7 @@ template_signifier = "TOMES_TEMPLATE"
 template_fill = "TOMES_TEMPLATE_FILL" # pymets constructor will eventually take TEMPLATE and
                                       # FILL attribute names.
 sig_path = "//*[@{}]".format(template_signifier)
-fill_path = "//*[@{}]".format(template_fill)
+fill_path = "//*[@{}='true']".format(template_fill)
 
 # these are the events that will be passed in.
 events = {"a": 1, "b": True, "c": False}
