@@ -23,6 +23,7 @@ xdoc = """<?xml version="1.0" encoding="UTF-8"?>
     "http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/version111/mets.xsd">
     <mets:metsHdr/>
     <mets:amdSec ID="amdSec_1">
+    <!-- TOMES_TEMPLATE_COMMENT This will be removed. -->
     <mets:techMD ID="techMD_1" TOMES_TEMPLATE="{'a': 1, 'b': True}">
         <mets:mdWrap MDTYPE="PREMIS:OBJECT">
             <mets:xmlData>
