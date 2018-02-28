@@ -4,7 +4,7 @@ from lxml import etree
 """
 Todo:
     * add support for attributes and multiple attributes:
-        <foo FILL="..." ATTRIBUTES="{'at1':'{a}', 'at2':'{b}foo'}" />
+        <foo FILL="true" ATTRIBUTES="{'at1':'{a}', 'at2':'{b}foo'}" />
     * create template/YAML parser function.
     * create element update/replace function.
     * check for yaml.scanner.ScannerError, etc.
@@ -60,7 +60,7 @@ template_fill = "TOMES_TEMPLATE_FILL"
 template_comment = "TOMES_TEMPLATE_COMMENT"
 sig_path = "//*[@{}]".format(template_signifier)
 fill_path = "//*[@{}='true']".format(template_fill)
-comm_path = "//comment()[contains(.,'{}')]".format(template_comment)
+comm_path = "//comment()[starts-with(normalize-space(.),'{}')]".format(template_comment)
 ## NOTE: pymets constructor will eventually take TEMPLATE, FILL, and COMMENT names as overrides to its defaults: PYMETS_TEMPLATE, etc.
 
 # these are the events that will be passed in.
