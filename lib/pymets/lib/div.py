@@ -31,11 +31,35 @@ class Div():
         self.ns_map = ns_map
 
 
-    def div(self, file_ids, attributes=None):
+    def get_fileIDs(self, file_el):
+        """ Returns a list of <fileGrp/file> @ID values for a given @file_el - an individual
+        <fileGrp> or an entire <fileSec> element.
+        
+        Args:
+            - @file_el (lxml.etree._Element): A <fileGrp> or <fileSec> lxml.etree._Element.
+            
+        Returns:
+            list: The return value.
+        """
+
+        # set <file> path.
+        path = "{" + self.ns_map[self.ns_prefix] + "}file"
+
+        # make adjustments if @file_el is a <fileSec> element.
+        if file_el.tag[-7:] == "fileSec":
+            path = "*" + path
+        
+        # make list of @ID attributes.
+        fids = [fid.get("ID") for fid in file_el.findall(path)]
+        return fids
+
+
+
+    def div(self, fileSec_el, attributes=None):
         """ Creates a METS <div> etree element for each item in @file_ids.
 
         Args:
-            - file_ids (list): The identifiers to us for each <fptr> element within the <div>.
+            - fileSec_el (lxml.etree._Element): ???
             - attributes (dict): The optional attributes to set.
         
         Returns:
@@ -52,11 +76,12 @@ class Div():
         if attributes is not None:
             self.logger.info("Appending attributes to <div> element.".format(name))
             for k, v in attributes.items():
+                self.logger.info("Setting attribute '{}' with value '{}'.".format(k, v))
                 div_el.set(k, v)
 
         # add <fprt> sub-elements with FILEID attribute.
         self.logger.info("Appending <fptr> sub-elements to <div> element.")
-        for file_id in file_ids:
+        for file_id in self.get_fileIDs(fileSec_el):
             fptr_el = etree.SubElement(div_el, "{" + self.ns_map[self.ns_prefix] + "}fptr",
                     nsmap=self.ns_map)
             fptr_el.set("FILEID", file_id)
