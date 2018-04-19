@@ -3,6 +3,9 @@
 Todo:
     * Verify template is a file on __init__.
         - And verify base is a folder.
+    * Need to determine constant vars.
+        - ISO/UTC now.
+        - What else?
 """
 
 
@@ -11,6 +14,7 @@ import glob
 import jinja2
 import os
 from datetime import datetime
+from lxml import etree
 from lib.file_to_object import FileToObject
 
 
@@ -41,7 +45,7 @@ class Packager():
         # ???
         data = {}
         root_files = glob.glob(self.base + "/*.*")
-        data[""] = [self.f2o(f, root=self.base, index=get_id(f, root_files)) for f in 
+        data["ROOT"] = [self.f2o(f, root=self.base, index=get_id(f, root_files)) for f in 
                 root_files]
 
         # ???
@@ -70,10 +74,11 @@ class Packager():
         # ??
         with open(self.template, encoding=self.charset) as tf:
                 xml = tf.read()
-        template = jinja2.Template(xml)
+        template = jinja2.Template(xml, trim_blocks=True, lstrip_blocks=True, 
+                comment_start_string="<!--#", comment_end_string="#-->")
         rendered_template = template.render(*args, **kwargs)
         
-        # load string as etree._Element.
+        # load string as etree._Element. ??? string yes?
         template_el = rendered_template#self.load(rendered_template, is_raw=True)
         return template_el
 
@@ -107,5 +112,7 @@ if __name__ == "__main__":
     open(p.xsd)
     docs = [(x.name, x.checksum) for x in data["lib"]]
     #print(docs)
-    t = p.render_template(mets_ctime=datetime.now().isoformat(), assets=data)
+    t = p.render_template(mets_ctime=datetime.now().isoformat(), file_groups=data)
+    t = etree.fromstring(t)
+    t = etree.tostring(t, pretty_print=True).decode()
     print(t)

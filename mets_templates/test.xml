@@ -7,18 +7,19 @@ xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/m
 			<name>TOMES Packager</name>
 			<note>Email archiving software developed through the Transforming Online Mail with Embedded Semantics (TOMES) project (https://www.ncdcr.gov/resources/records-management/tomes), a multi-state partnership that includes Kansas, Utah and North Carolina</note>
 		</agent>
-		<!-- This is a comment. -->
-	{# This is a Jinja2 comment. #}
+		<!-- This is an XMLcomment. It will stay intact. -->
+		<!--# This is a TOMES Packager comment. It will disappear. #-->
 	</metsHdr>
 	<fileSec>
-  {% for asset in assets %}
-		<fileGrp ID="FileGrp_{{ asset }}">
-		{% for file in assets[asset] %}
-			<file SIZE="{{ file.size }}"
-			ID="_{{ asset }}_{{ file.index }}" 
+  {% for file_group in file_groups %}
+		<fileGrp ID="FileGrp_{{ file_group }}">
+		{% for file in file_groups[file_group] %}
+			<file 
+			SIZE="{{ file.size }}" 
+			ID="_{{ file_group }}_{{ file.index }}" 
 			MIMETYPE="{{ file.mimetype }}" 
 			CREATED="{{ file.created }}" 
-			CHECKSUM="{{ file.checksum }}"
+			CHECKSUM="{{ file.checksum }}" 
 			CHECKSUMTYPE="{{ file.checksum_algorithm }}">
 				<FLocat xlink:href="{{ file.name }}" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
 			</file>
@@ -28,10 +29,10 @@ xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/m
 	</fileSec>
 	<structMap>
 		<div>
-	    {% for asset in assets %}
-			<div ID="Div_{{ asset }}">
-			{% for file in assets[asset] %}
-				<fptr FILEID="_{{ asset }}_{{ file.index }}"/>
+	    {% for file_group in file_groups %}
+			<div ID="Div_{{ file_group }}">
+			{% for file in file_groups[file_group] %}
+				<fptr FILEID="_{{ file_group }}_{{ file.index }}"/>
 			{% endfor %}
 			</div>
 		{% endfor %}
