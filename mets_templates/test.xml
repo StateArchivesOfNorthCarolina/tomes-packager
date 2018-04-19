@@ -2,41 +2,41 @@
 xmlns:xlink="http://www.w3.org/1999/xlink" 
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd">
-	<metsHdr CREATEDATE="{{ mets_ctime }}">
-		<agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
-			<name>TOMES Packager</name>
-			<note>Email archiving software developed through the Transforming Online Mail with Embedded Semantics (TOMES) project (https://www.ncdcr.gov/resources/records-management/tomes), a multi-state partnership that includes Kansas, Utah and North Carolina</note>
-		</agent>
-		<!-- This is an XMLcomment. It will stay intact. -->
-		<!--# This is a TOMES Packager comment. It will disappear. #-->
-	</metsHdr>
-	<fileSec>
+    <metsHdr CREATEDATE="{{ mets_ctime }}">
+        <agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
+            <name>TOMES Packager</name>
+            <note>Email archiving software developed through the Transforming Online Mail with Embedded Semantics (TOMES) project (https://www.ncdcr.gov/resources/records-management/tomes), a multi-state partnership that includes Kansas, Utah and North Carolina</note>
+        </agent>
+        <!-- This is an XMLcomment. It will stay intact. -->
+        <!--# This is a TOMES Packager comment. It will disappear. #-->
+    </metsHdr>
+    <fileSec>
   {% for file_group in file_groups %}
-		<fileGrp ID="FileGrp_{{ file_group }}">
-		{% for file in file_groups[file_group] %}
-			<file 
-			SIZE="{{ file.size }}" 
-			ID="_{{ file_group }}_{{ file.index }}" 
-			MIMETYPE="{{ file.mimetype }}" 
-			CREATED="{{ file.created }}" 
-			CHECKSUM="{{ file.checksum }}" 
-			CHECKSUMTYPE="{{ file.checksum_algorithm }}">
-				<FLocat xlink:href="{{ file.name }}" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
-			</file>
-		{% endfor %}
-		</fileGrp>
-	{% endfor %}
-	</fileSec>
-	<structMap>
-		<div>
-	    {% for file_group in file_groups %}
-			<div ID="Div_{{ file_group }}">
-			{% for file in file_groups[file_group] %}
-				<fptr FILEID="_{{ file_group }}_{{ file.index }}"/>
-			{% endfor %}
-			</div>
-		{% endfor %}
-		</div>
-	</structMap>
-	<!--It is ??? that this METS file is valid per ../mets_1-11.xsd.-->
+        <fileGrp ID="FileGrp_{{ file_group }}">
+        {% for file in file_groups[file_group] %}
+            <file 
+            SIZE="{{ file.size }}" 
+            ID="_{{ file_group }}_{{ file.index }}" 
+            MIMETYPE="{{ file.mimetype }}" 
+            CREATED="{{ file.created }}" 
+            CHECKSUM="{{ file.checksum }}" 
+            CHECKSUMTYPE="{{ file.checksum_algorithm }}">
+                <FLocat xlink:href="{{ file.name }}" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
+            </file>
+        {% endfor %}
+        </fileGrp>
+    {% endfor %}
+    </fileSec>
+    <structMap>
+        <div>
+        {% for file_group in file_groups %}
+            <div ID="Div_{{ file_group }}">
+            {% for file in file_groups[file_group] %}
+                <fptr FILEID="_{{ file_group }}_{{ file.index }}"/>
+            {% endfor %}
+            </div>
+        {% endfor %}
+        </div>
+    </structMap>
+    <!--It is ??? that this METS file is valid per ../mets_1-11.xsd.-->
 </mets>
