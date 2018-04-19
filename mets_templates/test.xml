@@ -1,0 +1,41 @@
+<mets xmlns="http://www.loc.gov/METS/" 
+xmlns:xlink="http://www.w3.org/1999/xlink" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd">
+	<metsHdr CREATEDATE="{{ mets_ctime }}">
+		<agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
+			<name>TOMES Packager</name>
+			<note>Email archiving software developed through the Transforming Online Mail with Embedded Semantics (TOMES) project (https://www.ncdcr.gov/resources/records-management/tomes), a multi-state partnership that includes Kansas, Utah and North Carolina</note>
+		</agent>
+		<!-- This is a comment. -->
+	{# This is a Jinja2 comment. #}
+	</metsHdr>
+	<fileSec>
+  {% for asset in assets %}
+		<fileGrp ID="FileGrp_{{ asset }}">
+		{% for file in assets[asset] %}
+			<file SIZE="{{ file.size }}"
+			ID="_{{ asset }}_{{ file.index }}" 
+			MIMETYPE="{{ file.mimetype }}" 
+			CREATED="{{ file.created }}" 
+			CHECKSUM="{{ file.checksum }}"
+			CHECKSUMTYPE="{{ file.checksum_algorithm }}">
+				<FLocat xlink:href="{{ file.name }}" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
+			</file>
+		{% endfor %}
+		</fileGrp>
+	{% endfor %}
+	</fileSec>
+	<structMap>
+		<div>
+	    {% for asset in assets %}
+			<div ID="Div_{{ asset }}">
+			{% for file in assets[asset] %}
+				<fptr FILEID="_{{ asset }}_{{ file.index }}"/>
+			{% endfor %}
+			</div>
+		{% endfor %}
+		</div>
+	</structMap>
+	<!--It is ??? that this METS file is valid per ../mets_1-11.xsd.-->
+</mets>
