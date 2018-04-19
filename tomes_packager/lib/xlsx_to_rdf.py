@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 
 """
-This module contains a function for creating RDF/Dublin Core metadata from a Microsoft Excel
+This module contains a class??? for creating RDF/Dublin Core metadata from a Microsoft Excel
 2010 file (.xlsx).
 
 Todo:
+    * Make this a class.
     * Add logging.
-    * Need to actually output entire mets:mdWrap. So maybe this shouldn't be an "extension"?
-        - Well, pymets will actually do the wrapping IF you pass a dict not a list so that
-        the sheet name is available to pymets.
 """
 
 # import modules.
