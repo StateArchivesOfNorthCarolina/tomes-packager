@@ -11,7 +11,7 @@ xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/m
         <!--# This is a TOMES Packager comment. It will disappear. #-->
     </metsHdr>
     <fileSec>
-  {% for file_group in file_groups %}
+   {% for file_group in file_groups %}
         <fileGrp ID="FileGrp_{{ file_group }}">
         {% for file in file_groups[file_group] %}
             <file 
