@@ -44,7 +44,17 @@ class Packager():
 
     class __DirectoryList(list):
         """ ??? """
-        
+
+        def __getattr__(self, att):
+            names = [d.name for d in self]
+            try:
+                found = names.index(att)
+                files = [f.name for f in self[found].files]
+            except ValueError:
+                return None
+            return files
+
+	
         def __contains__(self, test):
             return True if test in [d.name for d in self] else False
 
@@ -68,7 +78,7 @@ class Packager():
         root_files = glob.glob(self.base + "/*.*")
         root_files = [self.file_object(f, root=self.base, index=get_id(f, root_files)) for f in 
                 root_files]
-        root = self.directory_object(self.base, ".", root_files)
+        root = self.directory_object(self.base, "_", root_files)
         data.append(root)
 
         # ???
@@ -154,5 +164,4 @@ if __name__ == "__main__":
     t.append(etree.Comment(valid))
     t = p.beautify_mets(t)
     t = etree.tostring(t, pretty_print=True).decode()
-
     print(t)
