@@ -47,15 +47,17 @@ class Packager():
 
         def __getattr__(self, att):
             """ ??? """
+            
             try:
                 names = [d.name for d in self]
                 found = names.index(att)
                 files = [f.name for f in self[found].files]
+                return files
             except ValueError:
                 return None
-            return files
 
         def __contains__(self, test):
+            """ ??? """
             return True if test in [d.name for d in self] else False
 
 
