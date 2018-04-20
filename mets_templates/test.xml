@@ -12,11 +12,11 @@ xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/m
     </metsHdr>
     <fileSec>
    {% for file_group in file_groups %}
-        <fileGrp ID="FileGrp_{{ file_group }}">
-        {% for file in file_groups[file_group] %}
+        <fileGrp ID="FileGrp_{{ file_group.name }}">
+        {% for file in file_group.files %}
             <file 
             SIZE="{{ file.size }}" 
-            ID="_{{ file_group }}_{{ file.index }}" 
+            ID="_{{ file_group.name }}_{{ file.index }}" 
             MIMETYPE="{{ file.mimetype }}" 
             CREATED="{{ file.created }}" 
             CHECKSUM="{{ file.checksum }}" 
@@ -30,9 +30,9 @@ xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/m
     <structMap>
         <div>
         {% for file_group in file_groups %}
-            <div ID="Div_{{ file_group }}">
-            {% for file in file_groups[file_group] %}
-                <fptr FILEID="_{{ file_group }}_{{ file.index }}"/>
+            <div ID="Div_{{ file_group.name }}">
+            {% for file in file_group.files %}
+                <fptr FILEID="_{{ file_group.name }}_{{ file.index }}"/>
             {% endfor %}
             </div>
         {% endfor %}

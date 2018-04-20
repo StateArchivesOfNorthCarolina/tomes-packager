@@ -15,6 +15,7 @@ import jinja2
 import os
 from datetime import datetime
 from lxml import etree
+from lib.directory_to_object import DirectoryToObject
 from lib.file_to_object import FileToObject
 
 
@@ -30,6 +31,7 @@ class Packager():
         self.charset = charset
 
         # ???
+        self.d2o = DirectoryToObject
         self.f2o = FileToObject
         self.xsd = os.path.normpath(os.path.dirname(os.path.abspath(__file__)) + 
                 "/lib/mets_1-11.xsd")
@@ -43,19 +45,24 @@ class Packager():
         get_id = lambda x,y: str(y.index(x)).zfill(get_pad_len(y))
         
         # ???
-        data = {}
+        data = []
+
+        # ???
         root_files = glob.glob(self.base + "/*.*")
-        data["ROOT"] = [self.f2o(f, root=self.base, index=get_id(f, root_files)) for f in 
+        root_files = [self.f2o(f, root=self.base, index=get_id(f, root_files)) for f in 
                 root_files]
+        root = self.d2o(self.base, "ROOT", root_files)
+        data.append(root)
 
         # ???
         folders = [f for f in glob.glob(self.base + "/*/")]
         for folder in folders:
-            files = [f for f in glob.glob(folder + "/**", recursive=True) 
-                    if os.path.isfile(f)]
-            folder = os.path.relpath(folder, start=self.base)
-            data[folder] = [self.f2o(f, root=self.base, index=get_id(f, files)) for f in files]
-
+            files = [f for f in glob.glob(folder + "/**", recursive=True) if 
+                    os.path.isfile(f)]
+            files = [self.f2o(f, root=self.base, index=get_id(f, files)) for f in files]
+            rel_folder = os.path.relpath(folder, start=self.base)
+            folder = self.d2o(folder, rel_folder, files)
+            data.append(folder)
         return data
 
 
@@ -107,12 +114,11 @@ if __name__ == "__main__":
     p = Packager(".", "../mets_templates/test.xml")
     data = p.get_data()
     #for d in data:
-    #    print(d)
+    #    print(d.name)
     #print(p.xsd)
-    open(p.xsd)
-    docs = [(x.name, x.checksum) for x in data["lib"]]
+    #docs = [(x.name, x.checksum) for x in data[0].files]
     #print(docs)
     t = p.render_template(mets_ctime=datetime.now().isoformat(), file_groups=data)
-    t = etree.fromstring(t)
-    t = etree.tostring(t, pretty_print=True).decode()
+    #t = etree.fromstring(t)
+    #t = etree.tostring(t, pretty_print=True).decode()
     print(t)
