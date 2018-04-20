@@ -46,8 +46,9 @@ class Packager():
         """ ??? """
 
         def __getattr__(self, att):
-            names = [d.name for d in self]
+            """ ??? """
             try:
+                names = [d.name for d in self]
                 found = names.index(att)
                 files = [f.name for f in self[found].files]
             except ValueError:
