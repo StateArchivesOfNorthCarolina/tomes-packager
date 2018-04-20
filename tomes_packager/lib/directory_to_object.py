@@ -20,3 +20,6 @@ class DirectoryToObject(object):
         if not os.path.isdir(self.path):
             raise NotADirectoryError
 
+
+if __name__ == "__main__":
+    pass

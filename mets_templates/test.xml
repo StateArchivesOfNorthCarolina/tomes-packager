@@ -11,12 +11,12 @@ xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/m
         <!--# This is a TOMES Packager comment. It will disappear. #-->
     </metsHdr>
     <fileSec>
-   {% for file_group in file_groups %}
-        <fileGrp ID="FileGrp_{{ file_group.name }}">
-        {% for file in file_group.files %}
+   {% for folder in folders %}
+        <fileGrp ID="FileGrp_{{ folder.name }}">
+        {% for file in folder.files %}
             <file 
             SIZE="{{ file.size }}" 
-            ID="_{{ file_group.name }}_{{ file.index }}" 
+            ID="_{{ folder.name }}_{{ file.index }}" 
             MIMETYPE="{{ file.mimetype }}" 
             CREATED="{{ file.created }}" 
             CHECKSUM="{{ file.checksum }}" 
@@ -29,10 +29,10 @@ xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/m
     </fileSec>
     <structMap>
         <div>
-        {% for file_group in file_groups %}
-            <div ID="Div_{{ file_group.name }}">
-            {% for file in file_group.files %}
-                <fptr FILEID="_{{ file_group.name }}_{{ file.index }}"/>
+        {% for folder in folders %}
+            <div ID="Div_{{ folder.name }}">
+            {% for file in folder.files %}
+                <fptr FILEID="_{{ folder.name }}_{{ file.index }}"/>
             {% endfor %}
             </div>
         {% endfor %}

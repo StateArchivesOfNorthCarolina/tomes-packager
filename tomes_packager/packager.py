@@ -118,7 +118,7 @@ if __name__ == "__main__":
     #print(p.xsd)
     #docs = [(x.name, x.checksum) for x in data[0].files]
     #print(docs)
-    t = p.render_template(mets_ctime=datetime.now().isoformat(), file_groups=data)
+    t = p.render_template(mets_ctime=datetime.now().isoformat(), folders=data)
     #t = etree.fromstring(t)
     #t = etree.tostring(t, pretty_print=True).decode()
     print(t)
