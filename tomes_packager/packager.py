@@ -54,7 +54,6 @@ class Packager():
                 return None
             return files
 
-	
         def __contains__(self, test):
             return True if test in [d.name for d in self] else False
 
