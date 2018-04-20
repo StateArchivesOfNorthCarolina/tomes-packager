@@ -1,0 +1,107 @@
+<mets xmlns="http://www.loc.gov/METS/" 
+xmlns:xlink="http://www.w3.org/1999/xlink" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd">
+    <metsHdr CREATEDATE="2018-04-20T00:36:48.547264Z">
+        <agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
+            <name>TOMES Packager</name>
+            <note>Email archiving software developed through the Transforming Online Mail with Embedded Semantics (TOMES) project (https://www.ncdcr.gov/resources/records-management/tomes), a multi-state partnership that includes Kansas, Utah and North Carolina</note>
+        </agent>
+        <!-- This is an XMLcomment. It will stay intact. -->
+    </metsHdr>
+    <fileSec>
+        <fileGrp ID="FileGrp_ROOT">
+            <file 
+            SIZE="0" 
+            ID="_ROOT_00" 
+            MIMETYPE="text/xml" 
+            CREATED="2018-04-20T00:34:48.570318Z" 
+            CHECKSUM="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" 
+            CHECKSUMTYPE="SHA-256">
+                <FLocat xlink:href="foo.xml" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
+            </file>
+            <file 
+            SIZE="3908" 
+            ID="_ROOT_01" 
+            MIMETYPE="text/plain" 
+            CREATED="2018-04-19T23:48:35.994096Z" 
+            CHECKSUM="c6d16239e58ce4391920f133463f53ded0d4f82f881ff7e4fbd5ffd6e86bb456" 
+            CHECKSUMTYPE="SHA-256">
+                <FLocat xlink:href="packager.py" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
+            </file>
+        </fileGrp>
+        <fileGrp ID="FileGrp_lib">
+            <file 
+            SIZE="447" 
+            ID="_lib_00" 
+            MIMETYPE="text/plain" 
+            CREATED="2018-04-20T00:13:35.490504Z" 
+            CHECKSUM="f9ef62eed38544fc748b1b2795503a6d29bc60a293a36d6864230710bf54a741" 
+            CHECKSUMTYPE="SHA-256">
+                <FLocat xlink:href="lib/directory_to_object.py" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
+            </file>
+            <file 
+            SIZE="2015" 
+            ID="_lib_01" 
+            MIMETYPE="text/plain" 
+            CREATED="2018-04-19T23:45:23.524090Z" 
+            CHECKSUM="ef22e4e439899e768e545482da4ff8e7a3ef93eeadd5b4538dab7ab3550d506f" 
+            CHECKSUMTYPE="SHA-256">
+                <FLocat xlink:href="lib/file_to_object.py" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
+            </file>
+            <file 
+            SIZE="135096" 
+            ID="_lib_02" 
+            MIMETYPE="text/xml" 
+            CREATED="2018-04-19T17:41:14.595988Z" 
+            CHECKSUM="77a6684b3228b1857e0f325c1656a208f2fa12f76aa12a0c9e92853b70ef42c2" 
+            CHECKSUMTYPE="SHA-256">
+                <FLocat xlink:href="lib/mets_1-11.xsd" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
+            </file>
+            <file 
+            SIZE="3772" 
+            ID="_lib_03" 
+            MIMETYPE="text/plain" 
+            CREATED="2018-04-19T17:14:45.780955Z" 
+            CHECKSUM="4d8837d2c4848b87af392761145d6c9385507baef554651df5815d86d2d621a6" 
+            CHECKSUMTYPE="SHA-256">
+                <FLocat xlink:href="lib/xlsx_to_rdf.py" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
+            </file>
+            <file 
+            SIZE="695" 
+            ID="_lib_04" 
+            MIMETYPE="application/x-python-code" 
+            CREATED="2018-04-20T00:14:52.255536Z" 
+            CHECKSUM="5f26646e0f3216d23a45f8c63a9aa44f37200daf70fecb764430727d9a18ccba" 
+            CHECKSUMTYPE="SHA-256">
+                <FLocat xlink:href="lib/__pycache__/directory_to_object.cpython-36.pyc" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
+            </file>
+            <file 
+            SIZE="2029" 
+            ID="_lib_05" 
+            MIMETYPE="application/x-python-code" 
+            CREATED="2018-04-19T23:48:43.658092Z" 
+            CHECKSUM="be1c16dc4e52608fa0a364dff71191d9406fae848fb51a6597088740d4d3c333" 
+            CHECKSUMTYPE="SHA-256">
+                <FLocat xlink:href="lib/__pycache__/file_to_object.cpython-36.pyc" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
+            </file>
+        </fileGrp>
+    </fileSec>
+    <structMap>
+        <div>
+            <div ID="Div_ROOT">
+                <fptr FILEID="_ROOT_00"/>
+                <fptr FILEID="_ROOT_01"/>
+            </div>
+            <div ID="Div_lib">
+                <fptr FILEID="_lib_00"/>
+                <fptr FILEID="_lib_01"/>
+                <fptr FILEID="_lib_02"/>
+                <fptr FILEID="_lib_03"/>
+                <fptr FILEID="_lib_04"/>
+                <fptr FILEID="_lib_05"/>
+            </div>
+        </div>
+    </structMap>
+    <!--It is ??? that this METS file is valid per ../mets_1-11.xsd.-->
+</mets>
