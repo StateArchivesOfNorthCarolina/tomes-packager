@@ -37,12 +37,17 @@ class Packager():
                 "/lib/mets_1-11.xsd")
 
 
+    def load_event_data(self):
+        """ ??? """
+        # raise error is key value is not a time; convert to UTC.
+
+
     def get_data(self):
         """ ??? """
 
         # get padding length for local file identifiers.
-        get_pad_len = lambda x: len(str(len(x))) + 1
-        get_id = lambda x,y: str(y.index(x)).zfill(get_pad_len(y))
+        get_pad_len = lambda x: 1 + len(str(len(x)))
+        get_id = lambda x, y: str(y.index(x)).zfill(get_pad_len(y))
         
         # ???
         data = []
@@ -63,6 +68,7 @@ class Packager():
             rel_folder = os.path.relpath(folder, start=self.base)
             folder = self.d2o(folder, rel_folder, files)
             data.append(folder)
+
         return data
 
 
@@ -118,7 +124,7 @@ if __name__ == "__main__":
     #print(p.xsd)
     #docs = [(x.name, x.checksum) for x in data[0].files]
     #print(docs)
-    t = p.render_template(mets_ctime=datetime.now().isoformat(), folders=data)
+    t = p.render_template(mets_ctime=datetime.utcnow().isoformat()+"Z", folders=data)
     #t = etree.fromstring(t)
     #t = etree.tostring(t, pretty_print=True).decode()
     print(t)
