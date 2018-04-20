@@ -5,20 +5,20 @@
 import os
 
 
-class DirectoryToObject(object):
+class DirectoryObject(object):
     """ ??? """
 
     def __init__(self, path, name=None, files=[]):
         """ ??? name is an alias/nickname """
+
+        # ???
+        if not os.path.isdir(path):
+            raise NotADirectoryError
         
         # ???
         self.path = path
         self.name = name
         self.files = files
-
-        # ???
-        if not os.path.isdir(self.path):
-            raise NotADirectoryError
 
 
 if __name__ == "__main__":

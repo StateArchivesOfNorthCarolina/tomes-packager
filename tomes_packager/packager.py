@@ -17,10 +17,11 @@ import jinja2
 import os
 from datetime import datetime
 from lxml import etree
-from lib.directory_to_object import DirectoryToObject
-from lib.file_to_object import FileToObject
+from lib.directory_object import DirectoryObject
+from lib.file_object import FileObject
 
 
+    
 class Packager():
 
 
@@ -33,10 +34,19 @@ class Packager():
         self.charset = charset
 
         # ???
-        self.d2o = DirectoryToObject
-        self.f2o = FileToObject
-        self.xsd = os.path.normpath(os.path.dirname(os.path.abspath(__file__)) + 
+        self.directory_object = DirectoryObject
+        self.file_object = FileObject
+        self.xsd_file = os.path.normpath(os.path.dirname(os.path.abspath(__file__)) + 
                 "/lib/mets_1-11.xsd")
+        self.beautifier = os.path.normpath(os.path.dirname(os.path.abspath(__file__)) + 
+                "/lib/beautifier.xsl")
+
+
+    class __DirectoryList(list):
+        """ ??? """
+        
+        def __contains__(self, test):
+            return True if test in [d.name for d in self] else False
 
 
     def load_event_data(self):
@@ -52,13 +62,13 @@ class Packager():
         get_id = lambda x, y: str(y.index(x)).zfill(get_pad_len(y))
         
         # ???
-        data = []
+        data = self.__DirectoryList()
 
         # ???
         root_files = glob.glob(self.base + "/*.*")
-        root_files = [self.f2o(f, root=self.base, index=get_id(f, root_files)) for f in 
+        root_files = [self.file_object(f, root=self.base, index=get_id(f, root_files)) for f in 
                 root_files]
-        root = self.d2o(self.base, "", root_files)
+        root = self.directory_object(self.base, ".", root_files)
         data.append(root)
 
         # ???
@@ -66,9 +76,9 @@ class Packager():
         for folder in folders:
             files = [f for f in glob.glob(folder + "/**", recursive=True) if 
                     os.path.isfile(f)]
-            files = [self.f2o(f, root=self.base, index=get_id(f, files)) for f in files]
+            files = [self.file_object(f, root=self.base, index=get_id(f, files)) for f in files]
             rel_folder = os.path.relpath(folder, start=self.base)
-            folder = self.d2o(folder, rel_folder, files)
+            folder = self.directory_object(folder, rel_folder, files)
             data.append(folder)
 
         return data
@@ -90,6 +100,7 @@ class Packager():
         with open(self.template, encoding=self.charset) as tf:
                 xml = tf.read()
         template = jinja2.Template(xml, trim_blocks=True, lstrip_blocks=True, 
+                block_start_string="%%", block_end_string="%%",
                 comment_start_string="<!--#", comment_end_string="#-->")
         rendered_template = template.render(*args, **kwargs)
         
@@ -98,8 +109,18 @@ class Packager():
         return template_el
 
 
-    def validate_mets(self, xdoc):
-        """ Validates @xdoc file against @self.xsd.
+    def beautify_mets(self, mets):
+      """ ??? """
+
+      beautifier = etree.parse(self.beautifier)
+      transform = etree.XSLT(beautifier)
+      result = transform(mets)
+
+      return mets
+    
+
+    def validate_mets(self, mets):
+        """ Validates @mets file against @self.xsd.
         
         Args:
             - xdoc (str): The etree._Element to validate.
@@ -109,11 +130,11 @@ class Packager():
         """
         
         # load XSD.
-        xsd = self.load(self.xsd_file, False)
+        xsd = etree.parse(self.xsd_file)
         validator = etree.XMLSchema(xsd)
         
         # validate.
-        is_valid = validator.validate(xdoc)
+        is_valid = validator.validate(mets)
         return is_valid
 
 
@@ -122,11 +143,16 @@ if __name__ == "__main__":
     p = Packager(".", "../mets_templates/test.xml")
     data = p.get_data()
     #for d in data:
+    #    print(d)
     #    print(d.name)
     #print(p.xsd)
     #docs = [(x.name, x.checksum) for x in data[0].files]
     #print(docs)
     t = p.render_template(mets_ctime=datetime.utcnow().isoformat()+"Z", folders=data)
-    #t = etree.fromstring(t)
-    #t = etree.tostring(t, pretty_print=True).decode()
+    t = etree.fromstring(t)
+    valid = " It is {} that this METS is valid. ".format(p.validate_mets(t))
+    t.append(etree.Comment(valid))
+    t = p.beautify_mets(t)
+    t = etree.tostring(t, pretty_print=True).decode()
+
     print(t)

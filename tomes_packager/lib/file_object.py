@@ -14,7 +14,7 @@ import os
 from datetime import datetime
 
 
-class FileToObject(object):
+class FileObject(object):
     """ ??? """
     
     def __init__(self, path, index, root=None, checksum_algorithm="SHA-256"):
@@ -27,15 +27,15 @@ class FileToObject(object):
             ValueError: ???
         """
 
+        # ???
+        if not os.path.isfile(path):
+            raise FileNotFoundError
+
         # set attributes.
         self.path = path
         self.index = index
         self.root = root
         self.checksum_algorithm = checksum_algorithm 
-
-        # ???
-        if not os.path.isfile(self.path):
-            raise FileNotFoundError
 
         # ???
         self._checksum_map = {"SHA-1": hashlib.sha1, "SHA-256": hashlib.sha256, 
@@ -54,7 +54,7 @@ class FileToObject(object):
         self.mimetype = self.get_mimetype()
         self.checksum = self.get_checksum()
 
-
+    
     def get_mimetype(self):
         """ ??? """
         mimetype = mimetypes.guess_type(self.path)[0]
