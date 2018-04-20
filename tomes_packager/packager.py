@@ -6,6 +6,8 @@ Todo:
     * Need to determine constant vars.
         - ISO/UTC now.
         - What else?
+    * Need self.data and self.data_folders (list of folder names only).
+        - i.e. more side effect!
 """
 
 
@@ -56,7 +58,7 @@ class Packager():
         root_files = glob.glob(self.base + "/*.*")
         root_files = [self.f2o(f, root=self.base, index=get_id(f, root_files)) for f in 
                 root_files]
-        root = self.d2o(self.base, "ROOT", root_files)
+        root = self.d2o(self.base, "", root_files)
         data.append(root)
 
         # ???
