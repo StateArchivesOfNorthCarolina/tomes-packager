@@ -118,7 +118,8 @@ class DirectoryObject(object):
         self.files = self.__ListObject()
         self.rfiles = self.__ListObject()
 
-        # get padding length for local file identifiers.
+        # get padding length for local file identifiers
+        # TODO make get_id a method; too comlex for lambda.
         get_pad_len = lambda x: 1 + len(str(len(x)))
         get_id = lambda file, files: str(files.index(file)).zfill(get_pad_len(files))
 
@@ -132,7 +133,6 @@ class DirectoryObject(object):
         # root folder files. TODO indexes not unique?
         files = [normalize_path(f) for f in glob.glob(self.path + "/**", recursive=True)
                  if os.path.isfile(f)]
-        #re: id: ... max([f.count("/") for f in files])
         files = [self.file_object(f, self, index=get_id(f, files), parent=self.path) for f in files]
         for f in files:
             self.rfiles.append(f)

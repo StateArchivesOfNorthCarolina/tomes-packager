@@ -5,6 +5,7 @@ Todo:
     * Need ISO/UTF offset time.
     * Checksum should be an attribute to avoid recalculation.
         - If the attribute doesn't exst, then set self.checksum.
+    * Use a different string for "index" concept. It's confused with list's index.
 """
 
 
