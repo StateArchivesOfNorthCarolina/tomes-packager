@@ -21,7 +21,7 @@ xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/m
             ID="_{{ folder.name }}_{{ file.index }}" 
             MIMETYPE="{{ file.mimetype }}" 
             CREATED="{{ file.created }}" 
-            CHECKSUM="{{ file.checksum }}" 
+            CHECKSUM="{{ file.checksum() }}" 
             CHECKSUMTYPE="{{ file.checksum_algorithm }}">
                 <FLocat xlink:href="{{ file.name }}" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
             </file>
@@ -41,8 +41,8 @@ xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/m
         </div>
     </structMap>
     
-    %% if "lib" in folders %%
-    <!-- lib is in folders! -->
+    %% if "tests" in folders %%
+    <!-- tests is in folders! -->
     %% endif %%
     
     %% if "missing" in folders %%
