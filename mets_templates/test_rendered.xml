@@ -1,5 +1,5 @@
 <mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd">
-  <metsHdr CREATEDATE="2018-04-22T19:58:46.374124Z">
+  <metsHdr CREATEDATE="2018-04-22T20:06:39.163266Z">
     <agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
       <name>TOMES Packager</name>
       <note>Email archiving software developed through the Transforming Online Mail with Embedded Semantics (TOMES) project (https://www.ncdcr.gov/resources/records-management/tomes), a multi-state partnership that includes Kansas, Utah and North Carolina</note>
@@ -50,7 +50,7 @@
       <file SIZE="3724" ID="_mets_templates_007" MIMETYPE="text/xml" CREATED="2017-12-06T16:18:24.881436Z" CHECKSUM="ed8d415c684ecc7286f9b95eeecf6b0831bc296dad528c1d4db8e676d0abe224" CHECKSUMTYPE="SHA-256">
         <FLocat xlink:href="04_0_digiprov__premis-event.xml" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="2564" ID="_mets_templates_008" MIMETYPE="text/xml" CREATED="2018-04-19T17:52:45.263004Z" CHECKSUM="55f50274922100dea6d686c2acbc4dbacfaab9d9eef58f05325059db0db2ac59" CHECKSUMTYPE="SHA-256">
+      <file SIZE="2629" ID="_mets_templates_008" MIMETYPE="text/xml" CREATED="2018-04-19T17:52:45.263004Z" CHECKSUM="c83c6c562041d3899abaa035a95d83b8dcd28135f52ee5de47dd21e27d878eef" CHECKSUMTYPE="SHA-256">
         <FLocat xlink:href="test.xml" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
       <file SIZE="0" ID="_mets_templates_009" MIMETYPE="text/xml" CREATED="2018-04-20T00:34:48.570318Z" CHECKSUM="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" CHECKSUMTYPE="SHA-256">
@@ -69,7 +69,7 @@
       <file SIZE="492" ID="_tomes_packager_001" MIMETYPE="text/xml" CREATED="2018-04-20T15:36:55.882929Z" CHECKSUM="7465c83b71656ffea23978bf8f191b1d149e230048490ed11d06d75ee1737540" CHECKSUMTYPE="SHA-256">
         <FLocat xlink:href="lib/beautifier.xsl" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="4973" ID="_tomes_packager_002" MIMETYPE="text/plain" CREATED="2018-04-20T00:13:35.490504Z" CHECKSUM="bb4e53c83e8562351ae3e19a661163da5803005696754693fa158e796c24507c" CHECKSUMTYPE="SHA-256">
+      <file SIZE="5144" ID="_tomes_packager_002" MIMETYPE="text/plain" CREATED="2018-04-20T00:13:35.490504Z" CHECKSUM="101c0ba1c20e11a8ee71f36f12b9b0801f838606ef3aa95b622c4a253be8e9ab" CHECKSUMTYPE="SHA-256">
         <FLocat xlink:href="lib/directory_object.py" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
       <file SIZE="2476" ID="_tomes_packager_003" MIMETYPE="text/plain" CREATED="2018-04-19T23:45:23.524090Z" CHECKSUM="b86d6376e3ba535c96ebd91bc22ff69a06bdf5ca7f93c8900529f8b1feedb225" CHECKSUMTYPE="SHA-256">
@@ -84,7 +84,7 @@
       <file SIZE="0" ID="_tomes_packager_006" MIMETYPE="text/plain" CREATED="2018-04-20T22:52:56.169315Z" CHECKSUM="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" CHECKSUMTYPE="SHA-256">
         <FLocat xlink:href="lib/__init__.py" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="4876" ID="_tomes_packager_007" MIMETYPE="application/x-python-code" CREATED="2018-04-22T19:54:26.471066Z" CHECKSUM="e05a74e89cba3d5a218866ebd06472cccab0e87fb32c8af7f2670444cd5036d0" CHECKSUMTYPE="SHA-256">
+      <file SIZE="5044" ID="_tomes_packager_007" MIMETYPE="application/x-python-code" CREATED="2018-04-22T20:06:38.715227Z" CHECKSUM="d8c6767da8b81f5faf8d33795e2b934e6e90bfd062eeac376e31e40d5b37d5c3" CHECKSUMTYPE="SHA-256">
         <FLocat xlink:href="lib/__pycache__/directory_object.cpython-36.pyc" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
       <file SIZE="693" ID="_tomes_packager_008" MIMETYPE="application/x-python-code" CREATED="2018-04-20T14:40:55.031556Z" CHECKSUM="0d01b3402d2f295844290a1eedf236b764f9a6f4d27028424476da2982aab5bd" CHECKSUMTYPE="SHA-256">
@@ -102,7 +102,7 @@
       <file SIZE="164" ID="_tomes_packager_012" MIMETYPE="application/x-python-code" CREATED="2018-04-20T22:53:08.624372Z" CHECKSUM="4e56ef08e1f397c6116d7c648ef2cc53607a6c837cc467d98a9982dd5fe9834d" CHECKSUMTYPE="SHA-256">
         <FLocat xlink:href="lib/__pycache__/__init__.cpython-36.pyc" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="3819" ID="_tomes_packager_013" MIMETYPE="text/plain" CREATED="2018-04-19T23:48:35.994096Z" CHECKSUM="ce8f4baab36f494e42a1688da0a61f4f153baa6d0fed2290ed70fb8d1586e0e5" CHECKSUMTYPE="SHA-256">
+      <file SIZE="3692" ID="_tomes_packager_013" MIMETYPE="text/plain" CREATED="2018-04-19T23:48:35.994096Z" CHECKSUM="dc2030b24ad39645a520b3a0892773b0ee52f8715dda0e5fdb7ea830db371a90" CHECKSUMTYPE="SHA-256">
         <FLocat xlink:href="packager.py" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
     </fileGrp>
