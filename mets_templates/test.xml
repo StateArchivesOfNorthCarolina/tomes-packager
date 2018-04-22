@@ -13,9 +13,22 @@ xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/m
         
     </metsHdr>
     <fileSec>
-   %% for folder in folders %%
+	<fileGrp ID="FileGrp_ROOT">
+	%% for file in files %%
+		<file 
+		SIZE="{{ file.size }}" 
+		ID="ROOT_{{ file.index }}" 
+		MIMETYPE="{{ file.mimetype }}" 
+		CREATED="{{ file.created }}" 
+		CHECKSUM="{{ file.checksum() }}" 
+		CHECKSUMTYPE="{{ file.checksum_algorithm }}">
+			<FLocat xlink:href="{{ file.name }}" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
+		</file>
+	%% endfor %%
+	</fileGrp>
+	%% for folder in folders %%
         <fileGrp ID="FileGrp_{{ folder.name }}">
-        %% for file in folder.files %%
+        %% for file in folder.rfiles %%
             <file 
             SIZE="{{ file.size }}" 
             ID="_{{ folder.name }}_{{ file.index }}" 
@@ -31,9 +44,14 @@ xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/m
     </fileSec>
     <structMap>
         <div>
+            <div ID="Div_ROOT">
+			%% for file in files %%
+                <fptr FILEID="_ROOT_{{ file.index }}"/>
+            %% endfor %%
+            </div>
         %% for folder in folders %%
             <div ID="Div_{{ folder.name }}">
-            %% for file in folder.files %%
+            %% for file in folder.rfiles %%
                 <fptr FILEID="_{{ folder.name }}_{{ file.index }}"/>
             %% endfor %%
             </div>

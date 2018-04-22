@@ -6,7 +6,10 @@ Todo:
     * can search/find/names be recursive?
     * Think self.path MUST be absolute, so force that.
         - No. Is ok.
-    * .name is still not relative to master root.
+    * .name is still not relative to master root???
+    * File indexes in files are using rfiles as basis.
+        - Use the count of slashes as a padded leading decimal number for the index.
+            - e.g. 01.001
 """
 
 
@@ -113,35 +116,43 @@ class DirectoryObject(object):
         # ???
         self.dirs = self.__ListObject()
         self.files = self.__ListObject()
-        
+        self.rfiles = self.__ListObject()
+
         # get padding length for local file identifiers.
         get_pad_len = lambda x: 1 + len(str(len(x)))
         get_id = lambda file, files: str(files.index(file)).zfill(get_pad_len(files))
 
-        # flat.
+        # root folder dirs.
         folders = [normalize_path(f) for f in glob.glob(self.path + "/*/")]
         for folder in folders:
             par = os.path.split(folder)[0]
             folder = self.this(folder)
             self.dirs.append(folder)
 
-        # files. indexes not unique?
-        files = [normalize_path(f) for f in glob.glob(self.path + "/*.*")]
+        # root folder files. TODO indexes not unique?
+        files = [normalize_path(f) for f in glob.glob(self.path + "/**", recursive=True)
+                 if os.path.isfile(f)]
+        #re: id: ... max([f.count("/") for f in files])
         files = [self.file_object(f, self, index=get_id(f, files), parent=self.path) for f in files]
         for f in files:
-            self.files.append(f)
-
+            self.rfiles.append(f)
+            if f.name.count("/") == 0:
+                self.files.append(f)
+        
+        # subfolder files.
         for folder in self.dirs:
             files = [normalize_path(f) for f in glob.glob(folder.path + "/**", recursive=True)
                  if os.path.isfile(f)]
             files = [self.file_object(f, folder, index=get_id(f, files), parent=folder.path) for f in files]
-            folder.files = self.__ListObject()
+            folder.rfiles = self.__ListObject() # avoids redundance.
             for f in files:
-                folder.files.append(f)
+                folder.rfiles.append(f)
+                if f.name.count("/") == 0:
+                    folder.files.append(f)
 
 if __name__ == "__main__":
     #d = DirectoryObject("C:/Users/Nitin/Dropbox/TOMES/GitHub/tomes_packager/tomes_packager")
-    d = DirectoryObject("..")
+    d = DirectoryObject("../..")
 
 
     

@@ -115,7 +115,7 @@ if __name__ == "__main__":
 ##    for d in aip.dirs:
 ##        print(d)
 ##        print(d.name)
-    t = p.render_template(mets_ctime=datetime.utcnow().isoformat()+"Z", folders=aip.dirs)
+    t = p.render_template(mets_ctime=datetime.utcnow().isoformat()+"Z", folders=aip.dirs, files=aip.files)
     t = etree.fromstring(t)
     valid = " It is {} that this METS is valid. ".format(p.validate_mets(t))
     t.append(etree.Comment(valid))
