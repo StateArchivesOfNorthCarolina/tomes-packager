@@ -12,6 +12,10 @@ xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/m
         <!--# This is a TOMES Packager comment. It will disappear. #-->
         
     </metsHdr>
+	
+    <!--# !!! WARNING !!!
+	DO NOT edit below this line. 
+	#-->
     <fileSec>
 	<fileGrp ID="FileGrp_ROOT">
 	%% for file in files %%
