@@ -6,6 +6,7 @@ Todo:
     * Checksum should be an attribute to avoid recalculation.
         - If the attribute doesn't exst, then set self.checksum.
     * Use a different string for "index" concept. It's confused with list's index.
+    * Add modified time.
 """
 
 
@@ -20,7 +21,7 @@ from datetime import datetime
 class FileObject(object):
     """ ??? """
     
-    def __init__(self, path, path_object, index, parent=None, checksum_algorithm="SHA-256"):
+    def __init__(self, path, parent_object, master_object, index, checksum_algorithm="SHA-256"):
         """ Sets instance attributes.
         
         Args:
@@ -38,14 +39,15 @@ class FileObject(object):
 
         # set attributes.
         self.path = path
-        self.path_object = path_object
+        self.parent_object = parent_object
+        self.master_object = master_object
         self.index = index
-        self.parent = parent
         self.checksum_algorithm = checksum_algorithm 
             
         # ??? path data.
         normalize_path = lambda p: os.path.normpath(p).replace("\\", "/")
-        self.name = normalize_path(os.path.relpath(self.path, start=self.parent))
+        self.basename = os.path.basename(self.path)
+        self.name = normalize_path(os.path.relpath(self.path, start=self.master_object.path))
         #self.name = os.path.basename(self.path)
         self.abspath = normalize_path(os.path.abspath(self.path))
 

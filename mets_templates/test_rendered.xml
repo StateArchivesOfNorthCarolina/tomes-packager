@@ -1,5 +1,14 @@
+0
+1
+2
+3
+4
+5
+6
+7
+8
 <mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd">
-  <metsHdr CREATEDATE="2018-04-22T20:19:25.658971Z">
+  <metsHdr CREATEDATE="2018-04-23T17:13:11.728991Z">
     <agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
       <name>TOMES Packager</name>
       <note>Email archiving software developed through the Transforming Online Mail with Embedded Semantics (TOMES) project (https://www.ncdcr.gov/resources/records-management/tomes), a multi-state partnership that includes Kansas, Utah and North Carolina</note>
@@ -8,145 +17,149 @@
   </metsHdr>
   <fileSec>
     <fileGrp ID="FileGrp_ROOT">
-      <file SIZE="0" ID="ROOT_000" MIMETYPE="text/plain" CREATED="2018-04-19T17:10:33.331946Z" CHECKSUM="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" CHECKSUMTYPE="SHA-256">
+      <file SIZE="0" ID="ROOT_0.9.00" MIMETYPE="text/plain" CREATED="2018-04-19T17:10:33.331946Z" CHECKSUM="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" CHECKSUMTYPE="SHA-256">
         <FLocat xlink:href="LICENSE.txt" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="22214" ID="ROOT_001" MIMETYPE="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" CREATED="2018-04-09T13:56:47.258878Z" CHECKSUM="49d2633c8acd6486000f7bc2cc17df001ab5774106590735445b8762032ffe05" CHECKSUMTYPE="SHA-256">
+      <file SIZE="22215" ID="ROOT_0.9.01" MIMETYPE="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" CREATED="2018-04-09T13:56:47.258878Z" CHECKSUM="fd775a361a799af960a6cfdce57d82b7a2565f6d8401de78ef597e3ac0e8e2c1" CHECKSUMTYPE="SHA-256">
         <FLocat xlink:href="mets_prep.xlsx" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="162" ID="ROOT_012" MIMETYPE="application/octet-stream" CREATED="2018-04-17T19:58:52.724838Z" CHECKSUM="49c2a0ab1321b41e22f2b8f9571e4a3a7e044dab66030d04381a8ac4fede2c9b" CHECKSUMTYPE="SHA-256">
+      <file SIZE="162" ID="ROOT_0.9.02" MIMETYPE="application/octet-stream" CREATED="2018-04-17T19:58:52.724838Z" CHECKSUM="49c2a0ab1321b41e22f2b8f9571e4a3a7e044dab66030d04381a8ac4fede2c9b" CHECKSUMTYPE="SHA-256">
         <FLocat xlink:href="README.md" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="53" ID="ROOT_013" MIMETYPE="text/plain" CREATED="2018-01-03T17:33:12.787975Z" CHECKSUM="6d1bcba51393b814f0a8cd3838af5148e8657f2c6c2fb75a3c2c3dc7054137e7" CHECKSUMTYPE="SHA-256">
+      <file SIZE="53" ID="ROOT_0.9.03" MIMETYPE="text/plain" CREATED="2018-01-03T17:33:12.787975Z" CHECKSUM="6d1bcba51393b814f0a8cd3838af5148e8657f2c6c2fb75a3c2c3dc7054137e7" CHECKSUMTYPE="SHA-256">
         <FLocat xlink:href="requirements.txt" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="0" ID="ROOT_014" MIMETYPE="text/plain" CREATED="2018-04-19T17:10:39.022953Z" CHECKSUM="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" CHECKSUMTYPE="SHA-256">
+      <file SIZE="0" ID="ROOT_0.9.04" MIMETYPE="text/plain" CREATED="2018-04-19T17:10:39.022953Z" CHECKSUM="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" CHECKSUMTYPE="SHA-256">
         <FLocat xlink:href="setup.py" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
     </fileGrp>
     <fileGrp ID="FileGrp_docs"/>
     <fileGrp ID="FileGrp_mets_templates">
-      <file SIZE="838" ID="_mets_templates_000" MIMETYPE="text/xml" CREATED="2017-12-06T16:18:24.356438Z" CHECKSUM="d95101cf920087c1694e1c36dc8572bd4359fa3efe92f7d5ebee6f7c77ecd9f6" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="00_0_metsHdr.xml" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="838" ID="_mets_templates_1.0.000" MIMETYPE="text/xml" CREATED="2017-12-06T16:18:24.356438Z" CHECKSUM="d95101cf920087c1694e1c36dc8572bd4359fa3efe92f7d5ebee6f7c77ecd9f6" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="mets_templates/00_0_metsHdr.xml" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="354" ID="_mets_templates_001" MIMETYPE="text/xml" CREATED="2017-12-06T16:18:24.427438Z" CHECKSUM="73195106293e2f66f72a6972b4c8d4e5aed192e7b0dc93792dec1056803ecb3a" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="01_0_dmdSec__dc-account_information.xml" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="354" ID="_mets_templates_1.0.001" MIMETYPE="text/xml" CREATED="2017-12-06T16:18:24.427438Z" CHECKSUM="73195106293e2f66f72a6972b4c8d4e5aed192e7b0dc93792dec1056803ecb3a" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="mets_templates/01_0_dmdSec__dc-account_information.xml" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="355" ID="_mets_templates_002" MIMETYPE="text/xml" CREATED="2017-12-06T16:18:24.528432Z" CHECKSUM="373df4c66d775bc108e9943c33f9b8c8c26357ff8d67e61e313336fe445ab55d" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="01_1_dmdSec__dc-position_information.xml" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="355" ID="_mets_templates_1.0.002" MIMETYPE="text/xml" CREATED="2017-12-06T16:18:24.528432Z" CHECKSUM="373df4c66d775bc108e9943c33f9b8c8c26357ff8d67e61e313336fe445ab55d" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="mets_templates/01_1_dmdSec__dc-position_information.xml" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="355" ID="_mets_templates_003" MIMETYPE="text/xml" CREATED="2017-12-06T16:18:24.561443Z" CHECKSUM="fcf173c7bdc56fba86af26260003ea25fdc0707a75ea06449df94cc46f63f6fb" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="01_2_dmdSec__dc-employee_information.xml" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="355" ID="_mets_templates_1.0.003" MIMETYPE="text/xml" CREATED="2017-12-06T16:18:24.561443Z" CHECKSUM="fcf173c7bdc56fba86af26260003ea25fdc0707a75ea06449df94cc46f63f6fb" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="mets_templates/01_2_dmdSec__dc-employee_information.xml" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="4334" ID="_mets_templates_004" MIMETYPE="text/xml" CREATED="2017-12-06T16:18:24.577437Z" CHECKSUM="bcaf5350f93dae2b03b75dc48135eafa1839e05255b26ccc08f2fef4560a077c" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="02_0_rights__premis-rights.xml" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="4329" ID="_mets_templates_1.0.004" MIMETYPE="text/xml" CREATED="2017-12-06T16:18:24.577437Z" CHECKSUM="311a2a15651cc28d529b4d4eb18f376364f96d2572d9495e37a01bbd0db88c55" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="mets_templates/02_0_rights__premis-rights.xml" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="10645" ID="_mets_templates_005" MIMETYPE="text/xml" CREATED="2017-12-06T16:18:24.817433Z" CHECKSUM="0489e39f88ebd34ff85da309d7287a8d797cd063457a86eed9247e364a8c3241" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="03_0_techmd__premis-object.xml" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="10645" ID="_mets_templates_1.0.005" MIMETYPE="text/xml" CREATED="2017-12-06T16:18:24.817433Z" CHECKSUM="0489e39f88ebd34ff85da309d7287a8d797cd063457a86eed9247e364a8c3241" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="mets_templates/03_0_techmd__premis-object.xml" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="1708" ID="_mets_templates_006" MIMETYPE="text/xml" CREATED="2017-12-06T16:18:24.842436Z" CHECKSUM="db11625e3f1f15f096561ddee6b1afcc137fea1191516b8456bc2f88f6af22da" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="03_1_techmd__premis-agent.xml" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="1711" ID="_mets_templates_1.0.006" MIMETYPE="text/xml" CREATED="2017-12-06T16:18:24.842436Z" CHECKSUM="f73a114fcc8b3dd3cd4b465d3aefe038b2aecd8e8a97bd3baaca29589703f577" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="mets_templates/03_1_techmd__premis-agent.xml" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="3724" ID="_mets_templates_007" MIMETYPE="text/xml" CREATED="2017-12-06T16:18:24.881436Z" CHECKSUM="ed8d415c684ecc7286f9b95eeecf6b0831bc296dad528c1d4db8e676d0abe224" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="04_0_digiprov__premis-event.xml" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="3724" ID="_mets_templates_1.0.007" MIMETYPE="text/xml" CREATED="2017-12-06T16:18:24.881436Z" CHECKSUM="ed8d415c684ecc7286f9b95eeecf6b0831bc296dad528c1d4db8e676d0abe224" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="mets_templates/04_0_digiprov__premis-event.xml" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="2629" ID="_mets_templates_008" MIMETYPE="text/xml" CREATED="2018-04-19T17:52:45.263004Z" CHECKSUM="c83c6c562041d3899abaa035a95d83b8dcd28135f52ee5de47dd21e27d878eef" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="test.xml" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="2629" ID="_mets_templates_1.0.008" MIMETYPE="text/xml" CREATED="2018-04-19T17:52:45.263004Z" CHECKSUM="c83c6c562041d3899abaa035a95d83b8dcd28135f52ee5de47dd21e27d878eef" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="mets_templates/test.xml" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="0" ID="_mets_templates_009" MIMETYPE="text/xml" CREATED="2018-04-20T00:34:48.570318Z" CHECKSUM="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="test_rendered.xml" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="0" ID="_mets_templates_1.0.009" MIMETYPE="text/xml" CREATED="2018-04-20T00:34:48.570318Z" CHECKSUM="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="mets_templates/test_rendered.xml" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
     </fileGrp>
     <fileGrp ID="FileGrp_tests">
-      <file SIZE="10584" ID="_tests_00" MIMETYPE="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" CREATED="2017-12-06T16:18:23.432434Z" CHECKSUM="2e2487c2fb2b44eb177d222bb4ce8e6171ceabef38269000cfc84b3ed1ad7b6a" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="sample_files/sample_rdf.xlsx" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="10584" ID="_tests_2.3.00" MIMETYPE="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" CREATED="2017-12-06T16:18:23.432434Z" CHECKSUM="2e2487c2fb2b44eb177d222bb4ce8e6171ceabef38269000cfc84b3ed1ad7b6a" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="tests/sample_files/sample_rdf.xlsx" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
     </fileGrp>
     <fileGrp ID="FileGrp_tomes_packager">
-      <file SIZE="0" ID="_tomes_packager_000" MIMETYPE="text/plain" CREATED="2018-04-20T14:37:05.826504Z" CHECKSUM="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="lib/aip_maker.py" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="3692" ID="_tomes_packager_1.0.00" MIMETYPE="text/plain" CREATED="2018-04-19T23:48:35.994096Z" CHECKSUM="dc2030b24ad39645a520b3a0892773b0ee52f8715dda0e5fdb7ea830db371a90" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="tomes_packager/packager.py" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="492" ID="_tomes_packager_001" MIMETYPE="text/xml" CREATED="2018-04-20T15:36:55.882929Z" CHECKSUM="7465c83b71656ffea23978bf8f191b1d149e230048490ed11d06d75ee1737540" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="lib/beautifier.xsl" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="0" ID="_tomes_packager_2.5.00" MIMETYPE="text/plain" CREATED="2018-04-20T14:37:05.826504Z" CHECKSUM="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="tomes_packager/lib/aip_maker.py" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="5147" ID="_tomes_packager_002" MIMETYPE="text/plain" CREATED="2018-04-20T00:13:35.490504Z" CHECKSUM="749680d6a6b6edb68ef03a3aa90a025782f115c41aa9c4d287583c992d3421e1" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="lib/directory_object.py" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="492" ID="_tomes_packager_2.5.01" MIMETYPE="text/xml" CREATED="2018-04-20T15:36:55.882929Z" CHECKSUM="7465c83b71656ffea23978bf8f191b1d149e230048490ed11d06d75ee1737540" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="tomes_packager/lib/beautifier.xsl" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="2560" ID="_tomes_packager_003" MIMETYPE="text/plain" CREATED="2018-04-19T23:45:23.524090Z" CHECKSUM="17595853f8a9a264a8675cd946e10fb692829276817258871ff3cc2e1da85e17" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="lib/file_object.py" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="6453" ID="_tomes_packager_2.5.02" MIMETYPE="text/plain" CREATED="2018-04-20T00:13:35.490504Z" CHECKSUM="3ddf0622ac41d049366e3d07f0870dd1d6ecb4e65dc07475a789c687e5796e15" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="tomes_packager/lib/directory_object.py" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="135096" ID="_tomes_packager_004" MIMETYPE="text/xml" CREATED="2018-04-19T17:41:14.595988Z" CHECKSUM="77a6684b3228b1857e0f325c1656a208f2fa12f76aa12a0c9e92853b70ef42c2" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="lib/mets_1-11.xsd" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="2673" ID="_tomes_packager_2.5.03" MIMETYPE="text/plain" CREATED="2018-04-19T23:45:23.524090Z" CHECKSUM="4862cda6e810bb7190dfe1b78d387d1ebff7195d39b235755f6ba101db45ea6b" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="tomes_packager/lib/file_object.py" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="3772" ID="_tomes_packager_005" MIMETYPE="text/plain" CREATED="2018-04-20T15:45:55.456192Z" CHECKSUM="4d8837d2c4848b87af392761145d6c9385507baef554651df5815d86d2d621a6" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="lib/xlsx_to_rdf.py" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="135096" ID="_tomes_packager_2.5.04" MIMETYPE="text/xml" CREATED="2018-04-19T17:41:14.595988Z" CHECKSUM="77a6684b3228b1857e0f325c1656a208f2fa12f76aa12a0c9e92853b70ef42c2" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="tomes_packager/lib/mets_1-11.xsd" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="0" ID="_tomes_packager_006" MIMETYPE="text/plain" CREATED="2018-04-20T22:52:56.169315Z" CHECKSUM="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="lib/__init__.py" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="3772" ID="_tomes_packager_2.5.05" MIMETYPE="text/plain" CREATED="2018-04-20T15:45:55.456192Z" CHECKSUM="4d8837d2c4848b87af392761145d6c9385507baef554651df5815d86d2d621a6" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="tomes_packager/lib/xlsx_to_rdf.py" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="5044" ID="_tomes_packager_007" MIMETYPE="application/x-python-code" CREATED="2018-04-22T20:19:25.235971Z" CHECKSUM="b469ba5867a78f5127f273de04d56006852b093c4b3f21d89548b4d7190d3c53" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="lib/__pycache__/directory_object.cpython-36.pyc" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="0" ID="_tomes_packager_2.5.06" MIMETYPE="text/plain" CREATED="2018-04-20T22:52:56.169315Z" CHECKSUM="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="tomes_packager/lib/__init__.py" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="693" ID="_tomes_packager_008" MIMETYPE="application/x-python-code" CREATED="2018-04-20T14:40:55.031556Z" CHECKSUM="0d01b3402d2f295844290a1eedf236b764f9a6f4d27028424476da2982aab5bd" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="lib/__pycache__/directory_to_object.cpython-36.pyc" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="7049" ID="_tomes_packager_3.6.00" MIMETYPE="text/plain" CREATED="2018-04-23T13:30:00.958043Z" CHECKSUM="c782b9bd4c1a49bed7511f2bdcf1d668d3bb445341261d45044a590189a6fa77" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="tomes_packager/lib/New folder/directory_object.py.01.py" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="2382" ID="_tomes_packager_009" MIMETYPE="application/x-python-code" CREATED="2018-04-22T20:19:25.259972Z" CHECKSUM="e853aeecf5226b88f247ea0e2bd8be32761194326f8d67eda72711def36ce900" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="lib/__pycache__/file_object.cpython-36.pyc" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="5963" ID="_tomes_packager_3.7.00" MIMETYPE="application/x-python-code" CREATED="2018-04-23T17:12:31.795022Z" CHECKSUM="465e73f713535f1dd8859be75d866f53aa911b88877299ed5278b1f50521db3a" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="tomes_packager/lib/__pycache__/directory_object.cpython-36.pyc" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="2027" ID="_tomes_packager_010" MIMETYPE="application/x-python-code" CREATED="2018-04-20T14:40:55.072556Z" CHECKSUM="9baea1c2467f87bbfce157f9faaac00c6f40557ea177f2e7dd1c963fbb4ec09e" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="lib/__pycache__/file_to_object.cpython-36.pyc" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="693" ID="_tomes_packager_3.7.01" MIMETYPE="application/x-python-code" CREATED="2018-04-20T14:40:55.031556Z" CHECKSUM="0d01b3402d2f295844290a1eedf236b764f9a6f4d27028424476da2982aab5bd" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="tomes_packager/lib/__pycache__/directory_to_object.cpython-36.pyc" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="0" ID="_tomes_packager_011" MIMETYPE="text/plain" CREATED="2018-04-21T13:04:58.100704Z" CHECKSUM="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="lib/__pycache__/foo/New Text Document.txt" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="2382" ID="_tomes_packager_3.7.02" MIMETYPE="application/x-python-code" CREATED="2018-04-23T15:42:44.758680Z" CHECKSUM="0188b9087a837e086396766967967c37f83f6089688c3f3bfabc86cd4d709da6" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="tomes_packager/lib/__pycache__/file_object.cpython-36.pyc" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="164" ID="_tomes_packager_012" MIMETYPE="application/x-python-code" CREATED="2018-04-20T22:53:08.624372Z" CHECKSUM="4e56ef08e1f397c6116d7c648ef2cc53607a6c837cc467d98a9982dd5fe9834d" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="lib/__pycache__/__init__.cpython-36.pyc" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="2027" ID="_tomes_packager_3.7.03" MIMETYPE="application/x-python-code" CREATED="2018-04-20T14:40:55.072556Z" CHECKSUM="9baea1c2467f87bbfce157f9faaac00c6f40557ea177f2e7dd1c963fbb4ec09e" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="tomes_packager/lib/__pycache__/file_to_object.cpython-36.pyc" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
-      <file SIZE="3692" ID="_tomes_packager_013" MIMETYPE="text/plain" CREATED="2018-04-19T23:48:35.994096Z" CHECKSUM="dc2030b24ad39645a520b3a0892773b0ee52f8715dda0e5fdb7ea830db371a90" CHECKSUMTYPE="SHA-256">
-        <FLocat xlink:href="packager.py" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      <file SIZE="164" ID="_tomes_packager_3.7.04" MIMETYPE="application/x-python-code" CREATED="2018-04-20T22:53:08.624372Z" CHECKSUM="4e56ef08e1f397c6116d7c648ef2cc53607a6c837cc467d98a9982dd5fe9834d" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="tomes_packager/lib/__pycache__/__init__.cpython-36.pyc" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file SIZE="0" ID="_tomes_packager_4.8.00" MIMETYPE="text/plain" CREATED="2018-04-21T13:04:58.100704Z" CHECKSUM="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" CHECKSUMTYPE="SHA-256">
+        <FLocat xlink:href="tomes_packager/lib/__pycache__/foo/New Text Document.txt" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
       </file>
     </fileGrp>
   </fileSec>
   <structMap>
     <div>
       <div ID="Div_ROOT">
-        <fptr FILEID="_ROOT_000"/>
-        <fptr FILEID="_ROOT_001"/>
-        <fptr FILEID="_ROOT_012"/>
-        <fptr FILEID="_ROOT_013"/>
-        <fptr FILEID="_ROOT_014"/>
+        <fptr FILEID="_ROOT_0.9.00"/>
+        <fptr FILEID="_ROOT_0.9.01"/>
+        <fptr FILEID="_ROOT_0.9.02"/>
+        <fptr FILEID="_ROOT_0.9.03"/>
+        <fptr FILEID="_ROOT_0.9.04"/>
       </div>
       <div ID="Div_docs"/>
       <div ID="Div_mets_templates">
-        <fptr FILEID="_mets_templates_000"/>
-        <fptr FILEID="_mets_templates_001"/>
-        <fptr FILEID="_mets_templates_002"/>
-        <fptr FILEID="_mets_templates_003"/>
-        <fptr FILEID="_mets_templates_004"/>
-        <fptr FILEID="_mets_templates_005"/>
-        <fptr FILEID="_mets_templates_006"/>
-        <fptr FILEID="_mets_templates_007"/>
-        <fptr FILEID="_mets_templates_008"/>
-        <fptr FILEID="_mets_templates_009"/>
+        <fptr FILEID="_mets_templates_1.0.000"/>
+        <fptr FILEID="_mets_templates_1.0.001"/>
+        <fptr FILEID="_mets_templates_1.0.002"/>
+        <fptr FILEID="_mets_templates_1.0.003"/>
+        <fptr FILEID="_mets_templates_1.0.004"/>
+        <fptr FILEID="_mets_templates_1.0.005"/>
+        <fptr FILEID="_mets_templates_1.0.006"/>
+        <fptr FILEID="_mets_templates_1.0.007"/>
+        <fptr FILEID="_mets_templates_1.0.008"/>
+        <fptr FILEID="_mets_templates_1.0.009"/>
       </div>
       <div ID="Div_tests">
-        <fptr FILEID="_tests_00"/>
+        <fptr FILEID="_tests_2.3.00"/>
       </div>
       <div ID="Div_tomes_packager">
-        <fptr FILEID="_tomes_packager_000"/>
-        <fptr FILEID="_tomes_packager_001"/>
-        <fptr FILEID="_tomes_packager_002"/>
-        <fptr FILEID="_tomes_packager_003"/>
-        <fptr FILEID="_tomes_packager_004"/>
-        <fptr FILEID="_tomes_packager_005"/>
-        <fptr FILEID="_tomes_packager_006"/>
-        <fptr FILEID="_tomes_packager_007"/>
-        <fptr FILEID="_tomes_packager_008"/>
-        <fptr FILEID="_tomes_packager_009"/>
-        <fptr FILEID="_tomes_packager_010"/>
-        <fptr FILEID="_tomes_packager_011"/>
-        <fptr FILEID="_tomes_packager_012"/>
-        <fptr FILEID="_tomes_packager_013"/>
+        <fptr FILEID="_tomes_packager_1.0.00"/>
+        <fptr FILEID="_tomes_packager_2.5.00"/>
+        <fptr FILEID="_tomes_packager_2.5.01"/>
+        <fptr FILEID="_tomes_packager_2.5.02"/>
+        <fptr FILEID="_tomes_packager_2.5.03"/>
+        <fptr FILEID="_tomes_packager_2.5.04"/>
+        <fptr FILEID="_tomes_packager_2.5.05"/>
+        <fptr FILEID="_tomes_packager_2.5.06"/>
+        <fptr FILEID="_tomes_packager_3.6.00"/>
+        <fptr FILEID="_tomes_packager_3.7.00"/>
+        <fptr FILEID="_tomes_packager_3.7.01"/>
+        <fptr FILEID="_tomes_packager_3.7.02"/>
+        <fptr FILEID="_tomes_packager_3.7.03"/>
+        <fptr FILEID="_tomes_packager_3.7.04"/>
+        <fptr FILEID="_tomes_packager_4.8.00"/>
       </div>
     </div>
   </structMap>

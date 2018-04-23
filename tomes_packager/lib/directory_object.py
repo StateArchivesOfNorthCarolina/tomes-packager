@@ -1,15 +1,23 @@
 """ ???
 
 Todo:
-    * Too much normalize path.
-    * need "alias" optional arg for .name of ROOT.
-    * can search/find/names be recursive?
-    * Think self.path MUST be absolute, so force that.
-        - No. Is ok.
-    * .name is still not relative to master root???
-    * File indexes in files are using rfiles as basis.
-        - Use the count of slashes as a padded leading decimal number for the index.
-            - e.g. 01.001
+    * Too much normalize path everywhere.
+    * Use folders instead of "dirs"
+    * Can search/find/names be recursive?
+        - Should depend on dirs vs rdirs.
+    * .name is still not relative to master_object root???
+        - also: change name to "relname"??? NO.
+        - name needs to call a function and be relative to the container dir's name using parent object?
+        >>> par = d.dirs[0].dirs[1].parent_object.path
+        >>> kid = d.dirs[0].dirs[1].path
+        >>> os.path.relpath(kid, par)
+    * ListObject:
+        - names() should just call a function so to avoid parens.
+        - add basenames() too.
+    * Add ctime/mtime.
+    * Make get_id a method; too complex for lambda.
+        - Use depth as a padded leading decimal number for the index: e.g. 01.001
+
 """
 
 
@@ -26,24 +34,30 @@ class DirectoryObject(object):
 
     class __ListObject(list):
         """ ??? """
-        
-        def __getattr__(self, attr):
-            """ ??? Get rid of this: it's dangerous if there's a name conflict. """
-            
-            try:
-                names = [d.name for d in self]
-                found = names.index(attr)
-                folder_object = self[found]
-                return folder_object
-            except ValueError as err:
-                msg = "Attribute '{}' does not exist.".format(attr)
-                raise AttributeError(msg)
+
+# I still want a way to call a folder don't I? Maybe better query options.
+##        def __getattr__(self, attr):
+##            """ ??? Get rid of this: it's dangerous if there's a name conflict.
+##            i.e. folder called "find" or "search".
+##            AND it's not recursive. """
+##            
+##            try:
+##                names = [d.name for d in self]
+##                found = names.index(attr)
+##                folder_object = self[found]
+##                return folder_object
+##            except ValueError as err:
+##                msg = "Attribute '{}' does not exist.".format(attr)
+##                raise AttributeError(msg)
+
 
         def __contains__(self, test):
             """ ??? """
 
-            # ???
-            return True if self.find(test) is not None else False
+            r = False
+            if self.find(test) is not None:
+                r = True
+            return r
 
 
         def find(self, term):
@@ -60,9 +74,7 @@ class DirectoryObject(object):
         def search(self, term):
             """ ??? """
 
-            # sre_constants.error
-
-            # ???
+            # catch: sre_constants.error
             r = []
             for d in self:
                 t = re.search(term, d.name)
@@ -75,22 +87,28 @@ class DirectoryObject(object):
 
             if indexes == None:
                 indexes = range(0, len(self) + 1)
-            #if not self.recursive:
             n = [d.name for d in self if self.index(d) in indexes]
-            #else:
-            #    n = [d.parent + "/" + d.name for d in self if self.index(d) in indexes]
+            if len(n) == 0:
+                n = None
+            return n
+
+        def basenames(self, indexes=None):
+
+            if indexes == None:
+                indexes = range(0, len(self) + 1)
+            n = [d.basename for d in self if self.index(d) in indexes]
             if len(n) == 0:
                 n = None
             return n
 
         
     @classmethod
-    def this(cls, p):
-        return cls(p)
+    def this(cls, *args):
+        return cls(*args)
     
         
-    def __init__(self, path):
-        """ ??? name is an alias/nickname """
+    def __init__(self, path, master_object=None, parent_object=None, depth=0, index=0):
+        """ ??? """
 
         # ???
         if not os.path.isdir(path):
@@ -101,58 +119,87 @@ class DirectoryObject(object):
 
         # ???
         self.path = normalize_path(path)
+        self.parent_object = parent_object
+        self.depth = depth
+        self.index = index
         self.abspath = normalize_path(os.path.abspath(path))
         self.file_object = FileObject
-        self.parent = os.path.split(self.path)[0]
 
         # ???
-        self.name = os.path.basename(self.path)
-        #self.lname = os.path.relpath(self.parent, self.path) # how to get relpath?
-        """ os.path.relpath(d.dirs[0].dirs[0].path, d.path)
-        >>> os.path.relpath(d.dirs[0].dirs[1].dirs[0].path, d.path)
-        'lib\\__pycache__\\foo'
-        You prolly need to wrap this class in another in ordeer to preserve the root path? Fuck. """
+        def get_master_object():
+            if master_object is None:
+                return self
+            else:
+                print(master_object.index)
+                master_object.index += 1
+                return master_object
+        self.master_object = get_master_object()
+            
+        # ???
+        def get_parent():
+            if self.parent_object is not None:
+                return self.parent_object.basename
+        self.parent = get_parent()
+
+        # ???
+        self.basename = os.path.basename(self.path)
+
+        # ???
+        def get_name():
+            if self.depth > 0:
+                n = os.path.relpath(self.path, self.master_object.path)
+                return normalize_path(n)
+            else:
+                return ""
+        self.name = get_name()
 
         # ???
         self.dirs = self.__ListObject()
+        self.rdirs = self.__ListObject()
         self.files = self.__ListObject()
         self.rfiles = self.__ListObject()
 
-        # get padding length for local file identifiers
-        # TODO make get_id a method; too comlex for lambda.
-        get_pad_len = lambda x: 1 + len(str(len(x)))
-        get_id = lambda file, files: str(files.index(file)).zfill(get_pad_len(files))
-
-        # root folder dirs.
+        # ???
+        get_pad_len = lambda x: 1 + len(str(x))
+        def get_id(i, files_len):
+            ipad = get_pad_len(files_len)
+            i = str(i).zfill(ipad)
+            return "{}.{}.{}".format(self.depth, self.index, i)
+        
+        # ???
         folders = [normalize_path(f) for f in glob.glob(self.path + "/*/")]
         for folder in folders:
-            par = os.path.split(folder)[0]
-            folder = self.this(folder)
+            try:
+                ndx = master_object.index
+            except:
+                ndx = 0
+            folder = self.this(os.path.abspath(folder), self.master_object, self, self.depth+1, ndx)
             self.dirs.append(folder)
-
-        # root folder files. TODO indexes not unique?
-        files = [normalize_path(f) for f in glob.glob(self.path + "/**", recursive=True)
-                 if os.path.isfile(f)]
-        files = [self.file_object(f, self, index=get_id(f, files), parent=self.path) for f in files]
+            
+        files = [normalize_path(f) for f in glob.glob(self.path + "/*.*") if os.path.isfile(f)]
+        #files = [self.file_object(f, self, master_object=self.master_object, index=get_id(f, files))] # DELETE.
+        i = 0
+        files_len = len(files)
         for f in files:
-            self.rfiles.append(f)
-            if f.name.count("/") == 0:
-                self.files.append(f)
-        
-        # subfolder files.
-        for folder in self.dirs:
-            files = [normalize_path(f) for f in glob.glob(folder.path + "/**", recursive=True)
-                 if os.path.isfile(f)]
-            files = [self.file_object(f, folder, index=get_id(f, files), parent=folder.path) for f in files]
-            folder.rfiles = self.__ListObject() # avoids redundance.
-            for f in files:
-                folder.rfiles.append(f)
-                if f.name.count("/") == 0:
-                    folder.files.append(f)
+            f = self.file_object(f, self, master_object=self.master_object, index=get_id(i, files_len))
+            self.files.append(f)
+            i += 1
+                    
+        # ???
+        def get_recur(do, lo, mstr=None, att="dirs" ):
+            if mstr is None:
+                    mstr = do
+            if hasattr(do, att):
+                    lo += getattr(do, att)
+                    for f in do.dirs:
+                            get_recur(f, lo, mstr, att)
+            return lo
+
+        self.rdirs = get_recur(self, self.rdirs)
+        self.rfiles = get_recur(self, self.rfiles, att="files")
+
 
 if __name__ == "__main__":
-    #d = DirectoryObject("C:/Users/Nitin/Dropbox/TOMES/GitHub/tomes_packager/tomes_packager")
-    d = DirectoryObject("../..")
+    d = DirectoryObject("C:/Users/Nitin/Dropbox/TOMES/GitHub/tomes_packager/tomes_packager")
+    #d = DirectoryObject(".")
 
-
-    
