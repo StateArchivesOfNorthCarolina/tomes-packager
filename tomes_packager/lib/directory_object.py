@@ -130,7 +130,6 @@ class DirectoryObject(object):
             if master_object is None:
                 return self
             else:
-                print(master_object.index)
                 master_object.index += 1
                 return master_object
         self.master_object = get_master_object()
