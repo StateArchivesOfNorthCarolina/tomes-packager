@@ -17,7 +17,7 @@ Todo:
     * Add ctime/mtime.
     * Make get_id a method; too complex for lambda.
         - Use depth as a padded leading decimal number for the index: e.g. 01.001
-
+        - No, just get rid of it now that index is an int.
 """
 
 
