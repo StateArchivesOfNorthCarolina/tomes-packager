@@ -107,7 +107,7 @@ class DirectoryObject(object):
         return cls(*args)
     
         
-    def __init__(self, path, master_object=None, parent_object=None, depth=0, index=0):
+    def __init__(self, path, master_object=None, parent_object=None, depth=0):
         """ ??? """
 
         # ???
@@ -121,16 +121,23 @@ class DirectoryObject(object):
         self.path = normalize_path(path)
         self.parent_object = parent_object
         self.depth = depth
-        self.index = index
+        self.index = 0
         self.abspath = normalize_path(os.path.abspath(path))
         self.file_object = FileObject
 
         # ???
+        self.dirs = self.__ListObject()
+        self.rdirs = self.__ListObject()
+        self.files = self.__ListObject()
+        self.rfiles = self.__ListObject()
+        
+        # ???
         def get_master_object():
             if master_object is None:
+                #self.index += 1
                 return self
             else:
-                master_object.index += 1
+                #master_object.index += 1
                 return master_object
         self.master_object = get_master_object()
             
@@ -153,36 +160,30 @@ class DirectoryObject(object):
         self.name = get_name()
 
         # ???
-        self.dirs = self.__ListObject()
-        self.rdirs = self.__ListObject()
-        self.files = self.__ListObject()
-        self.rfiles = self.__ListObject()
-
-        # ???
         get_pad_len = lambda x: 1 + len(str(x))
         def get_id(i, files_len):
-            ipad = get_pad_len(files_len)
-            i = str(i).zfill(ipad)
-            return "{}.{}.{}".format(self.depth, self.index, i)
-        
+            #ipad = get_pad_len(files_len)
+            #i = str(i).zfill(ipad)
+            #return "{}.{}.{}".format(self.index, self.depth, i)
+            #return "{}.{}".format(self.index, i)
+            return i
+
+        files = [normalize_path(f) for f in glob.glob(self.path + "/*.*") if os.path.isfile(f)]
+        if self.parent_object is None:
+            i = self
+        else:
+            i = self.master_object
+        files_len = len(files)
+        for f in files:
+            f = self.file_object(f, self, master_object=self.master_object, index=get_id(i.index, files_len))
+            self.files.append(f)
+            i.index += 1
+            
         # ???
         folders = [normalize_path(f) for f in glob.glob(self.path + "/*/")]
         for folder in folders:
-            try:
-                ndx = master_object.index
-            except:
-                ndx = 0
-            folder = self.this(os.path.abspath(folder), self.master_object, self, self.depth+1, ndx)
+            folder = self.this(os.path.abspath(folder), self.master_object, self, self.depth+1)
             self.dirs.append(folder)
-            
-        files = [normalize_path(f) for f in glob.glob(self.path + "/*.*") if os.path.isfile(f)]
-        #files = [self.file_object(f, self, master_object=self.master_object, index=get_id(f, files))] # DELETE.
-        i = 0
-        files_len = len(files)
-        for f in files:
-            f = self.file_object(f, self, master_object=self.master_object, index=get_id(i, files_len))
-            self.files.append(f)
-            i += 1
                     
         # ???
         def get_recur(do, lo, mstr=None, att="dirs" ):
@@ -199,6 +200,6 @@ class DirectoryObject(object):
 
 
 if __name__ == "__main__":
-    d = DirectoryObject("C:/Users/Nitin/Dropbox/TOMES/GitHub/tomes_packager/tomes_packager")
+    d = DirectoryObject("C:/Users/Nitin/Dropbox/TOMES/GitHub/tomes_packager/")
     #d = DirectoryObject(".")
 
