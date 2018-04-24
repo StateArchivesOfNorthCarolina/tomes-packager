@@ -18,6 +18,11 @@ Todo:
     * Make get_id a method; too complex for lambda.
         - Use depth as a padded leading decimal number for the index: e.g. 01.001
         - No, just get rid of it now that index is an int.
+    * This doesn't work right yet, but add a vidualizer:
+    >>> for f in d.rdirs:
+	print("{}/{}".format("-"*f.depth, f.basename))
+	for fi in f.files:
+		print("{}{}".format("--"*f.depth, fi.basename))
 """
 
 
@@ -50,6 +55,9 @@ class DirectoryObject(object):
 ##                msg = "Attribute '{}' does not exist.".format(attr)
 ##                raise AttributeError(msg)
 
+        def __init__(self):
+            pass
+        
 
         def __contains__(self, test):
             """ ??? """
@@ -202,4 +210,31 @@ class DirectoryObject(object):
 if __name__ == "__main__":
     d = DirectoryObject("C:/Users/Nitin/Dropbox/TOMES/GitHub/tomes_packager/")
     #d = DirectoryObject(".")
+
+
+    def sorter(lo): 
+        sort = lambda x: sorted(x.names())
+        dsort = sort(lo)
+        
+        r = [] # needs to be ListObject.
+        for ds in dsort:
+            t = lo.find(ds)
+            t = lo[t]
+            r.append(t) 
+        return r
+
+    # would be interesting to put this in METS as XML comment.
+    # Put it in a demo tempalte, but not nc.gov's.
+    def vis(lo):
+        r = ""
+        if hasattr(lo, "files"):
+            lo = sorter(lo)
+        for f in lo:
+            if hasattr(f, "files"):
+                r += "{}{}/\n".format(" "*f.depth, f.basename)
+                for fi in f.files:
+                    r += "{}{}\n".format("  "*f.depth, fi.basename)
+            else:
+                r += "{}\n".format(f.name)
+        return r
 
