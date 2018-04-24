@@ -40,6 +40,10 @@ class DirectoryObject(object):
     class __ListObject(list):
         """ ??? """
 
+        @classmethod
+        def this(cls, *args):
+            return cls(*args)
+
 # I still want a way to call a folder don't I? Maybe better query options.
 ##        def __getattr__(self, attr):
 ##            """ ??? Get rid of this: it's dangerous if there's a name conflict.
@@ -55,9 +59,13 @@ class DirectoryObject(object):
 ##                msg = "Attribute '{}' does not exist.".format(attr)
 ##                raise AttributeError(msg)
 
+##        def __init__(self):
+##            pass
+        
+
         def __init__(self):
             pass
-        
+
 
         def __contains__(self, test):
             """ ??? """
@@ -109,7 +117,38 @@ class DirectoryObject(object):
                 n = None
             return n
 
-        
+
+        def sorted(self): 
+            sort = lambda x: sorted(self.names())
+            dsort = sort(self)
+            
+            r = self.this() # needs to be ListObject.
+            for ds in dsort:
+                t = self.find(ds)
+                t = self[t]
+                r.append(t)
+            return r
+
+
+        # would be interesting to put this in METS as XML comment.
+        # Put it in a demo tempalte, but not nc.gov's.
+        def vis(self):
+            
+            if len(self) > 0 and hasattr(self[0], "files"):
+                self = self.sorted()
+
+            r = ""
+            for f in self:
+                if hasattr(f, "files"):
+                    r += "{}{}/\n".format(" "*f.depth, f.basename)
+                    for fi in f.files:
+                        r += "{}{}\n".format("  "*f.depth, fi.basename)
+                else:
+                    r += "{}\n".format(f.name)
+            return r
+
+
+    ############
     @classmethod
     def this(cls, *args):
         return cls(*args)
@@ -212,29 +251,4 @@ if __name__ == "__main__":
     #d = DirectoryObject(".")
 
 
-    def sorter(lo): 
-        sort = lambda x: sorted(x.names())
-        dsort = sort(lo)
-        
-        r = [] # needs to be ListObject.
-        for ds in dsort:
-            t = lo.find(ds)
-            t = lo[t]
-            r.append(t) 
-        return r
-
-    # would be interesting to put this in METS as XML comment.
-    # Put it in a demo tempalte, but not nc.gov's.
-    def vis(lo):
-        r = ""
-        if hasattr(lo, "files"):
-            lo = sorter(lo)
-        for f in lo:
-            if hasattr(f, "files"):
-                r += "{}{}/\n".format(" "*f.depth, f.basename)
-                for fi in f.files:
-                    r += "{}{}\n".format("  "*f.depth, fi.basename)
-            else:
-                r += "{}\n".format(f.name)
-        return r
 
