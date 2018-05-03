@@ -58,10 +58,10 @@ class ListObject(list):
 
 
     @classmethod
-    def this(cls, *args):
-        """ Returns instance of ListObject class. """
+    def this(cls, *args, **kwargs):
+        """ Returns instance of this class. """
 
-        return cls(*args)
+        return cls(*args, **kwargs)
 
 
     def find(self, name):

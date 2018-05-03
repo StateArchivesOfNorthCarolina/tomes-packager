@@ -1,8 +1,8 @@
-""" ???
+#!/usr/bin/env python3
+
+""" This module contains a class for ...
 
 Todo:
-    * Too much normalize path everywhere.
-    * Use folders instead of "dirs"
     * Can search/find/names be recursive?
         - Should depend on dirs vs rdirs.
     * .name is still not relative to root_object root???
@@ -11,20 +11,9 @@ Todo:
         >>> par = d.dirs[0].dirs[1].parent_object.path
         >>> kid = d.dirs[0].dirs[1].path
         >>> os.path.relpath(kid, par)
-    * ListObject:
-        - names() should just call a function so to avoid parens.
-        - add basenames() too.
     * Add ctime/mtime.
-    * Make get_id a method; too complex for lambda.
-        - Use depth as a padded leading decimal number for the index: e.g. 01.001
-        - No, just get rid of it now that index is an int.
-    * This doesn't work right yet, but add a vidualizer:
-    >>> for f in d.rdirs:
-	print("{}/{}".format("-"*f.depth, f.basename))
-	for fi in f.files:
-		print("{}{}".format("--"*f.depth, fi.basename))
+    * Go back to calling this DirectoryObject!! :-]
 """
-
 
 # import modules.
 import sys; sys.path.append("..")
@@ -35,113 +24,120 @@ import os
 from lib.folder_object_lib.file_object import FileObject
 from lib.folder_object_lib.list_object import ListObject
 
+
 class FolderObject(object):
-    """ ??? """
+    """ A class for ... """
 
 
-    ############
-    @classmethod
-    def this(cls, *args):
-        return cls(*args)
-    
+    def __init__(self, path, parent_object=None, root_object=None, depth=0):
+        """ Sets instance attributes.
         
-    def __init__(self, path, root_object=None, parent_object=None, depth=0):
-        """ ??? """
+        Args:
+            - path (str):
+            - parent_object (FolderObject): The parent folder to which the @path file belongs.
+            - root_object (FolderObject): The root or "master" FolderObject under which the 
+            @path file and its @parent_object reside.
+            - depth (int):
 
-        # ???
+        Raises:
+            NotADirectoryError: If @path is not an actual folder path.
+        """
+
+        # verify @self.path is a folder.
         if not os.path.isdir(path):
             raise NotADirectoryError
         self.isdir = True
         self.isfile = False
-        normalize_path = lambda p: os.path.normpath(p).replace("\\", "/")
 
-        # ???
-        self.path = normalize_path(path)
+        # convenience function to clean up path notation.
+        self.normalize_path = lambda p: os.path.normpath(p).replace("\\", "/")  
+
+        # set attributes.
+        self.path = self.normalize_path(path)
         self.parent_object = parent_object
+        self.root_object = self if root_object is None else root_object
         self.depth = depth
-        self.file_index = 0
-        self.abspath = normalize_path(os.path.abspath(path))
+        
+        # set path attributes.
+        self.name = ""
+        if self.depth > 0:
+            self.name = self.normalize_path(os.path.relpath(self.path, 
+                start=self.root_object.path)) 
+        self.basename = os.path.basename(self.path)
+        self.abspath = self.normalize_path(os.path.abspath(self.path))
+
+        # start counter for file indices.
+        self._file_index = 0
+
+        # add dependency attributes.
         self.file_object = FileObject
         self.list_object = ListObject
 
-        # ???
-        self.dirs = self.list_object()
-        self.rdirs = self.list_object()
-        self.files = self.list_object()
-        self.rfiles = self.list_object()
+        # create ListObjects for non-recursive and recursive files and folders.
+        self.dirs, self.files = self.__get_assets()
+        self.rdirs = self.__get_recursives(self, self.list_object())
+        self.rfiles = self.__get_recursives(self, self.list_object(), attr="files")
+
+    
+    @classmethod
+    def this(cls, *args, **kwargs):
+        """ Returns instance of this class. """
+
+        return cls(*args, **kwargs)
+
+
+    def __get_assets(self):
+        """ """
         
         # ???
-        def get_root_object():
-            if root_object is None:
-                #self.index += 1
-                return self
-            else:
-                #root_object.index += 1
-                return root_object
-        self.root_object = get_root_object()
-            
-        # ???
-        def get_parent():
-            if self.parent_object is not None:
-                return self.parent_object.basename
-        self.parent = get_parent()
-
-        # ???
-        self.basename = os.path.basename(self.path)
-
-        # ???
-        def get_name():
-            if self.depth > 0:
-                n = os.path.relpath(self.path, self.root_object.path)
-                return normalize_path(n)
-            else:
-                return ""
-        self.name = get_name()
-
-        # ???
-        get_pad_len = lambda x: 1 + len(str(x))
-        def get_id(i, files_len):
-            #ipad = get_pad_len(files_len)
-            #i = str(i).zfill(ipad)
-            #return "{}.{}.{}".format(self.index, self.depth, i)
-            #return "{}.{}".format(self.index, i)
-            return i
-
-        files = [normalize_path(f) for f in glob.glob(self.path + "/*.*") if os.path.isfile(f)]
         if self.parent_object is None:
-            i = self
+            obj = self
         else:
-            i = self.root_object
+            obj = self.root_object
+
+        # ???
+        files = [self.normalize_path(f) for f in glob.glob(self.path + "/*.*") 
+                if os.path.isfile(f)]
         files_len = len(files)
-        for f in files:
-            f = self.file_object(f, self, root_object=self.root_object, index=get_id(i.file_index, files_len))
-            self.files.append(f)
-            i.file_index += 1
+
+        # ???
+        file_objects = self.list_object()
+        for fil in files:
+            fil = self.file_object(fil, self, root_object=self.root_object, 
+                    index=obj._file_index)
+            file_objects.append(fil)
+            obj._file_index += 1
             
         # ???
-        folders = [normalize_path(f) for f in glob.glob(self.path + "/*/")]
-        for folder in folders:
-            folder = self.this(os.path.abspath(folder), self.root_object, self, self.depth+1)
-            self.dirs.append(folder)
-                    
-        # ???
-        def get_recur(do, lo, mstr=None, att="dirs" ):
-            if mstr is None:
-                    mstr = do
-            if hasattr(do, att):
-                    lo += getattr(do, att)
-                    for f in do.dirs:
-                            get_recur(f, lo, mstr, att)
-            return lo
+        folders = [self.normalize_path(f) for f in glob.glob(self.path + "/*/")]
 
-        self.rdirs = get_recur(self, self.rdirs)
-        self.rfiles = get_recur(self, self.rfiles, att="files")
+        dir_objects = self.list_object()
+        for folder in folders:
+            folder = self.this(os.path.abspath(folder), parent_object=self, 
+                    root_object=self.root_object, depth=self.depth+1)
+            dir_objects.append(folder)
+
+        return dir_objects, file_objects
+
+            
+    def __get_recursives(self, dir_obj, list_obj, master_obj=None, attr="dirs" ):
+        """ ??? """
+
+        if master_obj is None:
+            master_obj = dir_obj
+        if hasattr(dir_obj, attr):
+            list_obj += getattr(dir_obj, attr)
+            for d in dir_obj.dirs:
+                self.__get_recursives(d, list_obj, master_obj, attr)
+        
+        return list_obj
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
     f = FolderObject("C:/Users/Nitin/Dropbox/TOMES/GitHub/tomes_packager/")
     #d = DirectoryObject(".")
+    print(f.dirs)
 
 
 
