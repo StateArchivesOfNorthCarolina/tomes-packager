@@ -13,6 +13,7 @@ Todo:
         >>> os.path.relpath(kid, par)
     * Add ctime/mtime.
     * Go back to calling this DirectoryObject!! :-]
+        - This includes the filename as well as path to imports.
 """
 
 # import modules.
@@ -135,9 +136,8 @@ class FolderObject(object):
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    f = FolderObject("C:/Users/Nitin/Dropbox/TOMES/GitHub/tomes_packager/")
+    d = FolderObject("C:/Users/Nitin/Dropbox/TOMES/GitHub/tomes_packager/")
     #d = DirectoryObject(".")
-    print(f.dirs)
 
 
 
