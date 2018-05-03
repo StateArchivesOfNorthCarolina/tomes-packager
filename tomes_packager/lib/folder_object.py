@@ -29,123 +29,14 @@ Todo:
 # import modules.
 import sys; sys.path.append("..")
 import glob
+import logging
+import logging.config
 import os
-import re
-from lib.file_object import FileObject
+from lib._file_object import FileObject
+from lib._list_object import ListObject
 
-
-class DirectoryObject(object):
+class FolderObject(object):
     """ ??? """
-
-    class __ListObject(list):
-        """ ??? """
-
-        @classmethod
-        def this(cls, *args):
-            return cls(*args)
-
-# I still want a way to call a folder don't I? Maybe better query options.
-##        def __getattr__(self, attr):
-##            """ ??? Get rid of this: it's dangerous if there's a name conflict.
-##            i.e. folder called "find" or "search".
-##            AND it's not recursive. """
-##            
-##            try:
-##                names = [d.name for d in self]
-##                found = names.index(attr)
-##                folder_object = self[found]
-##                return folder_object
-##            except ValueError as err:
-##                msg = "Attribute '{}' does not exist.".format(attr)
-##                raise AttributeError(msg)
-
-##        def __init__(self):
-##            pass
-        
-
-        def __init__(self):
-            pass
-
-
-        def __contains__(self, test):
-            """ ??? """
-
-            r = False
-            if self.find(test) is not None:
-                r = True
-            return r
-
-
-        def find(self, term):
-            """ ??? """
-
-            r = None
-            for d in self:
-                if d.name == term:
-                    r = self.index(d)
-                    break
-            return r
-
-            
-        def search(self, term):
-            """ ??? """
-
-            # catch: sre_constants.error
-            r = []
-            for d in self:
-                t = re.search(term, d.name)
-                if t is not None:
-                    r.append(self.index(d))
-            return r
-
-
-        def names(self, indexes=None):
-
-            if indexes == None:
-                indexes = range(0, len(self) + 1)
-            n = [d.name for d in self if self.index(d) in indexes]
-            if len(n) == 0:
-                n = None
-            return n
-
-        def basenames(self, indexes=None):
-
-            if indexes == None:
-                indexes = range(0, len(self) + 1)
-            n = [d.basename for d in self if self.index(d) in indexes]
-            if len(n) == 0:
-                n = None
-            return n
-
-
-        def sorted(self): 
-            sort = lambda x: sorted(self.names())
-            dsort = sort(self)
-            
-            r = self.this() # needs to be ListObject.
-            for ds in dsort:
-                t = self.find(ds)
-                t = self[t]
-                r.append(t)
-            return r
-
-
-        # would be interesting to put this in METS as XML comment.
-        # Put it in a demo tempalte, but not nc.gov's.
-        def vis(self):
-            
-            if len(self) > 0 and hasattr(self[0], "files"):
-                self = self.sorted()
-
-            r = ""
-            for f in self:
-                if hasattr(f, "files"):
-                    r += "{}{}/\n".format(" "*f.depth, f.basename)
-                    for fi in f.files:
-                        r += "{}{}\n".format("  "*f.depth, fi.basename)
-                else:
-                    r += "{}\n".format(f.name)
-            return r
 
 
     ############
@@ -171,12 +62,13 @@ class DirectoryObject(object):
         self.index = 0
         self.abspath = normalize_path(os.path.abspath(path))
         self.file_object = FileObject
+        self.list_object = ListObject
 
         # ???
-        self.dirs = self.__ListObject()
-        self.rdirs = self.__ListObject()
-        self.files = self.__ListObject()
-        self.rfiles = self.__ListObject()
+        self.dirs = self.list_object()
+        self.rdirs = self.list_object()
+        self.files = self.list_object()
+        self.rfiles = self.list_object()
         
         # ???
         def get_master_object():
@@ -247,7 +139,8 @@ class DirectoryObject(object):
 
 
 if __name__ == "__main__":
-    d = DirectoryObject("C:/Users/Nitin/Dropbox/TOMES/GitHub/tomes_packager/")
+    logging.basicConfig(level=logging.DEBUG)
+    f = FolderObject("C:/Users/Nitin/Dropbox/TOMES/GitHub/tomes_packager/")
     #d = DirectoryObject(".")
 
 

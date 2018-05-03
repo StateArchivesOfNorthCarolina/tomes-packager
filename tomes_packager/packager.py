@@ -8,7 +8,7 @@ Todo:
         - What else?
     * Need self.data and self.data_folders (list of folder names only).
         - i.e. more side effect!
-    * Do globs in the directory/file objects.
+    * Need to catch validation attempts run without an internet connection.
 """
 
 
@@ -18,8 +18,7 @@ import jinja2
 import os
 from datetime import datetime
 from lxml import etree
-from lib.directory_object import DirectoryObject
-from lib.file_object import FileObject
+from lib.folder_object import FolderObject
 
     
 class Packager():
@@ -34,7 +33,7 @@ class Packager():
         self.charset = charset
 
         # ???
-        self.directory_object = DirectoryObject
+        self.folder_object = FolderObject
         self.xsd_file = os.path.normpath(os.path.dirname(os.path.abspath(__file__)) + 
                 "/lib/mets_1-11.xsd")
         self.beautifier = os.path.normpath(os.path.dirname(os.path.abspath(__file__)) + 
@@ -50,7 +49,7 @@ class Packager():
         """ ??? """
 
         # get padding length for local file identifiers.
-        data = self.directory_object(self.base)
+        data = self.folder_object(self.base)
         return data
 
 
@@ -110,12 +109,12 @@ class Packager():
 
 if __name__ == "__main__":
 
-    p = Packager("..", "../mets_templates/test.xml")
+    p = Packager("C:/Users/Nitin/Dropbox/TOMES/GitHub/tomes_packager", "../mets_templates/test.xml")
     aip = p.get_data()
 ##    for d in aip.dirs:
 ##        print(d)
 ##        print(d.name)
-    t = p.render_template(mets_ctime=datetime.utcnow().isoformat()+"Z", folders=aip.dirs, files=aip.files)
+    t = p.render_template(mets_ctime=datetime.utcnow().isoformat()+"Z", folders=aip.dirs, files=aip.files, graph="\n" + aip.basename + "\n" + aip.rdirs.graph())
     t = etree.fromstring(t)
     valid = " It is {} that this METS is valid. ".format(p.validate_mets(t))
     t.append(etree.Comment(valid))
