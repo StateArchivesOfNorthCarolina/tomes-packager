@@ -5,7 +5,7 @@ Todo:
     * Use folders instead of "dirs"
     * Can search/find/names be recursive?
         - Should depend on dirs vs rdirs.
-    * .name is still not relative to master_object root???
+    * .name is still not relative to root_object root???
         - also: change name to "relname"??? NO.
         - name needs to call a function and be relative to the container dir's name using parent object?
         >>> par = d.dirs[0].dirs[1].parent_object.path
@@ -32,8 +32,8 @@ import glob
 import logging
 import logging.config
 import os
-from lib._file_object import FileObject
-from lib._list_object import ListObject
+from lib.folder_object_lib.file_object import FileObject
+from lib.folder_object_lib.list_object import ListObject
 
 class FolderObject(object):
     """ ??? """
@@ -45,7 +45,7 @@ class FolderObject(object):
         return cls(*args)
     
         
-    def __init__(self, path, master_object=None, parent_object=None, depth=0):
+    def __init__(self, path, root_object=None, parent_object=None, depth=0):
         """ ??? """
 
         # ???
@@ -59,7 +59,7 @@ class FolderObject(object):
         self.path = normalize_path(path)
         self.parent_object = parent_object
         self.depth = depth
-        self.index = 0
+        self.file_index = 0
         self.abspath = normalize_path(os.path.abspath(path))
         self.file_object = FileObject
         self.list_object = ListObject
@@ -71,14 +71,14 @@ class FolderObject(object):
         self.rfiles = self.list_object()
         
         # ???
-        def get_master_object():
-            if master_object is None:
+        def get_root_object():
+            if root_object is None:
                 #self.index += 1
                 return self
             else:
-                #master_object.index += 1
-                return master_object
-        self.master_object = get_master_object()
+                #root_object.index += 1
+                return root_object
+        self.root_object = get_root_object()
             
         # ???
         def get_parent():
@@ -92,7 +92,7 @@ class FolderObject(object):
         # ???
         def get_name():
             if self.depth > 0:
-                n = os.path.relpath(self.path, self.master_object.path)
+                n = os.path.relpath(self.path, self.root_object.path)
                 return normalize_path(n)
             else:
                 return ""
@@ -111,17 +111,17 @@ class FolderObject(object):
         if self.parent_object is None:
             i = self
         else:
-            i = self.master_object
+            i = self.root_object
         files_len = len(files)
         for f in files:
-            f = self.file_object(f, self, master_object=self.master_object, index=get_id(i.index, files_len))
+            f = self.file_object(f, self, root_object=self.root_object, index=get_id(i.file_index, files_len))
             self.files.append(f)
-            i.index += 1
+            i.file_index += 1
             
         # ???
         folders = [normalize_path(f) for f in glob.glob(self.path + "/*/")]
         for folder in folders:
-            folder = self.this(os.path.abspath(folder), self.master_object, self, self.depth+1)
+            folder = self.this(os.path.abspath(folder), self.root_object, self, self.depth+1)
             self.dirs.append(folder)
                     
         # ???

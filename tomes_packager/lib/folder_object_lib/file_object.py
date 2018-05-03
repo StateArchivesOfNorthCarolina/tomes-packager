@@ -14,8 +14,7 @@ class FileObject(object):
     """ A class for converting a file path into an object. """
     
     
-    def __init__(self, path, parent_object, root_object, file_index, 
-            checksum_algorithm="SHA-256"):
+    def __init__(self, path, parent_object, root_object, index, checksum_algorithm="SHA-256"):
         """ Sets instance attributes.
         
         Args:
@@ -23,7 +22,7 @@ class FileObject(object):
             - parent_object (FolderObject): The parent folder to which the @path file belongs.
             - root_object (FolderObject): The root or "master" FolderObject under which the 
             @path file and its @parent_object reside.
-            - file_index (int): The unique identifier for the @path file with in the context
+            - index (int): The unique identifier for the @path file with in the context
             of the @root_object.
             - checksum_algorithm (str): The SHA algorithm with which to calculate the @path
             file's checksum value. Use only SHA-1, SHA-256, SHA-384, or SHA-512.
@@ -46,7 +45,7 @@ class FileObject(object):
         self.path = path
         self.parent_object = parent_object
         self.root_object = root_object
-        self.file_index = file_index
+        self.index = index
         self.checksum_algorithm = checksum_algorithm 
     
         # set path attributes.
