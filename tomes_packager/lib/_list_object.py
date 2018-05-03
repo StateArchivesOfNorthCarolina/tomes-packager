@@ -1,11 +1,7 @@
 #!/usr/bin/env python3
 
 """ This module contains a class for providing list methods and other methods for accessing
-information about files and folders.
-
-Todo:
-    * Add logging.
-"""
+information about files and folders. """
 
 # import modules.
 import logging
