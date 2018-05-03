@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """ This module contains a class for converting a file path into an object. """
 
 # import modules.
