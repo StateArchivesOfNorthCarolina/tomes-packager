@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-""" This module contains a class for converting a file path into an object. """
+""" This module contains a class for creating a read-only object representation of a file. """
 
 # import modules.
 import glob
@@ -13,7 +13,7 @@ from datetime import datetime
 
 
 class FileObject(object):
-    """ A class for converting a file path into an object. """
+    """ A class for creating a read-only object representation of a file. """
     
     
     def __init__(self, path, parent_object, root_object, index, checksum_algorithm="SHA-256"):
@@ -22,8 +22,8 @@ class FileObject(object):
         Args:
             - path (str): A path to an actual file.
             - parent_object (FolderObject): The parent folder to which the @path file belongs.
-            - root_object (FolderObject): The root or "master" FolderObject under which the 
-            @path file and its @parent_object reside.
+            - root_object (FolderObject): The root or "master" folder under which the @path 
+            file and its @parent_object reside.
             - index (int): The unique identifier for the @path file within the context of the
             @root_object.
             - checksum_algorithm (str): The SHA algorithm with which to calculate the @path
@@ -84,13 +84,14 @@ class FileObject(object):
         return mimetype
 
 
-    def _get_checksum(self, block_size=2048):
+    def _get_checksum(self, block_size=4096):
         """ Returns the checksum value for @self.path using @self.checksum_algorithm.
 
         Args:
             - block_size (int): The chunk size with which to iteratively read @self.abspath
-            while calculating the checksum. If None, ten times the block size of the chosen
-            SHA algorithm will be used (ex: SHA-256 has a block size of 64, therefore 640).
+            while calculating the checksum. If None, twenty times the block size of the chosen
+            SHA algorithm will be used. For example, SHA-256 has a block size of 64, therefore
+            the block size would be 1280 (20 * 64).
         
         Returns:
             str: The return value.
@@ -116,21 +117,26 @@ class FileObject(object):
 
         # establish hashlib function and block size to use.
         sha = checksum_map[self.checksum_algorithm]
-        block_size = sha.block_size * 10
+        if block_size is None:
+            block_size = sha.block_size * 20
+
+        # calculate attempts needed to get checksum. 
+        remaining_chunks = round(self.size/block_size)
 
         # get checksum per "https://stackoverflow.com/a/1131255". 
         data = open(self.abspath, "rb")
-        remaining_blocks = self.size
         while True:
             chunk = data.read(block_size)
             if not chunk:
                 break
             sha.update(chunk)
-            remaining_blocks -= block_size
-            if remaining_blocks > 0:
-                self.logger.debug("Remaining blocks to read: {}.".format(remaining_blocks))            
+            remaining_chunks -= 1
+            if remaining_chunks > 0 and (remaining_chunks % 10) == 0:
+                self.logger.debug("Remaining file chunks to read: {}".format(
+                    remaining_chunks))            
         checksum = sha.hexdigest()
 
+        self.logger.info("{} checksum: {}".format(self.checksum_algorithm, checksum))
         return checksum
 
         

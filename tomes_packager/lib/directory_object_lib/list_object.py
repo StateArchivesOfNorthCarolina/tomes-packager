@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-""" This module contains a class for providing list methods and other methods for accessing
-information about files and folders. """
+""" This module contains a class for providing list-like methods for accessing information 
+about files and folders. """
 
 # import modules.
 import logging
@@ -10,8 +10,8 @@ import re
 
     
 class ListObject(list):
-    """ A class for providing list methods and other methods for accessing information about 
-    files and folders. """
+    """ A class for providing list-like methods for accessing information about files and
+    folders. """
 
 
     def __init__(self):
@@ -22,25 +22,6 @@ class ListObject(list):
         self.logger.addHandler(logging.NullHandler())
 
 
-    def __contains__(self, name):
-        """ Returns True if @name is the name of a folder or file in @self. Otherwise, returns
-        False.
-        
-        Args:
-            - name (str): The name of the file or folder for which to look.
-            
-        Returns:
-            bool: The return value.
-        """
-
-        # use self.find() to determine if @test exists.
-        is_contained = False
-        if self.find(name) != -1:
-            is_contained = True
-        
-        return is_contained
-
-
     def __getattr__(self, attr):
         """ Adds dynamic support for custom attributes. """
         
@@ -49,12 +30,13 @@ class ListObject(list):
             return self._get_names()
         if attr == "basenames":
             return self._get_names(basenames=True)
-    
-        # raise error if @attr is not an attribute of @self.
-        if "attr" not in dir(self):
-            msg = "Attribute '{}' does not exist.".format(attr)
-            self.logger.error(msg)
-            raise AttributeError(msg)
+
+
+    @classmethod
+    def _this(cls, *args, **kwargs):
+        """ Returns instance of this class. """
+
+        return cls(*args, **kwargs)
 
 
     def _get_names(self, indices=None, basenames=False):
@@ -83,15 +65,8 @@ class ListObject(list):
         return names
 
 
-    @classmethod
-    def this(cls, *args, **kwargs):
-        """ Returns instance of this class. """
-
-        return cls(*args, **kwargs)
-
-
     def find(self, name):
-        """ Returns the index of @name in @self. If @name is not in @self, -1 will be 
+        """ Returns the index of @name in @self. If @name is not in @self, None will be 
         returned.
         
         Args:
@@ -102,7 +77,7 @@ class ListObject(list):
         """
 
         # assume @name is not in @self.
-        index = -1
+        index = None
 
         # search for @name in @self.
         for s in self:
@@ -152,10 +127,10 @@ class ListObject(list):
         """
 
         # create container ListObject instance. 
-        resorted = self.this()
+        resorted = self._this()
         
         # sorted @self. 
-        for s in sorted(self.get_names()):
+        for s in sorted(self._get_names()):
             item = self.find(s)
             item = self[item]
             resorted.append(item)
@@ -163,7 +138,7 @@ class ListObject(list):
         return resorted
 
 
-    def graph(self):
+    def ls(self):
         """ Returns a string representation of the file or folder object.
 
         Returns:
