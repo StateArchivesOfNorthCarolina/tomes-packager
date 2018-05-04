@@ -149,9 +149,11 @@ class ListObject(list):
         if len(self) > 0 and self[0].isdir:
             self = self.sort()
 
-        # container string.
+        # create container string.
         viz = ""
-
+        if self[0].isdir:
+            viz = self[0].parent_object.name + "\n"
+        
         # for each item in @self, add strings to @viz. 
         for s in self:
 
