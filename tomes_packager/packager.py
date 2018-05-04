@@ -18,7 +18,7 @@ import jinja2
 import os
 from datetime import datetime
 from lxml import etree
-from lib.folder_object import FolderObject
+from lib.directory_object import DirectoryObject
 
     
 class Packager():
@@ -33,7 +33,7 @@ class Packager():
         self.charset = charset
 
         # ???
-        self.folder_object = FolderObject
+        self.directory_object = DirectoryObject
         self.xsd_file = os.path.normpath(os.path.dirname(os.path.abspath(__file__)) + 
                 "/lib/mets_1-11.xsd")
         self.beautifier = os.path.normpath(os.path.dirname(os.path.abspath(__file__)) + 
@@ -49,7 +49,7 @@ class Packager():
         """ ??? """
 
         # get padding length for local file identifiers.
-        data = self.folder_object(self.base)
+        data = self.directory_object(self.base)
         return data
 
 
