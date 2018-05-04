@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-""" This module contains a class for creating a read-only object representation of a folder. 
+""" This module contains a class for creating a read-only object representation of a folder.
 """
 
 # import modules.
@@ -53,9 +53,11 @@ class DirectoryObject(object):
         self.depth = depth
         
         # set path attributes.
-        self.name = self.normalize_path(os.path.relpath(self.path, 
+        self.name, self.basename = None, None
+        if root_object is not None:
+            self.name = self.normalize_path(os.path.relpath(self.path, 
             start=self.root_object.path)) 
-        self.basename = os.path.basename(self.path)
+            self.basename = os.path.basename(self.path)
         self.abspath = self.normalize_path(os.path.abspath(self.path))
 
         # set folder metadata.
