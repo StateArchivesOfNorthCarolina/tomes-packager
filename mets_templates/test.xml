@@ -63,11 +63,11 @@ xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/m
         </div>
     </structMap>
     
-    %% if "tests" in folders %%
+    %% if "tests" in folders.names %%
     <!-- tests is in folders! -->
     %% endif %%
     
-    %% if "missing" in folders %%
+    %% if "missing" in folders.names %%
     <!-- missing is in folders! -->
     %% else %%
     <!-- missing is NOT in folders! -->

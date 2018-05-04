@@ -183,8 +183,4 @@ class DirectoryObject(object):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
-    d = DirectoryObject("../..")
-
-
-
+    pass
