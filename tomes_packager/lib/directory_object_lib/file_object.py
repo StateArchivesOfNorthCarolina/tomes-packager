@@ -1,11 +1,6 @@
 #!/usr/bin/env python3
 
-""" This module contains a class for converting a file path into an object.
-
-Todo:
-    * I think it's important to only call checksum() when requested and ONLY call it once.
-        - Also might want to test on large files.
-"""
+""" This module contains a class for converting a file path into an object. """
 
 # import modules.
 import glob
@@ -56,7 +51,7 @@ class FileObject(object):
         self.parent_object = parent_object
         self.root_object = root_object
         self.index = index
-        self.checksum_algorithm = checksum_algorithm 
+        self.checksum_algorithm = checksum_algorithm
     
         # set path attributes.
         self.name = self.normalize_path(os.path.relpath(self.path, 
@@ -69,11 +64,11 @@ class FileObject(object):
         self.created = iso_date(os.path.getctime(path))
         self.modified = iso_date(os.path.getmtime(path))
         self.size = os.path.getsize(self.path)
-        self.mimetype = self.get_mimetype()
-        self.checksum = self.get_checksum()
+        self.mimetype = self._get_mimetype()
+        self.checksum = self._get_checksum()
 
     
-    def get_mimetype(self):
+    def _get_mimetype(self):
         """ Returns the MIME type for @self.path.
         
         Returns:
@@ -89,8 +84,13 @@ class FileObject(object):
         return mimetype
 
 
-    def get_checksum(self):
-        """ Returns the checksum value for @self.path using @self.checksum_algorithm. 
+    def _get_checksum(self, block_size=2048):
+        """ Returns the checksum value for @self.path using @self.checksum_algorithm.
+
+        Args:
+            - block_size (int): The chunk size with which to iteratively read @self.abspath
+            while calculating the checksum. If None, ten times the block size of the chosen
+            SHA algorithm will be used (ex: SHA-256 has a block size of 64, therefore 640).
         
         Returns:
             str: The return value.
@@ -99,9 +99,9 @@ class FileObject(object):
              ValueError: If @self.checksum_algorithm is illegal.
         """
 
-        # assing hash names to hash functions.
-        checksum_map = {"SHA-1": hashlib.sha1, "SHA-256": hashlib.sha256, 
-                "SHA-384": hashlib.sha384, "SHA-512": hashlib.sha512}
+        # assigning hash names to hash functions.
+        checksum_map = {"SHA-1": hashlib.sha1(), "SHA-256": hashlib.sha256(), 
+                "SHA-384": hashlib.sha384(), "SHA-512": hashlib.sha512()}
         
         # verify that @self.checksum_algorithm is legal
         if self.checksum_algorithm not in checksum_map:
@@ -114,10 +114,22 @@ class FileObject(object):
         self.logger.info("Calculating {} checksum value for: {}".format(
             self.checksum_algorithm, self.abspath))
 
-        # get checksum.
-        with open(self.abspath, "rb") as fb:
-            checksum = checksum_map[self.checksum_algorithm](fb.read())
-            checksum = checksum.hexdigest()
+        # establish hashlib function and block size to use.
+        sha = checksum_map[self.checksum_algorithm]
+        block_size = sha.block_size * 10
+
+        # get checksum per "https://stackoverflow.com/a/1131255". 
+        data = open(self.abspath, "rb")
+        remaining_blocks = self.size
+        while True:
+            chunk = data.read(block_size)
+            if not chunk:
+                break
+            sha.update(chunk)
+            remaining_blocks -= block_size
+            if remaining_blocks > 0:
+                self.logger.debug("Remaining blocks to read: {}.".format(remaining_blocks))            
+        checksum = sha.hexdigest()
 
         return checksum
 

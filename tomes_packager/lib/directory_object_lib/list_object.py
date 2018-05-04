@@ -46,15 +46,41 @@ class ListObject(list):
         
         # dynamically support custom attributes.
         if attr == "names":
-            return self.get_names()
+            return self._get_names()
         if attr == "basenames":
-            return self.get_names(basenames=True)
+            return self._get_names(basenames=True)
     
         # raise error if @attr is not an attribute of @self.
         if "attr" not in dir(self):
             msg = "Attribute '{}' does not exist.".format(attr)
             self.logger.error(msg)
             raise AttributeError(msg)
+
+
+    def _get_names(self, indices=None, basenames=False):
+        """ Returns a list of names for each file or folder in @self if @indicies is None.
+        Otherwise, only the list of names for each item index in @indices.
+        
+        Args:
+            - indices (list): A list of integers, with each integer corresponding to and 
+            item's index in @self.
+            - basenames (bool): If True, returns only the basenames of the file or folder.
+            Otherwise, returned the relative name.
+
+        Returns:
+            list: The return values.
+        """
+        
+        # if @indices is None, build it.
+        if indices == None:
+            indices = range(0, len(self) + 1)
+        
+        # create a list of name attributes for each required item.
+        if basenames:
+            names = [s.name for s in self if self.index(s) in indices]
+        else:
+            names = [s.name for s in self if self.index(s) in indices]
+        return names
 
 
     @classmethod
@@ -118,32 +144,6 @@ class ListObject(list):
         return results
 
 
-    def get_names(self, indices=None, basenames=False):
-        """ Returns a list of names for each file or folder in @self if @indicies is None.
-        Otherwise, only the list of names for each item index in @indices.
-        
-        Args:
-            - indices (list): A list of integers, with each integer corresponding to and 
-            item's index in @self.
-            - basenames (bool): If True, returns only the basenames of the file or folder.
-            Otherwise, returned the relative name.
-
-        Returns:
-            list: The return values.
-        """
-        
-        # if @indices is None, build it.
-        if indices == None:
-            indices = range(0, len(self) + 1)
-        
-        # create a list of name attributes for each required item.
-        if basenames:
-            names = [s.name for s in self if self.index(s) in indices]
-        else:
-            names = [s.name for s in self if self.index(s) in indices]
-        return names
-
-
     def sort(self):
         """ Sorts file or folder objects alphabetically.
         
@@ -175,22 +175,22 @@ class ListObject(list):
             self = self.sort()
 
         # container string.
-        ls = ""
+        viz = ""
 
-        # for each item in @self, add strings to @ls. 
+        # for each item in @self, add strings to @viz. 
         for s in self:
 
             # add folders and their files.
             if s.isdir:
-                ls += "{}{}/\n".format(" " * s.depth, s.basename)
+                viz += "{}{}/\n".format(" " * s.depth, s.basename)
                 for fil in s.files:
-                    ls += "{}{}\n".format("  " * s.depth, fil.basename)
+                    viz += "{}{}\n".format("  " * s.depth, fil.basename)
             
             # add root level files.
             else:
-                ls += "{}\n".format(s.name)
+                viz += "{}\n".format(s.name)
         
-        return ls
+        return viz
 
 
 if __name__ == "__main__":
