@@ -53,12 +53,13 @@ class DirectoryObject(object):
         self.depth = depth
         
         # set path attributes.
-        self.name, self.basename = None, None
+        self.abspath = self.normalize_path(os.path.abspath(self.path))
+        self.basename = os.path.basename(self.abspath)
         if root_object is not None:
             self.name = self.normalize_path(os.path.relpath(self.path, 
-            start=self.root_object.path)) 
-            self.basename = os.path.basename(self.path)
-        self.abspath = self.normalize_path(os.path.abspath(self.path))
+            start=self.root_object.path))
+        else:
+            self.name = self.basename
 
         # set folder metadata.
         iso_date = lambda t: datetime.utcfromtimestamp(t).isoformat() + "Z"
