@@ -66,6 +66,10 @@ xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/m
     %% if "tests" in folders.names %%
     <!-- tests is in folders! -->
     %% endif %%
+	    
+    %% if folders.names is defined %%
+    <!-- folders.names is defined! -->
+    %% endif %%
     
     %% if "missing" in folders.names %%
     <!-- missing is in folders! -->

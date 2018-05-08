@@ -30,7 +30,7 @@ class FileObject(object):
             file's checksum value. Use only SHA-1, SHA-256, SHA-384, or SHA-512.
 
         Raises:
-            FileNotFoundError: If @path is not an actual file path.
+            - FileNotFoundError: If @path is not an actual file path.
         """
 
         # verify @self.path is a file.
@@ -97,7 +97,7 @@ class FileObject(object):
             str: The return value.
             
         Raises:
-             ValueError: If @self.checksum_algorithm is illegal.
+             - ValueError: If @self.checksum_algorithm is illegal.
         """
 
         # assigning hash names to hash functions.

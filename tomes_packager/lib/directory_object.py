@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
 """ This module contains a class for creating a read-only object representation of a folder.
+
+Todo:
+    * Add "Attributes" to class docstring (and for File and List Objects, too).
 """
 
 # import modules.
@@ -30,7 +33,7 @@ class DirectoryObject(object):
             - depth (int): The subfolder depth from @path to the @root_object.
 
         Raises:
-            NotADirectoryError: If @path is not an actual folder path.
+            - NotADirectoryError: If @path is not an actual folder path.
         """
 
         # verify @self.path is a folder.
@@ -159,7 +162,7 @@ class DirectoryObject(object):
             ListObject: The return value.
 
         Raises:
-            ValueError: If @attr is not "dirs" or "files".
+            - ValueError: If @attr is not "dirs" or "files".
         """
 
         # verify @attr is legal.
