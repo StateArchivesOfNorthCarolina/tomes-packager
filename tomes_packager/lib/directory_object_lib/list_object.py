@@ -11,7 +11,13 @@ import re
     
 class ListObject(list):
     """ A class for providing list-like methods for accessing information about files and
-    folders. """
+    folders.
+    
+    Attributes:
+        - names: An alias for self._get_names().
+        - basenames: An alias for self._get_names(basenames=True).
+        
+    """
 
 
     def __init__(self):

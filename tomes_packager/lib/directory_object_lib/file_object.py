@@ -29,6 +29,18 @@ class FileObject(object):
             - checksum_algorithm (str): The SHA algorithm with which to calculate the @path
             file's checksum value. Use only SHA-1, SHA-256, SHA-384, or SHA-512.
 
+        Attributes:
+            - isfile (bool): True.
+            - isdir (bool): False.
+            - name (str): The relative path to @self.root_object's path.
+            - basename (str): The absolute path.
+            - abspath (str): The absolute version of @self.path.
+            - created (str): The creation date as ISO 8601.
+            - modified (str): The modified date as ISO 8601.
+            - size (int): The size in bytes.
+            - mimetype (str): The mimetype.
+            - checksum (str): The checksum value per @self.checksum_algorithm.
+
         Raises:
             - FileNotFoundError: If @path is not an actual file path.
         """
@@ -44,25 +56,25 @@ class FileObject(object):
         self.logger.addHandler(logging.NullHandler())
 
         # convenience function to clean up path notation.
-        self.normalize_path = lambda p: os.path.normpath(p).replace("\\", "/")    
+        self._normalize_path = lambda p: os.path.normpath(p).replace("\\", "/")    
 
         # set attributes.
-        self.path = self.normalize_path(path)
+        self.path = self._normalize_path(path)
         self.parent_object = parent_object
         self.root_object = root_object
         self.index = index
         self.checksum_algorithm = checksum_algorithm
     
         # set path attributes.
-        self.name = self.normalize_path(os.path.relpath(self.path, 
+        self.name = self._normalize_path(os.path.relpath(self.path, 
             start=self.root_object.path))
         self.basename = os.path.basename(self.path)
-        self.abspath = self.normalize_path(os.path.abspath(self.path))
+        self.abspath = self._normalize_path(os.path.abspath(self.path))
 
         # set file metadata.
-        iso_date = lambda t: datetime.utcfromtimestamp(t).isoformat() + "Z"
-        self.created = iso_date(os.path.getctime(path))
-        self.modified = iso_date(os.path.getmtime(path))
+        _iso_date = lambda t: datetime.utcfromtimestamp(t).isoformat() + "Z"
+        self.created = _iso_date(os.path.getctime(path))
+        self.modified = _iso_date(os.path.getmtime(path))
         self.size = os.path.getsize(self.path)
         self.mimetype = self._get_mimetype()
         self.checksum = self._get_checksum()

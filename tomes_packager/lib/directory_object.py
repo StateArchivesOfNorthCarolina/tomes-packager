@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 
 """ This module contains a class for creating a read-only object representation of a folder.
-
-Todo:
-    * Add "Attributes" to class docstring (and for File and List Objects, too).
 """
 
 # import modules.
@@ -32,6 +29,23 @@ class DirectoryObject(object):
             folder and its @parent_object reside.
             - depth (int): The subfolder depth from @path to the @root_object.
 
+        Attributes:
+            - isdir (bool): True.
+            - isfile (bool): False.
+            - name (str): The relative path to @self.root_object's path.
+            - basename (str): The absolute path.
+            - abspath (str): The absolute version of @self.path.
+            - created (str): The creation date as ISO 8601.
+            - modified (str): The modified date as ISO 8601.
+            - dirs (ListObject): All subfolders (non-recursive) within @self.path. Each item
+            is a DirectoryObject.
+            - rdirs (ListObject): All subfolders (recursive) within @self.path. Each item
+            is a DirectoryObject.
+            - files (ListObject): All files (non recursive) within @self.path. Each item is a 
+            FileObject.
+            - rfiles (ListObject): All files (recursive) within @self.path. Each item is a 
+            FileObject.
+
         Raises:
             - NotADirectoryError: If @path is not an actual folder path.
         """
@@ -47,27 +61,27 @@ class DirectoryObject(object):
         self.logger.addHandler(logging.NullHandler())
 
         # convenience function to clean up path notation.
-        self.normalize_path = lambda p: os.path.normpath(p).replace("\\", "/")  
+        self._normalize_path = lambda p: os.path.normpath(p).replace("\\", "/")  
 
         # set attributes.
-        self.path = self.normalize_path(path)
+        self.path = self._normalize_path(path)
         self.parent_object = parent_object
         self.root_object = self if root_object is None else root_object
         self.depth = depth
         
         # set path attributes.
-        self.abspath = self.normalize_path(os.path.abspath(self.path))
+        self.abspath = self._normalize_path(os.path.abspath(self.path))
         self.basename = os.path.basename(self.abspath)
         if root_object is not None:
-            self.name = self.normalize_path(os.path.relpath(self.path, 
+            self.name = self._normalize_path(os.path.relpath(self.path, 
             start=self.root_object.path))
         else:
             self.name = self.basename
 
         # set folder metadata.
-        iso_date = lambda t: datetime.utcfromtimestamp(t).isoformat() + "Z"
-        self.created = iso_date(os.path.getctime(path))
-        self.modified = iso_date(os.path.getmtime(path))
+        _iso_date = lambda t: datetime.utcfromtimestamp(t).isoformat() + "Z"
+        self.created = _iso_date(os.path.getctime(path))
+        self.modified = _iso_date(os.path.getmtime(path))
 
         # start counter for file indices.
         self._file_index = 0
@@ -110,7 +124,7 @@ class DirectoryObject(object):
 
         # glob @self for its files.
         self.logger.info("Globbing files in: {}".format(self.path))
-        files = [self.normalize_path(f) for f in glob.glob(self.path + "/*.*") 
+        files = [self._normalize_path(f) for f in glob.glob(self.path + "/*.*") 
                 if os.path.isfile(f)]
         files_len = len(files)
         self.logger.info("Files found: {}".format(files_len))
@@ -127,7 +141,7 @@ class DirectoryObject(object):
             
         # glob @self for its folders.
         self.logger.info("Globbing folders in: {}".format(self.path))
-        folders = [self.normalize_path(f) for f in glob.glob(self.path + "/*/") 
+        folders = [self._normalize_path(f) for f in glob.glob(self.path + "/*/") 
                 if os.path.isdir(f)]
         self.logger.info("Folders found: {}".format(len(folders)))
 
