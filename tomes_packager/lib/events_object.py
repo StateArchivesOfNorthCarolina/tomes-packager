@@ -35,7 +35,8 @@ class EventsObject(object):
             - events_dict (dict): Each key is a timestamp; each value is a list. The first 
             item in the list is a string, the event's alias. The second item is additional
             information such as a filename that the event created or a boolean (to explicitly
-            state that something occurred). If not needed, the second item can be None.
+            state that something occurred). If not needed, the second item can be None or 
+            an empty string.
 
         Raises:
             - TypeError: If @events_dict is not a dict.
@@ -105,7 +106,7 @@ class EventsObject(object):
 
         Attributes:
             - name (str): The name of the event, i.e. its alias.
-            - value (str): The event's value. This may be None if no value is needed.
+            - value (str): The event's value. Note: this will be None if no data was received.
             - timestamp (str): The event's timestamp (ISO 8601).
         """
 
@@ -123,7 +124,7 @@ class EventsObject(object):
 
             # set attributes.
             self.name = name
-            self.value = str(value) if value is not None else None
+            self.value = str(value) if value not in ("", None) else None
             self.timestamp = self._convert_time(timestamp)
 
         

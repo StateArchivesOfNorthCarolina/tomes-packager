@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
 """
-This module contains a class??? for creating RDF/Dublin Core metadata from a Microsoft Excel
-2010 file (.xlsx).
+This module contains a class for creating RDF/Dublin Core metadata from a Microsoft Excel 2010
+file (.xlsx).
 
 Todo:
-    * Make this a class.
     * Add logging.
+    * Get rid of __main__ test once you've created a unit test and know how this works! :-)
+    * Can you add validation per XSD?
 """
 
 # import modules.
@@ -14,72 +15,89 @@ import sys; sys.path.append("..")
 import hashlib
 import logging
 import logging.config
-from datetime import datetime
 import os
+from datetime import datetime
+from lxml import etree
 from openpyxl import load_workbook
-from pymets import mets
-from pymets.lib.namespaces import rdf_dc
 
 
-def excel_to_rdf(xlsx_path, element_header="dc_element", value_header="dc_value"):
-    """ A function for creating RDF/Dublin Core metadata from a Microsoft Excel 2010 file 
-    (.xlsx). 
+class XLSXToRDF():
+    """ A class for creating RDF/Dublin Core metadata from a Microsoft Excel 2010 file 
+    (.xlsx). """
+
+
+    def __init__(self, element_header="dc_element", value_header="dc_value"):
+        """ 
+        Args:
+            - ???
     
-    Args:
-        - ???
-    
-    """
-    
-    # set logging; suppress logging by default. 
-    logger = logging.getLogger(__name__)
-    logger.addHandler(logging.NullHandler())
-    
-    # ???
-    ns_prefix = "rdf"
-    ns_map = rdf_dc
-
-    # ???
-    pymets = mets.PyMETS(ns_prefix, ns_map)
-
-    # ???
-    logging.info("Opening workbook '{}'.".format(xlsx_path))
-    # do try/except here and log if you can't open the file.
-    workbook = load_workbook(xlsx_path, read_only=False, data_only=True)
-    worksheets = workbook.get_sheet_names()
-
-    for worksheet in worksheets:
+        """
         
-        logging.info("Looking for metadata in worksheet '{}'.".format(worksheet))
-        worksheet_object = workbook[worksheet]
-        header_map = [(header.value, header.column) for header in worksheet_object[1:1]]
-        header_map = dict(header_map)
-        logging.debug("Found headers: {}".format(header_map))
+        # set logging; suppress logging by default. 
+        self.logger = logging.getLogger(__name__)
+        self.logger.addHandler(logging.NullHandler())
+
+        # ???
+        self.element_header = element_header
+        self.value_header = value_header
         
         # ???
-        if element_header not in header_map.keys():
-            logging.info("Skipping worksheet. Missing required header '{}'.".format(
-                element_header))
-            continue
-        elif value_header not in header_map.keys():
-            logging.info("Skipping sheet. Missing required header '{}.'".format(
-                value_header))
-            continue
-        else: 
-            logging.info("Found required headers: {}".format((element_header, value_header)))
+        self.rdf_prefix = "rdf"
+        self.dc_prefix = "dc"
+        self.ns_map = {self.rdf_prefix: "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                self.dc_prefix: "http://purl.org/dc/elements/1.1/"}
 
+    # ???
+    def _get_worksheets(self, xlsx_file):
+        """ ??? """
+   
+        self.logger.info("Opening workbook '{}'.".format(xlsx_file))
+
+        # TODO: do try/except here and log if you can't open the file.
+        workbook = load_workbook(xlsx_file, read_only=False, data_only=True)
+        worksheets = workbook.worksheets
+
+        return worksheets
+ 
+
+    def _get_header_map(self, worksheet):
+        """ ??? """
+
+        self.logger.info("Looking for metadata in worksheet '{}'.".format(worksheet.title))
+        
+        header_map = [(header.value, header.column) for header in worksheet[1:1]]
+        header_map = dict(header_map)
+
+        logging.debug("Found headers: {}".format(header_map))
+        return header_map
+
+
+    def _validate_header(self, header_map):
+        """ ??? """
+        
+        # ???
+        if self.element_header not in header_map.keys():
+            self.logger.warning("Invalid sheet; missing required header: {}".format(
+                self.element_header))
+            return False
+        if self.value_header not in header_map.keys():
+            self.logger.warning("Invalid sheet; missing required header: {}".format(
+                self.value_header))
+            return False
+        
+        logging.info("Header is valid.")
+        return True
+
+
+    def _get_rdf_el(self, header_map, worksheet):
+        """ ??? """
+    
         # ???
         metadata = []
-        for header in [element_header, value_header]:
+        for header in [self.element_header, self.value_header]:
             header_column = header_map[header]
-            column = [cell.value for cell in worksheet_object[header_column][1:]]
+            column = [cell.value for cell in worksheet[header_column][1:]]
             metadata.append(column)
-
-        # ??? paranoid check.
-        elements, values = metadata[0], metadata[1]
-        if not len(elements) == len(values):
-            logging.warning("Skipping sheet. Length of '{}' and '{}' do not match.".format(
-                element_header, value_header))
-            continue
 
         # ???
         rdf_id = "{}".format(metadata) + datetime.utcnow().isoformat()
@@ -89,24 +107,57 @@ def excel_to_rdf(xlsx_path, element_header="dc_element", value_header="dc_value"
         logging.debug("Hashed metadata + timestamp: {}".format(rdf_id))        
             
         # ???
-        rdf_el = pymets.make("rdf:RDF")
-        rdf_description = pymets.make("rdf:Description", {"rdf:ID":rdf_id})
+        rdf_el = etree.Element("{" + self.ns_map[self.rdf_prefix] + "}RDF", nsmap=self.ns_map)
+        rdf_description = etree.Element("{" + self.ns_map[self.rdf_prefix] + "}Description", 
+                nsmap=self.ns_map)
+        rdf_description.set("{" + self.ns_map[self.rdf_prefix] + "}ID", rdf_id)
+        
+        # ???
+        elements, values = metadata[0], metadata[1]
         for i in range(0, len(elements)):
             element, value = elements[i], values[i]
-            if element is not None and value is not None:
-                element = pymets.make("dc:" + element)
-                element.text = str(value)
-                rdf_description.append(element)
-            rdf_el.append(rdf_description)
-        logging.info("RDF tree built.")
+            
+            # ???
+            if element is None or value is None:
+                self.logger.warning("Skipping ... ???")
+                continue
+            
+            # ???
+            dc_el= etree.Element("{" + self.ns_map[self.dc_prefix] + "}" + element, 
+                    nsmap=self.ns_map)
+            dc_el.text = str(value)
+            rdf_description.append(dc_el)
+        
+        # ???
+        rdf_el.append(rdf_description)
+        self.logger.info("RDF tree built.")
 
-    return rdf_el
+        return rdf_el
+
+
+    def get_RDFs(self, xlsx_file):
+        """ ??? """
+
+        RDFs = []
+
+        worksheets = self._get_worksheets(xlsx_file)
+        for worksheet in worksheets:
+            header_map = self._get_header_map(worksheet)
+            is_valid = self._validate_header(header_map)
+            if not is_valid:
+                self.logger.warning("Skipping sheet ...")
+                continue
+            else:
+                RDFs.append(self._get_rdf_el(header_map, worksheet))
+
+        return RDFs
 
 
 # TEST.
 if __name__ == "__main__":
 
-    pymets = mets.PyMETS()
-    rdf_el = excel_to_rdf(os.path.dirname(__file__) + "/test.xlsx")
-    rdf_doc = pymets.stringify(rdf_el)
-    print(rdf_doc)
+    x2r = XLSXToRDF()
+    f = "../../tests/sample_files/sample_rdf.xlsx"
+    rdf = x2r.get_RDFs(f)
+    rdf = [etree.tostring(r, pretty_print=True).decode() for r in rdf]
+    print(rdf)
