@@ -53,7 +53,8 @@ class DirectoryObject(object):
 
         # verify @self.path is a folder.
         if not os.path.isdir(path):
-            raise NotADirectoryError
+            msg = "Can't find: {}".format(path)
+            raise NotADirectoryError(msg)
         self.isdir = True
         self.isfile = False
 

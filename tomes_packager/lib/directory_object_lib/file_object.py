@@ -46,9 +46,10 @@ class FileObject(object):
             - FileNotFoundError: If @path is not an actual file path.
         """
 
-        # verify @self.path is a file.
+        # verify @self.path is a filei
         if not os.path.isfile(path):
-            raise FileNotFoundError
+            msg = "Can't find: {}".format(path)
+            raise FileNotFoundError(msg)
         self.isfile = True
         self.isdir = False
 
