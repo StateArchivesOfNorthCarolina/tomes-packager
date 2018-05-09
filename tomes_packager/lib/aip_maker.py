@@ -4,10 +4,11 @@
 TOMES archival information package (AIP).
 
 Todo:
-    * @file_exclusions: going to actually us this?
+    * @file_exclusions: going to actually use this?
     * Check in-line TODOs.
     * Need to move extraneous files to metadata/.
         - But how to identify extraneous? By basenames?
+    * Add logging for positive results, too. Be happy!
 """
 
 # import modules.
@@ -38,12 +39,18 @@ class AIPMaker():
             - TypeError: If @files_exclusions is not a list.
         """
 
-        # verify source_dir and destination_dir are folders.
+        # set logger; suppress logging by default.
+        self.logger = logging.getLogger(__name__)
+        self.logger.addHandler(logging.NullHandler())
+        
+        # verify @source_dir and @destination_dir are folders.
         if not os.path.isdir(source_dir):
             msg = "Can't find source: {}".format(source_dir)
+            self.logger.error(msg)
             raise NotADirectoryError(msg)
         if not os.path.isdir(destination_dir):
             msg = "Can't find destination: {}".format(destination_dir)
+            self.logger.error(msg)
             raise NotADirectoryError(msg)
 
         # verify @files_exclusions is a list:
@@ -52,17 +59,13 @@ class AIPMaker():
                     type(files_exclusions))
             raise TypeError(msg)
         
-        # set logger; suppress logging by default.
-        self.logger = logging.getLogger(__name__)
-        self.logger.addHandler(logging.NullHandler())
-
         # set attributes.
         self.account_id = str(account_id) 
         self.source_dir = source_dir
         self.destination_dir = destination_dir
         self.file_exclusions = file_exclusions
         
-        # convenience functions to join paths and normalize them.
+        # convenience functions to normalize and join paths.
         self._normalize_path = lambda p: os.path.normpath(p).replace("\\", "/")  
         self._join_paths = lambda *l: self._normalize_path(os.path.join(*l))
         
