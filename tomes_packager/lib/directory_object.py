@@ -51,17 +51,18 @@ class DirectoryObject(object):
             - NotADirectoryError: If @path is not an actual folder path.
         """
 
-        # verify @self.path is a folder.
-        if not os.path.isdir(path):
-            msg = "Can't find: {}".format(path)
-            raise NotADirectoryError(msg)
-        self.isdir = True
-        self.isfile = False
-
         # set logger; suppress logging by default.
         self.logger = logging.getLogger(__name__)
         self.logger.addHandler(logging.NullHandler())
 
+        # verify @path is a folder.
+        if not os.path.isdir(path):
+            msg = "Can't find: {}".format(path)
+            self.logger.error(msg)
+            raise NotADirectoryError(msg)
+        self.isdir = True
+        self.isfile = False
+ 
         # convenience function to clean up path notation.
         self._normalize_path = lambda p: os.path.normpath(p).replace("\\", "/")  
 

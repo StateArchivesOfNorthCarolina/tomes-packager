@@ -4,7 +4,6 @@
 object. """
 
 # import modules.
-import sys; sys.path.append("..")
 import dateutil.parser
 import logging
 import logging.config
@@ -42,16 +41,16 @@ class EventsObject(object):
             - TypeError: If @events_dict is not a dict.
         """
 
+        # set logger; suppress logging by default.
+        self.logger = logging.getLogger(__name__)
+        self.logger.addHandler(logging.NullHandler())
+
         # verify @events_dict is a dict.
         if not isinstance(events_dict, dict):
             msg = "Expected dictionary, got: {}".format(type(events_dict))
             self.logger.error(msg)
             raise TypeError(msg)
         
-        # set logger; suppress logging by default.
-        self.logger = logging.getLogger(__name__)
-        self.logger.addHandler(logging.NullHandler())
-
         # set attributes.
         self.events_dict = events_dict
         self.events = []

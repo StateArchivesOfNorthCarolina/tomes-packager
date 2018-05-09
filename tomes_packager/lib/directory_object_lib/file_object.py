@@ -45,17 +45,18 @@ class FileObject(object):
         Raises:
             - FileNotFoundError: If @path is not an actual file path.
         """
-
-        # verify @self.path is a file.
-        if not os.path.isfile(path):
-            msg = "Can't find: {}".format(path)
-            raise FileNotFoundError(msg)
-        self.isfile = True
-        self.isdir = False
-
+ 
         # set logger; suppress logging by default.
         self.logger = logging.getLogger(__name__)
         self.logger.addHandler(logging.NullHandler())
+
+       # verify @path is a file.
+        if not os.path.isfile(path):
+            msg = "Can't find: {}".format(path)
+            self.logger.error(msg)
+            raise FileNotFoundError(msg)
+        self.isfile = True
+        self.isdir = False
 
         # convenience function to clean up path notation.
         self._normalize_path = lambda p: os.path.normpath(p).replace("\\", "/")    

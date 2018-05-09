@@ -11,7 +11,6 @@ Todo:
 """
 
 # import modules.
-import sys; sys.path.append("..")
 import hashlib
 import logging
 import logging.config
