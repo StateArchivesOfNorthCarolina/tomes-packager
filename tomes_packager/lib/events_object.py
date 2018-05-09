@@ -46,7 +46,7 @@ class EventsObject(object):
         if not isinstance(events_dict, dict):
             msg = "Expected dictionary, got: {}".format(type(events_dict))
             self.logger.error(msg)
-            raise TypeError
+            raise TypeError(msg)
         
         # set logger; suppress logging by default.
         self.logger = logging.getLogger(__name__)
@@ -63,7 +63,13 @@ class EventsObject(object):
             
     def _add_events(self):
         """ Processes events in @events_dict by adding each event's alias to @self.events
-        and adding an attribute """
+        and adding an attribute to @self.
+
+        Raises:
+            - TypeError: If the second item in one of @self.dict's values isn't a list.
+            - ValueError: If the second item in one of @self.dict's values is not a list of 
+            exactly two items.
+        """
             
         self.logger.info("Parsing event dictionary.")
         
@@ -120,7 +126,9 @@ class EventsObject(object):
 
             # verify @name is a string.
             if not isinstance(name, str):
-                raise TypeError
+                msg = "Expected string; got: {}".format(type(name))
+                self.logger.error(msg)
+                raise TypeError(msg)
 
             # set attributes.
             self.name = name
@@ -135,7 +143,6 @@ class EventsObject(object):
                 - tstamp (str): A valid date string.
 
             Raises:
-                - TypeError: If @tstamp is not a string.
                 - ValueError: If @tstamp cannot be parsed as a date.
             """
 
@@ -144,7 +151,7 @@ class EventsObject(object):
             except (TypeError, ValueError) as err:
                 msg = "Invalid timestamp: {}".format(tstamp)
                 self.logger.error(msg)
-                raise err(msg)
+                raise ValueError(msg)
             
             return timestamp
 

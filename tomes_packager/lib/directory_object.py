@@ -182,7 +182,8 @@ class DirectoryObject(object):
         # verify @attr is legal.
         legal_attrs =  ["dirs", "files"]
         if attr not in legal_attrs:
-            err = "Illegal 'attr' argument '{}'; must be one of: {}".format(attr, legal_attrs)
+            err = "Illegal 'attr' argument '{}'; must be one of: {}".format(attr, 
+                    legal_attrs)
             self.logger.error(err)
             raise ValueError(err)
         
