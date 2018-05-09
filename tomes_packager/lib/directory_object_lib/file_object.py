@@ -15,17 +15,17 @@ from datetime import datetime
 class FileObject(object):
     """ A class for creating a read-only object representation of a file. 
 
-        Attributes:
-            - isfile (bool): True.
-            - isdir (bool): False.
-            - name (str): The relative path to @self.root_object's path.
-            - basename (str): The absolute path.
-            - abspath (str): The absolute version of @self.path.
-            - created (str): The creation date as ISO 8601.
-            - modified (str): The modified date as ISO 8601.
-            - size (int): The size in bytes.
-            - mimetype (str): The mimetype.
-            - checksum (str): The checksum value per @self.checksum_algorithm.
+    Attributes:
+        - isfile (bool): True.
+        - isdir (bool): False.
+        - name (str): The relative path to @self.root_object's path.
+        - basename (str): The absolute path.
+        - abspath (str): The absolute version of @self.path.
+        - created (str): The creation date as ISO 8601.
+        - modified (str): The modified date as ISO 8601.
+        - size (int): The size in bytes.
+        - mimetype (str): The mimetype.
+        - checksum (str): The checksum value per @self.checksum_algorithm.
     """
 
 

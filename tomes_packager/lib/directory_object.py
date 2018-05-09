@@ -17,22 +17,22 @@ from lib.directory_object_lib.list_object import ListObject
 class DirectoryObject(object):
     """ A class for creating a read-only object representation of a folder. 
     
-        Attributes:
-            - isdir (bool): True.
-            - isfile (bool): False.
-            - name (str): The relative path to @self.root_object's path.
-            - basename (str): The absolute path.
-            - abspath (str): The absolute version of @self.path.
-            - created (str): The creation date as ISO 8601.
-            - modified (str): The modified date as ISO 8601.
-            - dirs (ListObject): All subfolders (non-recursive) within @self.path. Each item
-            is a DirectoryObject.
-            - rdirs (ListObject): All subfolders (recursive) within @self.path. Each item
-            is a DirectoryObject.
-            - files (ListObject): All files (non recursive) within @self.path. Each item is a 
-            FileObject.
-            - rfiles (ListObject): All files (recursive) within @self.path. Each item is a 
-            FileObject.
+    Attributes:
+        - isdir (bool): True.
+        - isfile (bool): False.
+        - name (str): The relative path to @self.root_object's path.
+        - basename (str): The absolute path.
+        - abspath (str): The absolute version of @self.path.
+        - created (str): The creation date as ISO 8601.
+        - modified (str): The modified date as ISO 8601.
+        - dirs (ListObject): All subfolders (non-recursive) within @self.path. Each item is a
+        DirectoryObject.
+        - rdirs (ListObject): All subfolders (recursive) within @self.path. Each item is a 
+        DirectoryObject.
+        - files (ListObject): All files (non recursive) within @self.path. Each item is a 
+        FileObject.
+        - rfiles (ListObject): All files (recursive) within @self.path. Each item is a 
+        FileObject.
     """
 
 
