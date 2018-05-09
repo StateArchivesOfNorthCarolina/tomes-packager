@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
 """ This module contains a class for creating a read-only object representation of a folder.
+
+Todo:
+    * I think you need to move Attributes from __init__ to the class docstring.
+		- Same for the sub-modules.
 """
 
 # import modules.
