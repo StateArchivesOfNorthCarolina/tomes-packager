@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 
 """ This module contains a class for creating a read-only object representation of a folder.
-
-Todo:
-    * I think you need to move Attributes from __init__ to the class docstring.
-		- Same for the sub-modules.
 """
 
 # import modules.
@@ -19,20 +15,8 @@ from lib.directory_object_lib.list_object import ListObject
 
 
 class DirectoryObject(object):
-    """ A class for creating a read-only object representation of a folder. """
-
-
-    def __init__(self, path, parent_object=None, root_object=None, depth=0):
-        """ Sets instance attributes.
-        
-        Args:
-            - path (str): A path to an actual folder.
-            - parent_object (DirectoryObject): The parent folder to which the @path file 
-            belongs.
-            - root_object (DirectoryObject): The root or "master" folder under which the @path
-            folder and its @parent_object reside.
-            - depth (int): The subfolder depth from @path to the @root_object.
-
+    """ A class for creating a read-only object representation of a folder. 
+    
         Attributes:
             - isdir (bool): True.
             - isfile (bool): False.
@@ -49,6 +33,19 @@ class DirectoryObject(object):
             FileObject.
             - rfiles (ListObject): All files (recursive) within @self.path. Each item is a 
             FileObject.
+    """
+
+
+    def __init__(self, path, parent_object=None, root_object=None, depth=0):
+        """ Sets instance attributes.
+        
+        Args:
+            - path (str): A path to an actual folder.
+            - parent_object (DirectoryObject): The parent folder to which the @path file 
+            belongs.
+            - root_object (DirectoryObject): The root or "master" folder under which the @path
+            folder and its @parent_object reside.
+            - depth (int): The subfolder depth from @path to the @root_object.
 
         Raises:
             - NotADirectoryError: If @path is not an actual folder path.

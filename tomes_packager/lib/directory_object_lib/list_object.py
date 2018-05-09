@@ -16,7 +16,6 @@ class ListObject(list):
     Attributes:
         - names: An alias for self._get_names().
         - basenames: An alias for self._get_names(basenames=True).
-        
     """
 
 
@@ -104,7 +103,7 @@ class ListObject(list):
             list: The return value.
         """
 
-        # container.
+        # create container list.
         results = []
         
         # for each regex match on @term, append the index of match in @results.

@@ -13,21 +13,7 @@ from datetime import datetime
 
 
 class FileObject(object):
-    """ A class for creating a read-only object representation of a file. """
-    
-    
-    def __init__(self, path, parent_object, root_object, index, checksum_algorithm="SHA-256"):
-        """ Sets instance attributes.
-        
-        Args:
-            - path (str): A path to an actual file.
-            - parent_object (FolderObject): The parent folder to which the @path file belongs.
-            - root_object (FolderObject): The root or "master" folder under which the @path 
-            file and its @parent_object reside.
-            - index (int): The unique identifier for the @path file within the context of the
-            @root_object.
-            - checksum_algorithm (str): The SHA algorithm with which to calculate the @path
-            file's checksum value. Use only SHA-1, SHA-256, SHA-384, or SHA-512.
+    """ A class for creating a read-only object representation of a file. 
 
         Attributes:
             - isfile (bool): True.
@@ -40,6 +26,21 @@ class FileObject(object):
             - size (int): The size in bytes.
             - mimetype (str): The mimetype.
             - checksum (str): The checksum value per @self.checksum_algorithm.
+    """
+
+
+    def __init__(self, path, parent_object, root_object, index, checksum_algorithm="SHA-256"):
+        """ Sets instance attributes.
+        
+        Args:
+            - path (str): A path to an actual file.
+            - parent_object (FolderObject): The parent folder to which the @path file belongs.
+            - root_object (FolderObject): The root or "master" folder under which the @path 
+            file and its @parent_object reside.
+            - index (int): The unique identifier for the @path file within the context of the
+            @root_object.
+            - checksum_algorithm (str): The SHA algorithm with which to calculate the @path
+            file's checksum value. Use only SHA-1, SHA-256, SHA-384, or SHA-512.
 
         Raises:
             - FileNotFoundError: If @path is not an actual file path.
@@ -138,14 +139,19 @@ class FileObject(object):
         # get checksum per "https://stackoverflow.com/a/1131255". 
         data = open(self.abspath, "rb")
         while True:
+            
+            # read next data chunk; break if none are left.
             chunk = data.read(block_size)
             if not chunk:
                 break
             sha.update(chunk)
             remaining_chunks -= 1
+
+            # log every 10th read.
             if remaining_chunks > 0 and (remaining_chunks % 10) == 0:
                 self.logger.debug("Remaining file chunks to read: {}".format(
-                    remaining_chunks))            
+                    remaining_chunks))
+
         checksum = sha.hexdigest()
 
         self.logger.info("{} checksum: {}".format(self.checksum_algorithm, checksum))
