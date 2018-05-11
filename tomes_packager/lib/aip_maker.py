@@ -11,6 +11,7 @@ Todo:
     * Have a cleanup function to clean up the hot folder.
     * Make a general purpose file mover function AND one for folders.
     * Vadlidate AIP after the fact - or during.
+    * ABORT if destination folder already exists.
 """
 
 # import modules.
@@ -78,39 +79,90 @@ class AIPMaker():
         self.source_pst = self._join_paths(self.source_dir, "pst")
 
         # set destination attributes.
-        self.root = self._make_dir()
-        self.metadata_dir = self._make_dir("metadata")
-        self.eaxs_dir = self._make_dir("eaxs")
-        self.mime_dir = self._make_dir("mime")
-        self.pst_dir = self._make_dir("pst")
+        self.root = self._join_paths(self.destination_dir, self.account_id)
+        self.metadata_dir = self._join_paths(self.root, "metadata")
+        self.eaxs_dir = self._join_paths(self.root, "eaxs")
+        self.mime_dir = self._join_paths(self.root, "mime")
+        self.pst_dir = self._join_paths(self.root, "pst")
 
 
-    def _make_dir(self, subdir=None):
+    def _make_folder(self, folder):
         """ ???
 
         Args:
-            - subdir (str): ???
+            - folder (str): The folder path to create.
         
         Returns:
             str: The return value.
             # ???
+        
+        Raises:
+            - ???
         """
-        
-        # ???
-        if subdir is None:
-            folder = self._join_paths(self.destination_dir, self.account_id)        
-        else:
-            folder = self._join_paths(self.root, subdir)
-        
+
         # ???
         try:
             self.logger.info("Making folder: {}".format(folder))        
             os.mkdir(folder)
         except Exception as err:
+            # TODO: What specific exceptions?
             self.logger.warning("Unable to create: {}".format(folder))
             self.logger.error(err)
+            raise err
 
         return folder
+
+
+    def _move_data(self, data, destination_dir, is_files=True):
+        """
+        
+        Args:
+            - data (list):
+            - destiantion (str):
+            - is_files (bool): Use True if @data is a list of files. If it is a list of 
+            folders, use False.
+        
+        Returns:
+            tuple: The return value.
+            The first item is a list of items that were successfully moved to @parent_dir.
+            The second item is the list of items that were not moved.
+        """
+        
+        # ???
+        if is_files:
+            data = [self._normalize_path(f) for f in self.source_files
+                    if os.path.splitext(os.path.basename(f))[0] == self.account_id
+                    and self._normalize_path(os.path.dirname(f)) in data]
+        else:
+            data = [self._normalize_path(f) for f in self.source_folders
+                    if self._normalize_path(os.path.dirname(f)) in data]
+
+        # ???
+        if len(data) == 0:
+            self.logger.warning("Unable to find data requested for moving; skipping.")
+            return
+
+        # ???
+        if not os.path.isdir(destination_dir):  
+            self._make_folder(destination_dir)
+
+        # ???
+        for datum in data:
+            try:
+                if is_files:
+                    msg = "Moving file '{}' to: {}".format(datum, destination_dir)
+                else:
+                    msg = "Moving files and sobfolders in '{}' to: {}".format(datum, 
+                            destination_dir)
+                self.logger(msg)
+                shutil.move(datum, destination_dir)
+            except Exception as err:
+                # TODO: What specific exceptions?
+                self.logger.warning("Can't move '{}' to: {}".format(datum, destination_dir))
+                self.logger.error(err)
+                # TODO: ???
+
+        return
 
 
     def make_aip(self):
@@ -118,68 +170,22 @@ class AIPMaker():
 
         Returns:
             None
+
+        Raises:
+            ValueError: If @self.root already exists.
         """
 
-        if not os.path.isdir(self.root):
-            self.logger.warning("Cannot add files to non-existant AIP folder; aborting.")
-            return
-
-        self._move_files(self.source_pst, self.pst_dir, delete_empty=True)
-        self._move_subdirs(self.source_eaxs, self.eaxs_dir)
-        self._move_subdirs(self.source_mime, self.mime_dir)
-
-        return
-
-
-    def _move_files(self, source, destination, required=False, delete_empty=False):
-        """ """
-        
         # ???
-        files = [self._normalize_path(f) for f in self.source_files
-                 if os.path.splitext(os.path.basename(f))[0] == self.account_id
-                 and self._normalize_path(os.path.dirname(f)) == source]
-        if len(files) == 0:
-            self.logger.info("???")
-            if delete_empty:
-                self.logger.info("???")
-                os.rmdir(destination)
-            # TODO: OK, PST not required. ???
-            return
-
+        if os.path.isdir(self.root):
+            msg = "Destination '{}' already exists.".format(self.root)
+            self.logger.error(msg)
+            raise ValueError(msg)
+                
         # ???
-        for fil in files:
-            try:
-                shutil.move(fil, destination)
-            except Exception as err:
-                # TODO: What specific exceptions?
-                self.logger.warning("???: {}".format())
-                self.logger.error(err)
-                # TODO: ???
-
-        return
-
-
-    def _move_subdirs(self, source, destination, required=False):
-        """ Moves first level subdirectories and their files ... """
-        
-        # ???       
-        if not os.path.isdir(source):
-            self.logger.warning("???")
-            self.logger.error("???")
-            # TODO: raise something?
-            return
-
-        # ???
-        subfolders = [self._normalize_path(f) for f in self.source_folders
-                      if self._normalize_path(os.path.dirname(f)) == source]
-        for subfolder in subfolders:
-            try:
-                shutil.move(subfolder, destination)
-            except Exception as err:
-                # TODO: What specific exceptions?
-                self.logger.warning("???: {}".format())
-                self.logger.error(err)
-                # TODO: ???
+        self._make_folder(self.root)        
+        self._move_data([self.source_pst], self.pst_dir)
+        self._move_data([self.source_eaxs], self.eaxs_dir, False)
+        self._move_data([self.source_mime], self.mime_dir, False)
 
         return
 
