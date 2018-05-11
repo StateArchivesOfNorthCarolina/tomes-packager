@@ -279,6 +279,5 @@ class AIPMaker():
         return self.root
 
 
-# TEST.
 if __name__ == "__main__":
     pass
