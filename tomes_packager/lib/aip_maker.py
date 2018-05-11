@@ -214,7 +214,8 @@ class AIPMaker():
         test = len(self.transfers["failed"]) == 0
         validation_tests.append(test)
         if not test:
-            self.logger.warning("Failed transfers: {}".format(self.transfers["failed"]))            
+            self.logger.warning("Failed transfers: {}".format(self.transfers["failed"]))
+
         # test if MIME and EAXS folders exists in AIP.
         for required_folder in [self.mime_dir, self.eaxs_dir]:
             test = os.path.isdir(required_folder)
