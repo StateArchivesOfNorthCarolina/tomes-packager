@@ -1,12 +1,7 @@
 #!/usr/bin/env python3
 
 """ This module contains a class for constructing the basic file and folder structure for a 
-TOMES archival information package (AIP).
-
-Todo:
-    * Check in-line TODOs.
-    * Vadlidate AIP after the fact - or during.?
-"""
+TOMES archival information package (AIP). """
 
 # import modules.
 import glob
@@ -18,16 +13,23 @@ import shutil
 
 class AIPMaker():
     """ A class for constructing the basic file and folder structure for a TOMES archival 
-    information package (AIP). """
+    information package (AIP).
+    
+    Example:
+        >>> sample_dir = "../../tests/sample_files/"
+        >>> am = AIPMaker("foo", sample_dir + "/hot_folder", sample_dir)
+        >>> am.make_aip() # returns absolute path to new "foo" AIP folder.
+        >>> am.validate() # True
+    """
 
     
     def __init__(self, account_id, source_dir, destination_dir):
         """ Sets instance attributes.
 
         Args:
-            - account_id (str): ???
-            - source_dir (str): ??? 
-            - source_dir (str): ??? 
+            - account_id (str): The email account's base identifier, i.e. the file prefix.
+            - source_dir (str): The folder path from which to transfer data.
+            - destination_dir (str): The folder path in which to create the AIP structure.
 
         Raises:
             - NotADirectoryError: If @source_dir or @destination_dir are not actual folder 
@@ -59,37 +61,43 @@ class AIPMaker():
         self.source_data = glob.glob(self._join_paths(self.source_dir, "**"), recursive=True)
         self.source_folders = [f for f in self.source_data if os.path.isdir(f)]
         self.source_files = [f for f in self.source_data if os.path.isfile(f)]
-        self.source_eaxs = self._join_paths(self.source_dir, "eaxs", self.account_id)
-        self.source_mime = self._join_paths(self.source_dir, "mime", self.account_id)
         self.source_pst = self._join_paths(self.source_dir, "pst")
+        self.source_mime = self._join_paths(self.source_dir, "mime", self.account_id)
+        self.source_eaxs = self._join_paths(self.source_dir, "eaxs", self.account_id)
+        self.source_metadata = self._join_paths(self.source_dir, "metadata", self.account_id)
 
         # set destination attributes.
         self.root = self._join_paths(self.destination_dir, self.account_id)
-        self.metadata_dir = self._join_paths(self.root, "metadata")
-        self.eaxs_dir = self._join_paths(self.root, "eaxs")
-        self.mime_dir = self._join_paths(self.root, "mime")
         self.pst_dir = self._join_paths(self.root, "pst")
+        self.mime_dir = self._join_paths(self.root, "mime")
+        self.eaxs_dir = self._join_paths(self.root, "eaxs")
         self.metadata_dir = self._join_paths(self.root, "metadata")
 
-        # ???
+        # track data regarding transfer attempts.
         self.transfers = {"attempted": [], "passed": [], "failed": []}
-        self.is_valid = lambda: self.transfers["attempted"] == self.transfers["passed"]
 
 
     def _remove_folder(self, folder):
-        """ ??? """
+        """ Removes the given @folder if it is empty. 
+        
+        Args:
+            - folder (str): The folder path to remove.
+            
+        Returns:
+            None
+        """
 
-        # ???
+        # check if @folder is empty.
         if len(os.listdir(folder)) != 0:
             self.logger.warning("Can't delete non-empty folder: {}".format(
                 folder))
             return
-
+        
+        # delete @folder.
         self.logger.info("Deleting folder: {}".format(folder))
         try:
             shutil.rmtree(folder)
-        except Exception as err:
-            # TODO: What exceptions?
+        except OSError as err:
             self.logger.warning("Can't delete source folder: {}".format(folder))
             self.logger.error(err)
             return
@@ -97,49 +105,55 @@ class AIPMaker():
         return
 
 
-    def _make_folder(self, folder):
-        """ ???
+    def _create_folder(self, folder):
+        """ Creates a given @folder.
 
         Args:
             - folder (str): The folder path to create.
         
         Returns:
-            str: The return value.
-            # ???
+            None
         
         Raises:
-            - ???
+            - OSError: If the folder can't be created.
         """
 
-        # ???
+        # make @folder.
         try:
             self.logger.info("Making folder: {}".format(folder))        
             os.mkdir(folder)
-        except Exception as err:
-            # TODO: What specific exceptions?
+        except OSError as err:
             self.logger.warning("Unable to create folder: {}".format(folder))
             self.logger.error(err)
-            raise err
+            raise OSError(err)
 
-        return folder
+        return
 
 
-    def _move_data(self, source_dir, destination_dir, is_files=True):
-        """
+    def _transfer_data(self, source_dir, destination_dir, find_files=True):
+        """ Moves data in @source_dir to @destination_dir. If @find_files is True, only
+        files in @source_dir with basenames that equal @self.account_id will be moved.
+        Otherwise, all subfolders (and their files) in @source_dir will be moved.
         
         Args:
-            - source_data (str): The directory path to ...
-            - destiantion (str): The directory to which to move content in @source_data.
-            - is_files (bool): Use True to move files???
+            - source_dir (str): The folder path from which to move data.
+            - destination_dir (str): The folder path into which to move data.
+            - is_files (bool): Use True to move files (as described above). Use False to move
+            subfolders.
         
         Returns:
            None
         """
         
-        self.logger.info("Looking for candidate items in: {}".format(source_dir))
+        self.logger.info("Looking for candidate data in: {}".format(source_dir))
+        
+        # verify @source_dir exists.
+        if not os.path.isdir(source_dir):
+            self.logger.warning("Can't find folder '{}'; skipping.".format(source_dir))
+            return
 
-        # ???
-        if is_files:
+        # per @find_files, determine what data to move.
+        if find_files:
             data = [self._normalize_path(f) for f in self.source_files
                     if os.path.splitext(os.path.basename(f))[0] == self.account_id
                     and self._normalize_path(os.path.dirname(f)) == source_dir]
@@ -147,86 +161,123 @@ class AIPMaker():
             data = [self._normalize_path(f) for f in self.source_folders
                     if self._normalize_path(os.path.dirname(f)) == source_dir]
 
-        # ???
+        # abort if @data is empty, otherwise store what data should be moved.
         if len(data) == 0:
-            self.logger.warning("Unable to find any candidate items to move.")
+            self.logger.warning("Unable to find any candidate data to move.")
             return
         else:
             self.transfers["attempted"] += data
             self.logger.info("Moving the following items: {}".format(data))
         
-        # ???
+        # if needed, create @destination_dir.
         if not os.path.isdir(destination_dir):  
-            self._make_folder(destination_dir)
+            self._create_folder(destination_dir)
 
-        # ???
-        for datum in data:
+        # move items in @data.
+        for item in data:
             try:
-                self.logger.info("Moving '{}' to: {}".format(datum, destination_dir))
-                shutil.move(datum, destination_dir)
-                self.transfers["passed"].append(datum)
-            except Exception as err:
-                # TODO: What specific exceptions?
-                self.logger.warning("Can't move '{}' to: {}".format(datum, destination_dir))
+                self.logger.info("Moving '{}' to: {}".format(item, destination_dir))
+                shutil.move(item, destination_dir)
+                self.transfers["passed"].append(item)
+            except OSError as err:
+                self.logger.warning("Can't move '{}' to: {}".format(item, destination_dir))
                 self.logger.error(err)
-                self.transfers["failed"].append(datum)
-                # TODO: ???
+                self.transfers["failed"].append(item)
+
+        # if moving and entire tree, remove @source_dir.
+        if not find_files:
+            self._remove_folder(source_dir)
 
         return
 
-    def make_aip(self):
-        """ ???
+
+    def validate(self):
+        """ Determine if the AIP structure appears to be valid.
 
         Returns:
-            None
+            bool: The return value.
+            True if the AIP appears to be valid. Otherwise, False.
+        """
+    
+        self.logger.info("Trying to determing if AIP structure is valid.")
+
+        # store validation tests.
+        validation_tests = []
+
+        # test if all transfer attempts were successful.
+        test = self.transfers["attempted"] == self.transfers["passed"]
+        validation_tests.append(test)
+        if not test:
+            self.logger.warning("Not all attempted tranfers passed.")
+
+        # test if no transfers failed (theoretically redundant vs. the previous test).
+        test = len(self.transfers["failed"]) == 0
+        validation_tests.append(test)
+        if not test:
+            self.logger.warning("Failed transfers: {}".format(self.transfers["failed"]))            
+        # test if MIME and EAXS folders exists in AIP.
+        for required_folder in [self.mime_dir, self.eaxs_dir]:
+            test = os.path.isdir(required_folder)
+            validation_tests.append(test)
+            if not test:
+                self.logger.warning("Missing required folder: {}".format(required_folder))
+                
+        # if False is in @validation_tests; the AIP cannot be valid.
+        is_valid = False not in validation_tests
+
+        # report on validity.
+        if is_valid:
+            self.logger.info("AIP structure appears to be valid.")
+        else:
+            self.logger.warning("AIP structure appears to invalid.")
+         
+        return is_valid
+
+
+    def make_aip(self):
+        """ Create the AIP structure.
+
+        Returns:
+            str: The return value.
+            The absolute folder path to the AIP structure's root. 
 
         Raises:
-            ValueError: If @self.root already exists.
+            IsADirectoryError: If @self.root already exists.
         """
 
-        # ???
+        # verify @self.root doesn't already exist.
         if os.path.isdir(self.root):
-            msg = "AIP destination '{}' already exists; aborting.".format(self.root)
+            msg = "AIP destination '{}' already exists.".format(self.root)
             self.logger.error(msg)
-            raise ValueError(msg)
+            raise IsADirectoryError(msg)
         else:
             self.logger.info("Creating AIP at: {}".format(self.root))
 
-        # ???
-        self._make_folder(self.root)        
-        self._move_data(self.source_pst, self.pst_dir)
-        self._move_data(self.source_eaxs, self.eaxs_dir, False)
-        self._move_data(self.source_mime, self.mime_dir, False)
+        # create @self.root and move data into it.
+        self._create_folder(self.root)        
+        self._transfer_data(self.source_pst, self.pst_dir)
+        self._transfer_data(self.source_mime, self.mime_dir, False)
+        self._transfer_data(self.source_eaxs, self.eaxs_dir, False)
+        self._transfer_data(self.source_metadata, self.metadata_dir, False)
 
-        # ???
-        self._remove_folder(self.source_eaxs)
-        self._remove_folder(self.source_mime)
-
-        # ???
+        # check for extra files with the same basename as @self.account_id.
         metadata_files = [self._normalize_path(f) for f in self.source_files
                         if os.path.splitext(os.path.basename(f))[0] == self.account_id
                         and os.path.isfile(f)]
-        if len(metadata_files) > 0:
-            self.logger.info("Extra account files found.")
         
-        # ???
-        metadata_files = [os.path.dirname(f) for f in metadata_files]
-        for metadata_file in metadata_files:
-            self._move_data(metadata_file, self.metadata_dir)
+        # if extra files were found, move them.
+        if len(metadata_files) > 0:
+            self.logger.info("Extra account data found.") 
+            metadata_files = [os.path.dirname(f) for f in metadata_files]
+            for metadata_file in metadata_files:
+                self._transfer_data(metadata_file, self.metadata_dir)
 
-        return
+        # validate the AIP for logging purposes.
+        self.validate()
+        
+        return self.root
 
 
 # TEST.
 if __name__ == "__main__":
-
-    logging.basicConfig(level=logging.DEBUG)
-    f = "../../tests/sample_files"
-    am = AIPMaker("foo", f+"/hot_folder", f)
-    am.make_aip()
-    print(am.is_valid())
-    am = AIPMaker("bar", f+"/hot_folder", f)
-    am.make_aip()
-    print(am.is_valid())
-    
-
+    pass
