@@ -245,7 +245,7 @@ class XLSXToRDF():
 
         # log malformed XML for debugging purposes.
         if not is_valid:
-            self.logger.debug(repr(rdf))
+            self.logger.debug("Invalid RDF tree: {}".format(repr(rdf)))
 
         return is_valid
 
