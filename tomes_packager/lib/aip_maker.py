@@ -15,11 +15,24 @@ class AIPMaker():
     """ A class for constructing the basic file and folder structure for a TOMES archival 
     information package (AIP).
     
+    Attributes:
+        - root (str): The root path of the created AIP structure.
+        - pst_dir (str): = The optional "/pst" folder path within the AIP or None if empty 
+        after self.make().
+        - mime_dir (str): The required "/mime" folder path within the AIP or None if empty 
+        after self.make().
+        - eaxs_dir (str): The required "/eaxs" folder within the AIP or None if empty after 
+        self.make().
+        - metadata_dir (str): The optional "/metadata" folder within the AIP or None if empty 
+        after self.make().
+        - transfers (dict): The log of file transfers with keys: "attempted", "passed", and
+        "failed". Each key's value is a list.
+
     Example:
         >>> sample_dir = "../../tests/sample_files/"
-        >>> am = AIPMaker("foo", sample_dir + "/hot_folder", sample_dir)
-        >>> am.make() # returns absolute path to new "foo" AIP folder.
-        >>> am.validate() # True
+        >>> aip = AIPMaker("foo", sample_dir + "/hot_folder", sample_dir)
+        >>> aip.make() # returns path to the new "foo" AIP folder.
+        >>> aip.validate() # True
     """
 
     
@@ -56,21 +69,21 @@ class AIPMaker():
         self.destination_dir = destination_dir
         
         # convenience functions to join paths and normalize them.
-        self._normalize_path = lambda p: os.path.abspath(p).replace("\\", "/")  
+        self._normalize_path = lambda p: os.path.relpath(p).replace("\\", "/")  
         self._join_paths = lambda *p: self._normalize_path(os.path.join(*p))
         
         # set source attributes.
-        self.source_pst = self._join_paths(self.source_dir, "pst")
-        self.source_mime = self._join_paths(self.source_dir, "mime", self.account_id)
-        self.source_eaxs = self._join_paths(self.source_dir, "eaxs", self.account_id)
-        self.source_metadata = self._join_paths(self.source_dir, "metadata", self.account_id)
+        self._source_pst = self._join_paths(self.source_dir, "pst")
+        self._source_mime = self._join_paths(self.source_dir, "mime", self.account_id)
+        self._source_eaxs = self._join_paths(self.source_dir, "eaxs", self.account_id)
+        self._source_metadata = self._join_paths(self.source_dir, "metadata", self.account_id)
 
         # set destination attributes.
         self.root = self._join_paths(self.destination_dir, self.account_id)
         self.pst_dir = self._join_paths(self.root, "pst")
+        self.metadata_dir = self._join_paths(self.root, "metadata")
         self.mime_dir = self._join_paths(self.root, "mime")
         self.eaxs_dir = self._join_paths(self.root, "eaxs")
-        self.metadata_dir = self._join_paths(self.root, "metadata")
 
         # track data regarding transfer attempts.
         self.transfers = {"attempted": [], "passed": [], "failed": []}
@@ -88,8 +101,7 @@ class AIPMaker():
 
         # check if @folder is empty.
         if len(os.listdir(folder)) != 0:
-            self.logger.warning("Can't delete non-empty folder: {}".format(
-                folder))
+            self.logger.warning("Can't delete non-empty folder: {}".format(folder))
             return
         
         # delete @folder.
@@ -159,9 +171,15 @@ class AIPMaker():
             data_glob = glob.glob(source_dir + "/*")
             data = [self._normalize_path(f) for f in data_glob]
 
-        # abort if @data is empty, otherwise store what data should be moved.
+        # if @data is empty set the corresponsing folder attribute to None, otherwise store 
+        # what data should be moved in @self.transfers.
         if len(data) == 0:
-            self.logger.warning("Unable to find any candidate data to move.")
+            self.logger.info("Unable to find any candidate data to move.")
+            for key in self.__dict__:
+                if self.__dict__[key] == destination_dir:
+                    self.logger.debug("Setting instance attribute '{}' to None.".format(key))
+                    self.__dict__[key] = None
+                    break
             return
         else:
             self.transfers["attempted"] += data
@@ -199,6 +217,12 @@ class AIPMaker():
     
         self.logger.info("Testing if AIP structure is valid.")
 
+        # if @self.root doesn't exist, the AIP is invalid.
+        if not os.path.isdir(self.root):
+            self.logger.warning("AIP folder doesn't exist.".format(self.root))
+            self.logger.info("Trying running .make() first.")
+            return False
+        
         # store validation tests.
         validation_tests = []
 
@@ -206,7 +230,9 @@ class AIPMaker():
         test = self.transfers["attempted"] == self.transfers["passed"]
         validation_tests.append(test)
         if not test:
-            self.logger.warning("Not all attempted tranfers passed.")
+            self.logger.warning("Not all attempted transfers passed.")
+        else:
+            self.logger.info("All attempted transfers passed.")
 
         # test if no transfers failed (theoretically redundant vs. the previous test).
         test = len(self.transfers["failed"]) == 0
@@ -221,12 +247,17 @@ class AIPMaker():
             validation_tests.append(test)
             if not test:
                 self.logger.warning("Missing required folder: {}".format(required_folder))
+                continue
+            else:
+                self.logger.info("Found required folder: {}".format(required_folder))
             
             test = len(os.listdir(required_folder)) !=0
             validation_tests.append(test)
             if not test:
-                self.logger.warning("Empty required folder: {}".format(required_folder))
-                
+                self.logger.warning("No data in required folder: {}".format(required_folder))
+            else:
+                self.logger.info("Found data in required folder: {}".format(required_folder))
+
         # if False is in @validation_tests; the AIP cannot be valid.
         is_valid = False not in validation_tests
 
@@ -244,7 +275,7 @@ class AIPMaker():
 
         Returns:
             str: The return value.
-            The absolute folder path to the AIP structure's root. 
+            The path to the AIP structure's root. 
 
         Raises:
             IsADirectoryError: If @self.root already exists.
@@ -260,14 +291,14 @@ class AIPMaker():
 
         # create @self.root and move data into it.
         self._create_folder(self.root)        
-        self._transfer_data(self.source_pst, self.pst_dir)
-        self._transfer_data(self.source_mime, self.mime_dir, False)
-        self._transfer_data(self.source_eaxs, self.eaxs_dir, False)
-        self._transfer_data(self.source_metadata, self.metadata_dir, False)
+        self._transfer_data(self._source_pst, self.pst_dir)
+        self._transfer_data(self._source_mime, self.mime_dir, False)
+        self._transfer_data(self._source_eaxs, self.eaxs_dir, False)
+        self._transfer_data(self._source_metadata, self.metadata_dir, False)
 
         # move stray metadata files in @self.source_dir to @self.metadata_dir.
         self._transfer_data(self.source_dir, self.metadata_dir)
-        
+
         return self.root
 
 
