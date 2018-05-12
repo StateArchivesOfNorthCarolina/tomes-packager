@@ -233,7 +233,7 @@ class AIPMaker():
         if is_valid:
             self.logger.info("AIP structure appears to be valid.")
         else:
-            self.logger.critical("AIP structure appears to invalid.")
+            self.logger.warning("AIP structure appears to invalid.")
          
         return is_valid
 
