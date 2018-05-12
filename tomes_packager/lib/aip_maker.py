@@ -97,7 +97,6 @@ class AIPMaker():
         except OSError as err:
             self.logger.warning("Can't delete source folder: {}".format(folder))
             self.logger.error(err)
-            return
         
         return
 
