@@ -6,7 +6,6 @@ file (.xlsx).
 
 Todo:
     * Add logging.
-    * Get rid of __main__ test once you've created a unit test and know how this works! :-)
     * Can you add validation per XSD?
 """
 
@@ -15,6 +14,8 @@ import hashlib
 import logging
 import logging.config
 import os
+import rdflib
+import xml.sax._exceptions
 from datetime import datetime
 from lxml import etree
 from openpyxl import load_workbook
@@ -22,11 +23,21 @@ from openpyxl import load_workbook
 
 class XLSXToRDF():
     """ A class for creating RDF/Dublin Core metadata from a Microsoft Excel 2010 file 
-    (.xlsx). """
+    (.xlsx). 
+    
+    Attributes:
+        - ???
+        
+    Example:
+        >>> ???
+        
+    """
 
 
-    def __init__(self, element_header="dc_element", value_header="dc_value"):
-        """ 
+    def __init__(self, element_header="dc_element", value_header="dc_value",
+                 charset="utf-8"):
+        """ Sets instance attributes.
+
         Args:
             - ???
     
@@ -39,6 +50,7 @@ class XLSXToRDF():
         # ???
         self.element_header = element_header
         self.value_header = value_header
+        self.charset = charset
         
         # ???
         self.rdf_prefix = "rdf"
@@ -54,7 +66,15 @@ class XLSXToRDF():
 
         # TODO: do try/except here and log if you can't open the file.
         workbook = load_workbook(xlsx_file, read_only=False, data_only=True)
-        worksheets = workbook.worksheets
+        
+        # ???
+        worksheets = []
+        for worksheet in workbook.worksheets:
+            if worksheet.title.replace("_", "").isalpha:
+                self.logger.info("")
+                worksheets.append(worksheet)
+            else:
+                self.logger.warning("")
 
         return worksheets
  
@@ -88,8 +108,10 @@ class XLSXToRDF():
         return True
 
 
-    def _get_rdf_el(self, header_map, worksheet):
+    def _get_rdf(self, header_map, worksheet):
         """ ??? """
+    
+        self.logger.info("Building RDF tree.")
     
         # ???
         metadata = []
@@ -101,9 +123,8 @@ class XLSXToRDF():
         # ???
         rdf_id = "{}".format(metadata) + datetime.utcnow().isoformat()
         rdf_id = rdf_id.encode("utf-8")
-        logging.debug("Unhashed metadata + timestamp: {}".format(rdf_id))  
         rdf_id = "_" + hashlib.sha256(rdf_id).hexdigest()
-        logging.debug("Hashed metadata + timestamp: {}".format(rdf_id))        
+        self.logger.debug("Hashed metadata + timestamp: {}".format(rdf_id))        
             
         # ???
         rdf_el = etree.Element("{" + self.ns_map[self.rdf_prefix] + "}RDF", nsmap=self.ns_map)
@@ -129,16 +150,38 @@ class XLSXToRDF():
         
         # ???
         rdf_el.append(rdf_description)
-        self.logger.info("RDF tree built.")
 
-        return rdf_el
+        rdf = etree.tostring(rdf_el, pretty_print=True).decode(self.charset)
+        return rdf
 
 
-    def get_RDFs(self, xlsx_file):
+    def validate_rdf(self, rdf):
         """ ??? """
 
-        RDFs = []
+        # ???
+        is_valid = True
 
+        # ???
+        try:
+            graph = rdflib.Graph()
+            result = graph.parse(data=rdf, format="application/rdf+xml")
+        except xml.sax._exceptions.SAXParseException as err:
+            self.logger.warning("bad XML")
+            self.logger.error(err)
+            is_valid = False
+        except rdflib.exceptions.ParserError as err:
+            self.logger.warning("bad RDF")
+            self.logger.error(err)
+            is_valid = False
+
+        return is_valid
+
+        
+    def get_rdfs(self, xlsx_file):
+        """ ??? """\
+            
+        rdfs = []
+        
         worksheets = self._get_worksheets(xlsx_file)
         for worksheet in worksheets:
             header_map = self._get_header_map(worksheet)
@@ -147,9 +190,12 @@ class XLSXToRDF():
                 self.logger.warning("Skipping sheet ...")
                 continue
             else:
-                RDFs.append(self._get_rdf_el(header_map, worksheet))
+                rdf = self._get_rdf(header_map, worksheet)
+                if self.validate_rdf(rdf):
+                    worksheet.__setattr__("rdf", rdf)
+                    rdfs.append(worksheet)
 
-        return RDFs
+        return rdfs
 
 
 # TEST.
@@ -157,6 +203,7 @@ if __name__ == "__main__":
 
     x2r = XLSXToRDF()
     f = "../../tests/sample_files/sample_rdf.xlsx"
-    rdf = x2r.get_RDFs(f)
-    rdf = [etree.tostring(r, pretty_print=True).decode() for r in rdf]
-    print(rdf)
+    rdfs = x2r.get_rdfs(f)
+    rdf = rdfs[0]
+    print(rdf.title)
+    print(rdf.rdf)
