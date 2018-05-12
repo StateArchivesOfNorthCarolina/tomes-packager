@@ -2,11 +2,7 @@
 
 """
 This module contains a class for creating RDF/Dublin Core metadata from a Microsoft Excel 2010
-file (.xlsx).
-
-Todo:
-    * Add docstrings/logging.
-"""
+file (.xlsx). """
 
 # import modules.
 import hashlib
