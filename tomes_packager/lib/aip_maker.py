@@ -18,7 +18,7 @@ class AIPMaker():
     Example:
         >>> sample_dir = "../../tests/sample_files/"
         >>> am = AIPMaker("foo", sample_dir + "/hot_folder", sample_dir)
-        >>> am.make_aip() # returns absolute path to new "foo" AIP folder.
+        >>> am.make() # returns absolute path to new "foo" AIP folder.
         >>> am.validate() # True
     """
 
@@ -55,12 +55,9 @@ class AIPMaker():
         
         # convenience functions to join paths and normalize them.
         self._normalize_path = lambda p: os.path.abspath(p).replace("\\", "/")  
-        self._join_paths = lambda *l: self._normalize_path(os.path.join(*l))
+        self._join_paths = lambda *p: self._normalize_path(os.path.join(*p))
         
         # set source attributes.
-        self.source_data = glob.glob(self._join_paths(self.source_dir, "**"), recursive=True)
-        self.source_folders = [f for f in self.source_data if os.path.isdir(f)]
-        self.source_files = [f for f in self.source_data if os.path.isfile(f)]
         self.source_pst = self._join_paths(self.source_dir, "pst")
         self.source_mime = self._join_paths(self.source_dir, "mime", self.account_id)
         self.source_eaxs = self._join_paths(self.source_dir, "eaxs", self.account_id)
@@ -154,12 +151,12 @@ class AIPMaker():
 
         # per @find_files, determine what data to move.
         if find_files:
-            data = [self._normalize_path(f) for f in self.source_files
-                    if os.path.splitext(os.path.basename(f))[0] == self.account_id
-                    and self._normalize_path(os.path.dirname(f)) == source_dir]
+            data_glob = glob.glob(source_dir + "/*.*")
+            data = [self._normalize_path(f) for f in data_glob
+                    if os.path.splitext(os.path.basename(f))[0] == self.account_id]
         else:
-            data = [self._normalize_path(f) for f in self.source_folders
-                    if self._normalize_path(os.path.dirname(f)) == source_dir]
+            data_glob = glob.glob(source_dir + "/*")
+            data = [self._normalize_path(f) for f in data_glob]
 
         # abort if @data is empty, otherwise store what data should be moved.
         if len(data) == 0:
@@ -199,7 +196,7 @@ class AIPMaker():
             True if the AIP appears to be valid. Otherwise, False.
         """
     
-        self.logger.info("Trying to determing if AIP structure is valid.")
+        self.logger.info("Testing if AIP structure is valid.")
 
         # store validation tests.
         validation_tests = []
@@ -216,12 +213,18 @@ class AIPMaker():
         if not test:
             self.logger.warning("Failed transfers: {}".format(self.transfers["failed"]))
 
-        # test if MIME and EAXS folders exists in AIP.
+        # test if MIME and EAXS folders exists in AIP and aren't empty.
         for required_folder in [self.mime_dir, self.eaxs_dir]:
+            
             test = os.path.isdir(required_folder)
             validation_tests.append(test)
             if not test:
                 self.logger.warning("Missing required folder: {}".format(required_folder))
+            
+            test = len(os.listdir(required_folder)) !=0
+            validation_tests.append(test)
+            if not test:
+                self.logger.warning("Empty required folder: {}".format(required_folder))
                 
         # if False is in @validation_tests; the AIP cannot be valid.
         is_valid = False not in validation_tests
@@ -230,12 +233,12 @@ class AIPMaker():
         if is_valid:
             self.logger.info("AIP structure appears to be valid.")
         else:
-            self.logger.warning("AIP structure appears to invalid.")
+            self.logger.critical("AIP structure appears to invalid.")
          
         return is_valid
 
 
-    def make_aip(self):
+    def make(self):
         """ Create the AIP structure.
 
         Returns:
@@ -261,20 +264,8 @@ class AIPMaker():
         self._transfer_data(self.source_eaxs, self.eaxs_dir, False)
         self._transfer_data(self.source_metadata, self.metadata_dir, False)
 
-        # check for extra files with the same basename as @self.account_id.
-        metadata_files = [self._normalize_path(f) for f in self.source_files
-                        if os.path.splitext(os.path.basename(f))[0] == self.account_id
-                        and os.path.isfile(f)]
-        
-        # if extra files were found, move them.
-        if len(metadata_files) > 0:
-            self.logger.info("Extra account data found.") 
-            metadata_files = [os.path.dirname(f) for f in metadata_files]
-            for metadata_file in metadata_files:
-                self._transfer_data(metadata_file, self.metadata_dir)
-
-        # validate the AIP for logging purposes.
-        self.validate()
+        # move stray metadata files in @self.source_dir to @self.metadata_dir.
+        self._transfer_data(self.source_dir, self.metadata_dir)
         
         return self.root
 
