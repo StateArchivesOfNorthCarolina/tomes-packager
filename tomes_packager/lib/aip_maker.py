@@ -36,17 +36,19 @@ class AIPMaker():
             paths.
         """
 
-        # verify source_dir and destination_dir are folders.
-        if not os.path.isdir(source_dir):
-            msg = "Can't find source: {}".format(source_dir)
-            raise NotADirectoryError(msg)
-        if not os.path.isdir(destination_dir):
-            msg = "Can't find destination: {}".format(destination_dir)
-            raise NotADirectoryError(msg)
-
         # set logger; suppress logging by default.
         self.logger = logging.getLogger(__name__)
         self.logger.addHandler(logging.NullHandler())
+
+        # verify source_dir and destination_dir are folders.
+        if not os.path.isdir(source_dir):
+            msg = "Can't find source: {}".format(source_dir)
+            self.logger.error(msg)
+            raise NotADirectoryError(msg)
+        if not os.path.isdir(destination_dir):
+            msg = "Can't find destination: {}".format(destination_dir)
+            self.logger.error(msg)
+            raise NotADirectoryError(msg)
 
         # set attributes.
         self.account_id = str(account_id) 
@@ -180,7 +182,7 @@ class AIPMaker():
                 self.logger.error(err)
                 self.transfers["failed"].append(item)
 
-        # if moving and entire tree, remove @source_dir.
+        # if moving an entire tree, remove @source_dir.
         if not find_files:
             self._remove_folder(source_dir)
 
