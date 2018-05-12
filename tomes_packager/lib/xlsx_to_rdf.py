@@ -5,8 +5,7 @@ This module contains a class for creating RDF/Dublin Core metadata from a Micros
 file (.xlsx).
 
 Todo:
-    * Add logging.
-    * Can you add validation per XSD?
+    * Add docstrings/logging.
 """
 
 # import modules.
@@ -25,53 +24,74 @@ class XLSXToRDF():
     """ A class for creating RDF/Dublin Core metadata from a Microsoft Excel 2010 file 
     (.xlsx). 
     
-    Attributes:
-        - ???
         
     Example:
-        >>> ???
-        
+        >>> xlsx = "../../tests/sample_files/sample_rdf.xlsx"
+        >>> x2r = XLSXToRDF()
+        >>> rdfs = x2r.get_rdfs(f) # list of openpyxl worsheets.
+        >>> for rdf in rdfs:
+        >>>     print(rdf.title)
+        >>>     print(rdf.rdf)
     """
 
 
-    def __init__(self, element_header="dc_element", value_header="dc_value",
-                 charset="utf-8"):
+    def __init__(self, element_header="dc_element", value_header="dc_value", charset="utf-8"):
         """ Sets instance attributes.
 
         Args:
-            - ???
-    
+            - element_header (str):
+            - value_header (str):
+            - charset (str): 
         """
         
         # set logging; suppress logging by default. 
         self.logger = logging.getLogger(__name__)
         self.logger.addHandler(logging.NullHandler())
 
-        # ???
+        # set attributes.
         self.element_header = element_header
         self.value_header = value_header
         self.charset = charset
         
-        # ???
+        # set namespace attributes.
         self.rdf_prefix = "rdf"
         self.dc_prefix = "dc"
         self.ns_map = {self.rdf_prefix: "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
                 self.dc_prefix: "http://purl.org/dc/elements/1.1/"}
 
-    # ???
-    def _get_worksheets(self, xlsx_file):
-        """ ??? """
-   
-        self.logger.info("Opening workbook '{}'.".format(xlsx_file))
 
-        # TODO: do try/except here and log if you can't open the file.
-        workbook = load_workbook(xlsx_file, read_only=False, data_only=True)
+    def _get_worksheets(self, xlsx_file):
+        """ ???
         
+        Args:
+            - xlsx_file (str):
+                
+        Returns:
+            list: The return value.
+            Each item is an openpyxl.worksheet.worksheet.Worksheet.
+        """
+   
+        self.logger.info("Opening workbook: {}".format(xlsx_file))
+
+        # ???
+        try:
+            workbook = load_workbook(xlsx_file, read_only=False, data_only=True)
+        except Exception as err:
+            # TODO: What exceptions?
+            self.logger.warning("")
+            self.logger.error("")
+            raise
+
         # ???
         worksheets = []
         for worksheet in workbook.worksheets:
-            if worksheet.title.replace("_", "").isalpha:
-                self.logger.info("")
+            
+            # ???
+            title = worksheet.title
+            
+            # ???
+            if title.replace("_", "").isalpha:
+                self.logger.info("{}".format(title))
                 worksheets.append(worksheet)
             else:
                 self.logger.warning("")
@@ -80,38 +100,68 @@ class XLSXToRDF():
  
 
     def _get_header_map(self, worksheet):
-        """ ??? """
+        """ ???
+        
+        Args:
+            worksheet (openpyxl.worksheet.worksheet.Worksheet): 
+                
+        Returns:
+            dict: The return value.
+            ???
+        """
 
         self.logger.info("Looking for metadata in worksheet '{}'.".format(worksheet.title))
         
+        # ???
         header_map = [(header.value, header.column) for header in worksheet[1:1]]
         header_map = dict(header_map)
-
-        logging.debug("Found headers: {}".format(header_map))
+        
+        logging.info("Found the following headers: {}".format(header_map))
         return header_map
 
 
     def _validate_header(self, header_map):
-        """ ??? """
+        """ ??? 
         
+        Args:
+            - header_map (dict): ???
+            
+        Returns:
+            bool: The return value.
+            ???
+        """
+        
+        self.logger.info("")
+
         # ???
         if self.element_header not in header_map.keys():
             self.logger.warning("Invalid sheet; missing required header: {}".format(
                 self.element_header))
             return False
+        
+        # ???
         if self.value_header not in header_map.keys():
             self.logger.warning("Invalid sheet; missing required header: {}".format(
                 self.value_header))
             return False
         
-        logging.info("Header is valid.")
+        logging.info("Sheet headers are valid.")
         return True
 
 
     def _get_rdf(self, header_map, worksheet):
-        """ ??? """
+        """ ??? 
+        
+        Args:
+            - header_map (dict):
+            - worksheet (openpyxl.worksheet.worksheet.Worksheet):
+            
+        Returns:
+            str: The return value.
+            The RDF document.
+        """
     
-        self.logger.info("Building RDF tree.")
+        self.logger.info("Building RDF tree from worksheet: {}".format(worksheet.title))
     
         # ???
         metadata = []
@@ -135,6 +185,7 @@ class XLSXToRDF():
         # ???
         elements, values = metadata[0], metadata[1]
         for i in range(0, len(elements)):
+            
             element, value = elements[i], values[i]
             
             # ???
@@ -150,13 +201,20 @@ class XLSXToRDF():
         
         # ???
         rdf_el.append(rdf_description)
-
         rdf = etree.tostring(rdf_el, pretty_print=True).decode(self.charset)
+        
         return rdf
 
 
     def validate_rdf(self, rdf):
-        """ ??? """
+        """ ???
+        
+        Args:
+            - rdf (str):
+            
+        Returns:
+            bool: The return value.
+        """
 
         # ???
         is_valid = True
@@ -178,22 +236,39 @@ class XLSXToRDF():
 
         
     def get_rdfs(self, xlsx_file):
-        """ ??? """\
+        """ ??? 
+        
+        Args:
+            - xlsx_file (str):
+                
+        Returns:
+            list: The return value.
+            Each item is an openpyxl.worksheet.worksheet.Worksheet with an added "rdf"
+            attribute. This attribute is an RDF document (str).
+        """
             
+        # create output container.
         rdfs = []
         
+
+        # ???
         worksheets = self._get_worksheets(xlsx_file)
         for worksheet in worksheets:
+            
+            # ???
             header_map = self._get_header_map(worksheet)
             is_valid = self._validate_header(header_map)
+            
+            # ???
             if not is_valid:
                 self.logger.warning("Skipping sheet ...")
                 continue
-            else:
-                rdf = self._get_rdf(header_map, worksheet)
-                if self.validate_rdf(rdf):
-                    worksheet.__setattr__("rdf", rdf)
-                    rdfs.append(worksheet)
+
+            # ???
+            rdf = self._get_rdf(header_map, worksheet)
+            if self.validate_rdf(rdf):
+                worksheet.__setattr__("rdf", rdf)
+                rdfs.append(worksheet)
 
         return rdfs
 
