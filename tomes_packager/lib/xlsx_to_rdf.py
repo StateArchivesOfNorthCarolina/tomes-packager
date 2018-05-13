@@ -23,7 +23,7 @@ class XLSXToRDF():
     Example:
         >>> xlsx = "../../tests/sample_files/sample_rdf.xlsx"
         >>> x2r = XLSXToRDF()
-        >>> rdfs = x2r.get_rdfs(f) # list of openpyxl worksheets.
+        >>> rdfs = x2r.get_rdfs(xlsx)
         >>> for rdf in rdfs:
         >>>     print(rdf.name) # a worksheet's name.
         >>>     print(rdf.xml)  # RDF XML string version of worksheet.
@@ -114,7 +114,7 @@ class XLSXToRDF():
         header_map = [(header.value, header.column) for header in worksheet[1:1]]
         header_map = dict(header_map)
         
-        logging.info("Found the following headers: {}".format(header_map))
+        self.logger.info("Found the following headers: {}".format(header_map))
         return header_map
 
 
@@ -268,7 +268,7 @@ class XLSXToRDF():
 
         # verify @xlsx_file exists.
         if not os.path.isfile(xlsx_file):
-            msg = ""
+            msg = "Can't find Excel file: {}".format(xlsx_file))
             self.logger.error(msg)
             raise FileNotFoundError(msg)
 
