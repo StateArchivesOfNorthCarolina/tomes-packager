@@ -157,7 +157,7 @@ class ListObject(list):
         # create container string.
         viz = ""
         if self[0].isdir:
-            viz = self[0].parent_object.name + "\n"
+            viz = self[0].parent_object.name + "/\n"
         
         # for each item in @self, add strings to @viz. 
         for s in self:
