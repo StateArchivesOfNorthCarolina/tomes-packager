@@ -7,7 +7,6 @@ Todo:
     * Need to determine constant vars.
         - ISO/UTC now (aka @timstamp).
         - What else?
-    * Need to catch validation attempts run without an internet connection.
 """
 
 
@@ -99,13 +98,22 @@ class Packager():
             
         Returns:
             bool: The return value. True for valid, otherwise False.
+            If validation could not be performed due to no Internet connection, None is 
+            returned.
         """
 
         self.logger.info("Validating METS XML.")
         
         # load XSD.
         xsd = etree.parse(self._mets_xsd)
-        validator = etree.XMLSchema(xsd)
+        
+        # create validator or return None if no Internet connection exists.
+        try:
+            validator = etree.XMLSchema(xsd)
+        except etree.XMLSchemaParseError as err:
+            self.logger.warning("Unable to validate XML; likely no Internet connection.")
+            self.logger.error(err)
+            return None
         
         # validate @mets.
         try:
@@ -215,10 +223,14 @@ class Packager():
         
         # validate @mets and add validation status as an XML comment.
         is_mets_valid = self._validate_mets(mets)
-        if is_mets_valid:
-            msg = "NOTE: this METS document is valid as of {}.".format(timestamp())
+        if is_mets_valid is None:
+            msg = "WARNING: METS document could not be validated as of {}.".format(
+                    timestamp())
+            is_mets_valid = False
+        elif not is_mets_valid:
+            msg = "CRITICAL: this METS document is valid as of {}.".format(timestamp())
         else:
-            msg = "WARNING: this METS document is valid as of {}.".format(timestamp())
+            msg = "NOTE: this METS document is valid as of {}.".format(timestamp())
         mets.append(etree.Comment(msg))
        
         # beautify @mets.
