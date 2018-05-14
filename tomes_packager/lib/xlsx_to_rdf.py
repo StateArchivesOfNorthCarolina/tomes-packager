@@ -25,8 +25,9 @@ class XLSXToRDF():
         >>> x2r = XLSXToRDF()
         >>> rdfs = x2r.get_rdfs(xlsx)
         >>> for rdf in rdfs:
-        >>>     print(rdf.name) # a worksheet's name.
-        >>>     print(rdf.xml)  # RDF XML string version of worksheet.
+        >>>     print(rdf.name)
+        >>>     print(rdf.element)
+        >>>     print(rdf.xml) 
     """
 
 
@@ -55,6 +56,29 @@ class XLSXToRDF():
                 self.dc_prefix: "http://purl.org/dc/elements/1.1/"}
 
 
+    @staticmethod
+    def _legalize_xml_text(xtext):
+        """ A static method that alters @xtext by replacing vertical tabs, form feeds, and
+        carriage returns with line breaks and by removing control characters except for line 
+        breaks and tabs. This is so that @xtext can be written to XML without raising a 
+        ValueError.
+        
+        Args:
+            - xtext (str): The text to alter.
+
+        Returns:
+            str: The return value.
+        """
+
+        # legalize @xtext.
+        for ws in ["\f","\r","\v"]:
+            xtext = xtext.replace(ws, "\n")
+        xtext = "".join([char for char in xtext if unicodedata.category(char)[0] != "C" or
+            char in ("\t", "\n")])
+        
+        return xtex
+
+
     def _get_worksheets(self, xlsx_file):
         """ Gets the worksheets in @xlsx_file. Each worksheet's name must contain only letters
         and underscores.
@@ -81,17 +105,22 @@ class XLSXToRDF():
             raise OSError(err)
 
         # collect candidate worksheets.
+        self.logger.info("Looking for worksheets to convert to RDF.")
         worksheets = []
         for worksheet in workbook.worksheets:
             
             # only store worksheets with valid names.
             title = worksheet.title
-            if title.replace("_", "").isalpha():
+            title_plain = title.replace("_", "")
+            if title_plain.isalpha():
                 self.logger.info("Found candidate worksheet: {}".format(title))
                 worksheets.append(worksheet)
             else:
                 self.logger.warning("Worksheet '{}' has an invalid name; skipping.".format(
                     title))
+                illegal_chars = [c for c in title_plain if not c.isalpha()]
+                self.logger.debug("Illegal characters found in '{}': {}".format(title, 
+                    illegal_chars))
 
         return worksheets
  
@@ -108,13 +137,14 @@ class XLSXToRDF():
             Each key is a header row's text. Each value is the corresponding column letter.
         """
 
-        self.logger.info("Looking for metadata in worksheet '{}'.".format(worksheet.title))
+        self.logger.info("Looking for metadata in worksheet: {}".format(worksheet.title))
         
         # create dict with header data.
-        header_map = [(header.value, header.column) for header in worksheet[1:1]]
-        header_map = dict(header_map)
-        
-        self.logger.info("Found the following headers: {}".format(header_map))
+        headers = [(header.value, header.column) for header in worksheet[1:1]]
+        header_fields = tuple([h for h,v in headers])
+        header_map = dict(headers)
+
+        self.logger.info("Found the following headers: {}".format(header_fields))
         return header_map
 
 
@@ -143,23 +173,22 @@ class XLSXToRDF():
         
         # report on validity.
         if is_valid:
-            self.logger.info("Sheet header is valid.")
+            self.logger.info("Header is valid.")
         else:
-            self.logger.error("Sheet header is invalid.")
+            self.logger.warning("Header is invalid.")
         
         return is_valid
 
 
     def _get_rdf(self, worksheet):
-        """ Generates an RDF XML string from a given @worksheet.
+        """ Generates an RDF XML element from a given @worksheet.
         
         Args:
             - worksheet (openpyxl.worksheet.worksheet.Worksheet): The worksheet from which to
-            build and RDF XML document.
+            build and RDF XML element.
             
         Returns:
-            str: The return value.
-            The RDF XML document.
+            lxml.etree._Element: The return value.
         """
      
         # get @worksheet header.
@@ -167,7 +196,7 @@ class XLSXToRDF():
             
         # if the header is not valid, return None.
         if not self._validate_header(header_map):
-            self.logger.warning("Skipping invalid worksheet.")
+            self.logger.warning("Skipping invalid worksheet: {}".format(worksheet.title))
             return None
         else:
             self.logger.info("Building RDF tree from worksheet: {}".format(worksheet.title))
@@ -183,16 +212,16 @@ class XLSXToRDF():
         # current timestamp.
         rdf_id = "{}".format(metadata) + datetime.utcnow().isoformat()
         rdf_id = rdf_id.encode(self.charset)
-        rdf_id = "_" + hashlib.sha256(rdf_id).hexdigest()[:6]
-        self.logger.debug("Hashed metadata + timestamp: {}".format(rdf_id))        
+        rdf_id = "_" + hashlib.sha256(rdf_id).hexdigest()[:7]
+        self.logger.debug("Created @rdf_id: {}".format(rdf_id))        
             
         # create RDF root as an lxml.etree._Element.
-        rdf_el = etree.Element("{" + self.ns_map[self.rdf_prefix] + "}RDF", nsmap=self.ns_map)
+        rdf = etree.Element("{" + self.ns_map[self.rdf_prefix] + "}RDF", nsmap=self.ns_map)
         rdf_description = etree.Element("{" + self.ns_map[self.rdf_prefix] + "}Description", 
                 nsmap=self.ns_map)
         rdf_description.set("{" + self.ns_map[self.rdf_prefix] + "}ID", rdf_id)
         
-        # append sub-elements to @rdf_el.
+        # append sub-elements to @rdf.
         elements, values = metadata[0], metadata[1]
         for i in range(0, len(elements)):
             
@@ -200,18 +229,28 @@ class XLSXToRDF():
             
             # if either the element or value cell is blank, skip the row.
             if element is None or value is None:
-                self.logger.warning("Skipping row '{}'; contains empty data.".format(i))
+                self.logger.warning("Skipping row {}; contains empty data.".format(i))
                 continue
+            else:
+                self.logger.info("Creating element '{}' with value: {}".format(element,
+                    value))
             
             # create sub-element and append it the RDF tree.
-            dc_el= etree.Element("{" + self.ns_map[self.dc_prefix] + "}" + element, 
+            dc_el = etree.Element("{" + self.ns_map[self.dc_prefix] + "}" + element, 
                     nsmap=self.ns_map)
-            dc_el.text = str(value)
-            rdf_description.append(dc_el)
-        
-        # finalize @rdf_el and convert it to a string.
-        rdf_el.append(rdf_description)
-        rdf = etree.tostring(rdf_el, pretty_print=True).decode(self.charset)
+            rdf_description.append(dc_el)            
+
+            # set @element text to @value.
+            value = str(value)
+            try:
+                dc_el.text = value
+            except ValueError as err:
+                self.logger.error(err)
+                self.logger.info("Cleaning whitespace for element value.")
+                dc_el.text = self._legalize_xml_text(value)
+            
+        # finalize @rdf.
+        rdf.append(rdf_description)
         
         return rdf
 
@@ -258,9 +297,10 @@ class XLSXToRDF():
                 
         Returns:
             list: The return value.
-            Each item is an object with two attributes:
-                1. "name" - The name of a corresponding worksheet in @xlsx_file.
-                2. "xml" - The RDF string representation of the worksheet data.
+            Each item is an object with three attributes: 
+                1. name: The name of a corresponding worksheet in @xlsx_file.
+                2. element: The RDF XML version of the worksheet as an lxml.etree._Element. 
+                3. xml: The RDF XML as a string.
 
         Raises:
             - FileNotFoundError: If @xlsx_file is not a file. 
@@ -268,7 +308,7 @@ class XLSXToRDF():
 
         # verify @xlsx_file exists.
         if not os.path.isfile(xlsx_file):
-            msg = "Can't find Excel file: {}".format(xlsx_file))
+            msg = "Can't find Excel file: {}".format(xlsx_file)
             self.logger.error(msg)
             raise FileNotFoundError(msg)
 
@@ -277,8 +317,9 @@ class XLSXToRDF():
         
         # @rdfs will contain instances of this class. 
         class RDFObject(object):
-            def __init__(self, name, xml):
-                self.name, self.xml = name, xml
+            def __init__(self, name, element, _charset=self.charset):
+                self.name, self.element = name, element
+                self.xml = etree.tostring(rdf, pretty_print=True).decode(_charset)
 
         # for each worksheet; try to generate RDF.
         worksheets = self._get_worksheets(xlsx_file)
@@ -288,10 +329,12 @@ class XLSXToRDF():
             rdf = self._get_rdf(worksheet)
             if rdf is None:
                 continue
+            
+            # make an RDFObject.
+            rdfobj = RDFObject(worksheet.title, rdf)
 
-            # only append valid RDF documents to @rdfs.
-            if self.validate_rdf(rdf):
-                rdfobj = RDFObject(worksheet.title, rdf)
+            # only append valid RDF to @rdfs.
+            if self.validate_rdf(rdfobj.xml):
                 rdfs.append(rdfobj)
 
         return rdfs
