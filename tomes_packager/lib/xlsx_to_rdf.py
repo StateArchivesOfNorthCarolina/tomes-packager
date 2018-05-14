@@ -76,7 +76,7 @@ class XLSXToRDF():
         xtext = "".join([char for char in xtext if unicodedata.category(char)[0] != "C" or
             char in ("\t", "\n")])
         
-        return xtex
+        return xtext
 
 
     def _get_worksheets(self, xlsx_file):
