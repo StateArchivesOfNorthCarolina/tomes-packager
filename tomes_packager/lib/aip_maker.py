@@ -287,7 +287,7 @@ class AIPMaker():
             self.logger.error(msg)
             raise IsADirectoryError(msg)
         else:
-            self.logger.info("Creating AIP at: {}".format(self.root))
+            self.logger.info("Creating AIP structure at: {}".format(self.root))
 
         # create @self.root and move data into it.
         self._create_folder(self.root)        

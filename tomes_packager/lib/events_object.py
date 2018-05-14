@@ -126,7 +126,6 @@ class EventsObject(object):
             # verify @name is a string.
             if not isinstance(name, str):
                 msg = "Expected string; got: {}".format(type(name))
-                self.logger.error(msg)
                 raise TypeError(msg)
 
             # set attributes.
