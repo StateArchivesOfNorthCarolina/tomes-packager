@@ -25,9 +25,9 @@ class XLSXToRDF():
         >>> x2r = XLSXToRDF()
         >>> rdfs = x2r.get_rdfs(xlsx)
         >>> for rdf in rdfs:
-        >>>     print(rdf.name)
-        >>>     print(rdf.element)
-        >>>     print(rdf.xml) 
+        >>>     print(rdf.name) # worksheet name.
+        >>>     #rdf.element # RDF XML as lxml.etree._Element. 
+        >>>     print(rdf.xml) # RDF XML as string.
     """
 
 
