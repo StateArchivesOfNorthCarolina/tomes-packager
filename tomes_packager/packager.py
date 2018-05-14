@@ -131,9 +131,9 @@ class Packager():
         try:
             mets = template.render(*args, **kwargs)
         except Exception as err:
-            # TODO: What exceptions?
+            # TODO: What exceptions? jinja2.exceptions.UndefinedError
             self.logger.warning("Unable to render template.")
-            self.logger.err(err)
+            self.logger.error(err)
             raise 
         
         # convert @mets to an lxml.etree._Element.
@@ -168,7 +168,6 @@ class Packager():
             self.logger.warning("??? invalid AIP structure; trying anyway ...")
         if not self._abspath(self.destination_dir) == self._abspath(aip.destination_dir):
             self.logger.warning("???")
-
 
         # ???
         if self.mets_template == "":

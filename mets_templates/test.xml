@@ -78,4 +78,5 @@ xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/m
     %% endif %%
     
 <!-- {{ graph }} -->
+<!-- {{ events.fooevent.name }}: {{ events.fooevent.timestamp }} -->
 </mets>
