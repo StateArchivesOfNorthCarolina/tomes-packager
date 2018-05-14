@@ -7,6 +7,9 @@ Todo:
     * Need to determine constant vars.
         - ISO/UTC now (aka @timstamp).
         - What else?
+    * If AIP restructing works but METS fails, we need a function to JUST
+    drop in the METS (and to create DirectoryObject) - also useful if AIP 
+    already exists.
 """
 
 
