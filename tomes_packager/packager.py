@@ -1,4 +1,5 @@
-""" ???
+""" This module contains a class for constructing a TOMES archival information package (AIP)
+with an optional METS file.
 
 Todo:
     * Verify template is a file on __init__.
@@ -23,11 +24,25 @@ from lib.events_object import EventsObject
 
     
 class Packager():
-    """ ??? """
+    """ A class for constructing a TOMES archival information package (AIP) with an optional 
+    METS file. """
 
-    def __init__(self, account_id, source_dir, destination_dir, preservation_events={}, 
-            mets_template="", charset="utf-8"):
-        """ ??? """
+
+    def __init__(self, account_id, source_dir, destination_dir, mets_template="", 
+            preservation_events={}, charset="utf-8"):
+        """ Sets instance attributes.
+        
+        Args:
+            - account_id (str): The email account's base identifier, i.e. the file prefix.
+            - source_dir (str): The folder path from which to transfer data.
+            - destination_dir (str): The folder path in which to create the AIP structure.
+            - mets_template (str): The file path for the METS template. This will be used to
+            render a METS file inside the AIP's root folder. For more information, see: 
+            "https://github.com/StateArchivesOfNorthCarolina/tomes-packager/blob/master/docs/documentation.md".
+            - preservation_events (dict): Optional preservation events to pass into 
+            @mets_template.
+            - charset (str): The encoding for the rendered METS file.
+        """
 
         # set logger; suppress logging by default.
         self.logger = logging.getLogger(__name__)
@@ -116,93 +131,117 @@ class Packager():
             
         Returns:
             lxml.etree._Element: The return value.
+            If the template has invalid XML syntax, None is returned.
+
+        Raises:
+            - jinja2.exceptions.UndefinedError: If @self.mets_template can't be rendered.
         """
 
         self.logger.info("Rendering template: {}".format(self.mets_template))
 
-        # render @self.mets_template.
+        # open @self.mets_template.
         with open(self.mets_template, encoding=self.charset) as tf:
                 mets = tf.read()
-                
+               
+        # create the Jinja renderer.
         template = jinja2.Template(mets, trim_blocks=True, lstrip_blocks=True, 
                 block_start_string="%%", block_end_string="%%", comment_start_string="<!--#",
                 comment_end_string="#-->")
         
+        # render @self.mets_template.
         try:
             mets = template.render(*args, **kwargs)
-        except Exception as err:
-            # TODO: What exceptions? jinja2.exceptions.UndefinedError
-            self.logger.warning("Unable to render template.")
+        except jinja2.exceptions.UndefinedError as err:
+            self.logger.warning("Unable to render template; skipping METS creation.")
             self.logger.error(err)
-            raise 
+            return None
         
         # convert @mets to an lxml.etree._Element.
-        mets = etree.fromstring(mets) 
+        try:
+            mets = etree.fromstring(mets) 
+        except etree.XMLSyntaxError as err:
+            self.logger.warning("XML syntax error in template; skipping METS creation.")
+            self.logger.error(err)
+            return None
 
-        # validate @mets and add validation status as an XML comment.
-        valid_msg = " It is {} that this METS is valid. ".format(self._validate_mets(mets))
-        mets.append(etree.Comment(valid_msg))
-        
-        # beautify @mets.
-        mets = self._beautify_mets(mets)
-        
         return mets
 
 
     def package(self):
-        """ ??? """
+        """ Creates the AIP structure and optional METS file.
+        
+        Returns:
+            tuple: The return value.
+            The first item is he AIP folder's absolute path. The second item is the METS 
+            file's base name (None if no METS was created). The third item is a boolean:
+            False if the AIP structure and/or the METS is invalid and/or the METS template
+            failed to render (likely due to user error). Otherwise, True.
+        """
 
-        self.logger.info("???")
+        # create function to get ISO timestamp. 
+        timestamp = lambda: datetime.utcnow().isoformat() + "Z"
 
-        # ???
-        try:
-            aip = self._aip_maker(self.account_id, self.source_dir, self.destination_dir)
-            aip.make()
-        except Exception as err:
-            self.logger.warning("???")
-            self.logger.error(err)
-            raise #TODO: raise what?
+        # set AIP path.
+        aip_dir = self._abspath(os.path.join(self.destination_dir, 
+            self.account_id))
+        self.logger.info("Packaging: {}".format(aip_dir))
 
-        # ???
+        # create AIP structure.
+        aip = self._aip_maker(self.account_id, self.source_dir, self.destination_dir)
+        aip.make()
+
+        # if the AIP structure isn't valid, warn but continue on.
         if not aip.validate():
-            self.logger.warning("??? invalid AIP structure; trying anyway ...")
-        if not self._abspath(self.destination_dir) == self._abspath(aip.destination_dir):
-            self.logger.warning("???")
+            self.logger.warning("AIP structure is invalid; continuing anyway.")
 
-        # ???
+        # if no METS template was passed; return AIP.
         if self.mets_template == "":
-            self.logger.info("???")
-            return
+            self.logger.info("No METS template passed; skipping METS creation.")
+            return (aip_dir, None, aip.validate())
 
-        # ???
-        try:
-            aip_dir = self._normalize_path(os.path.join(self.destination_dir, 
-                self.account_id))
-            aip_obj = self._directory_object(aip_dir)
-        except Exception as err:
-            self.logger.warning("???")
-            self.logger.error(err)
-            raise #TODO: raise what?
+        # otherwise, create a DirectoryObject for the AIP.
+        aip_obj = self._directory_object(aip_dir)
 
-        # ???
-        mets = self._render_mets(timestamp = lambda: datetime.utcnow().isoformat() + "Z", 
+        # create METS from @self.mets_template.
+        mets = self._render_mets(timestamp = timestamp, 
                 folders = aip_obj.dirs, 
                 files = aip_obj.files,
                 graph = "\n" + aip_obj.rdirs.ls(),
                 events = self.preservation_events)
+        
+        # is the METS template failed to render, return AIP and mark it invalid.
+        if mets is None:
+            return (aip_dir, None, False)
+        
+        # validate @mets and add validation status as an XML comment.
+        is_mets_valid = self._validate_mets(mets)
+        if is_mets_valid:
+            msg = "NOTE: this METS document is valid as of {}.".format(timestamp())
+        else:
+            msg = "WARNING: this METS document is valid as of {}.".format(timestamp())
+        mets.append(etree.Comment(msg))
+       
+        # beautify @mets.
+        mets = self._beautify_mets(mets)
+
+        # convert @mets to a string.
         mets = etree.tostring(mets, pretty_print=True, encoding=self.charset).decode(
                 self.charset)
         
-        # ???
+        # set the METS file path.
         mets_file = "{}.mets.xml".format(self.account_id)
         mets_path = os.path.join(self._abspath(self.destination_dir), self.account_id,
                 mets_file)
+        mets_path = self._abspath(mets_path)
         
-        # ???
+        # write @mets to file.
         with open(mets_path, "w", encoding=self.charset) as mf:
             mf.write(mets)
             
-        return mets_path
+        # determine if both the AIP and the METS are valid.
+        aip_validity = bool(aip.validate() * is_mets_valid)
+
+        return (aip_dir, mets_file, aip_validity)
 
 
 # TEST.
@@ -212,9 +251,10 @@ if __name__ == "__main__":
 
     p = Packager("foo", 
             "../tests/sample_files/hot_folder", 
-            "../tests/sample_files",
-            {"20180101":["fooevent", None]}, 
-            "../mets_templates/test.xml")
+            "../tests/sample_files", 
+            "../mets_templates/test.xml",
+            {"20180101":["fooevent", None]})
     
-    p.package()
+    aip = p.package()
+    print(aip)
     pass
