@@ -246,7 +246,7 @@ class XLSXToRDF():
                 dc_el.text = value
             except ValueError as err:
                 self.logger.error(err)
-                self.logger.info("Cleaning whitespace for element value.")
+                self.logger.info("Cleaning whitespace; rewriting element value.")
                 dc_el.text = self._legalize_xml_text(value)
             
         # finalize @rdf.
@@ -274,11 +274,11 @@ class XLSXToRDF():
             graph = rdflib.Graph()
             result = graph.parse(data=rdf, format="application/rdf+xml")
         except xml.sax._exceptions.SAXParseException as err:
-            self.logger.warning("XML is malformed.")
+            self.logger.warning("RDF XML is malformed.")
             self.logger.error(err)
             is_valid = False
         except rdflib.exceptions.ParserError as err:
-            self.logger.warning("XML is well-formed but the RDF syntax is wrong.")
+            self.logger.warning("RDF XML is well-formed but the syntax is wrong.")
             self.logger.error(err)
             is_valid = False
 
