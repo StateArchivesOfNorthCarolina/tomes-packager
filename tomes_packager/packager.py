@@ -11,7 +11,6 @@ Todo:
 
 
 # import modules.
-import glob
 import jinja2
 import logging
 import logging.config
