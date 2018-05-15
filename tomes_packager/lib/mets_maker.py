@@ -161,15 +161,22 @@ class METSMaker():
                 mets = tf.read()
                
         # create the Jinja renderer.
-        template = jinja2.Template(mets, trim_blocks=True, lstrip_blocks=True, 
-                block_start_string="%%", block_end_string="%%", comment_start_string="<!--#",
-                comment_end_string="#-->")
+        try:
+            template = jinja2.Template(mets, trim_blocks=True, lstrip_blocks=True, 
+                    block_start_string="%%", block_end_string="%%", 
+                    comment_start_string="<!--#", comment_end_string="#-->")
+        except jinja2.exceptions.TemplateSyntaxError as err:
+            self.logger.warning("Can't render METS; template syntax is invalid.")
+            self.logger.exception(err, exc_info=True)
+            return None
         
         # render @self.mets_template.
         try:
             mets = template.render(*self.args, **self.kwargs)
         except (AttributeError, TypeError, jinja2.exceptions.UndefinedError) as err:
-            self.logger.warning("Can't render METS; check template for user errors.")
+            msg = "Can't render METS; "
+            msg += "check template for undefined variables or calls to non-functions."
+            self.logger.warning(msg)
             self.logger.exception(err, exc_info=True)
             return None
         
