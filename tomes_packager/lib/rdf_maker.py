@@ -16,35 +16,53 @@ from lxml import etree
 from openpyxl import load_workbook
 
 
-class XLSXToRDF():
+class RDFMaker():
     """ A class for creating RDF/Dublin Core XML metadata from a Microsoft Excel 2010 file 
     (.xlsx).
+
+    Attributes:
+        - rdfs (list): A list of RDF objects, each with three attributes:
+            1. name: The name of a corresponding worksheet in @self.xlsx_file.
+            2. element: The RDF XML version of the worksheet as an lxml.etree._Element. 
+            3. xml: The RDF XML as a string.
         
     Example:
         >>> xlsx = "../../tests/sample_files/sample_rdf.xlsx"
-        >>> x2r = XLSXToRDF()
-        >>> rdfs = x2r.get_rdfs(xlsx)
-        >>> for rdf in rdfs:
+        >>> rm = RDFMaker(xlsx)
+        >>> rm.make()
+        >>> for rdf in rm.rdfs:
         >>>     print(rdf.name) # worksheet name.
         >>>     #rdf.element # RDF XML version of the worksheet as an lxml.etree._Element. 
         >>>     print(rdf.xml) # RDF XML as a string.
     """
 
 
-    def __init__(self, element_header="dc_element", value_header="dc_value", charset="utf-8"):
+    def __init__(self, xlsx_file, element_header="dc_element", value_header="dc_value", 
+            charset="utf-8"):
         """ Sets instance attributes.
 
         Args:
+            - xlsx_file (str): The Excel file from which to get worksheets to convert to RDF.
             - element_header (str): The worksheet header string for Dublin Core element names.
             - value_header (str): The worksheet header string for Dublin Core element values.
             - charset (str): The encoding to use for RDF XML strings.
+
+        Raises:
+            - FileNotFoundError: If @self.xlsx_file is not an actual file path.
         """
         
         # set logging; suppress logging by default. 
         self.logger = logging.getLogger(__name__)
         self.logger.addHandler(logging.NullHandler())
 
+        # verify @xlsx is a file.
+        if not os.path.isfile(xlsx_file):
+            msg = "Can't find: {}".format(xlsx_file)
+            self.logger.error(msg)
+            raise FileNotFoundError(msg)
+
         # set attributes.
+        self.xlsx_file = xlsx_file
         self.element_header = element_header
         self.value_header = value_header
         self.charset = charset
@@ -54,6 +72,9 @@ class XLSXToRDF():
         self.dc_prefix = "dc"
         self.ns_map = {self.rdf_prefix: "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
                 self.dc_prefix: "http://purl.org/dc/elements/1.1/"}
+
+        # set storage container for RDFs.
+        self.rdfs = []
 
 
     @staticmethod
@@ -79,28 +100,25 @@ class XLSXToRDF():
         return xtext
 
 
-    def _get_worksheets(self, xlsx_file):
-        """ Gets the worksheets in @xlsx_file. Each worksheet's name must contain only letters
-        and underscores.
-        
-        Args:
-            - xlsx_file (str): The Excel file from which to obtain worksheets.
+    def _get_worksheets(self):
+        """ Gets the worksheets in @self.xlsx_file. Each worksheet's name must contain only 
+        letters and underscores.
                 
         Returns:
             list: The return value.
             Each item is an openpyxl.worksheet.worksheet.Worksheet.
 
         Raises:
-            - OSError: If @xlsx_file can't be opened.
+            - OSError: If @self.xlsx_file can't be opened.
         """
    
-        self.logger.info("Opening workbook: {}".format(xlsx_file))
+        self.logger.info("Opening workbook: {}".format(self.xlsx_file))
 
-        # load data from @xlsx_file.
+        # load data from @self.xlsx_file.
         try:
-            workbook = load_workbook(xlsx_file, read_only=False, data_only=True)
+            workbook = load_workbook(self.xlsx_file, read_only=False, data_only=True)
         except Exception as err:
-            self.logger.warning("Can't open Excel file: {}".format(xlsx_file))
+            self.logger.warning("Can't open Excel file: {}".format(self.xlsx_file))
             self.logger.error(err)
             raise OSError(err)
 
@@ -255,7 +273,7 @@ class XLSXToRDF():
         return rdf
 
 
-    def validate_rdf(self, rdf):
+    def validate(self, rdf):
         """ Determines if @rdf is well-formed XML and has valid RDF syntax.
         
         Args:
@@ -289,28 +307,16 @@ class XLSXToRDF():
         return is_valid
 
         
-    def get_rdfs(self, xlsx_file):
-        """ Creates RDF XML documents for each suitable worksheet in @xlsx_file.
-        
-        Args:
-            - xlsx_file (str): The XML file from which to generate RDF XML.
+    def make(self):
+        """ Creates RDF XML documents for each suitable worksheet in @self.xlsx_file.
                 
         Returns:
             list: The return value.
             Each item is an object with three attributes: 
-                1. name: The name of a corresponding worksheet in @xlsx_file.
+                1. name: The name of a corresponding worksheet in @self.xlsx_file.
                 2. element: The RDF XML version of the worksheet as an lxml.etree._Element. 
                 3. xml: The RDF XML as a string.
-
-        Raises:
-            - FileNotFoundError: If @xlsx_file is not a file. 
         """
-
-        # verify @xlsx_file exists.
-        if not os.path.isfile(xlsx_file):
-            msg = "Can't find Excel file: {}".format(xlsx_file)
-            self.logger.error(msg)
-            raise FileNotFoundError(msg)
 
         # create output container.
         rdfs = []
@@ -322,7 +328,7 @@ class XLSXToRDF():
                 self.xml = etree.tostring(rdf, pretty_print=True).decode(_charset)
 
         # for each worksheet; try to generate RDF.
-        worksheets = self._get_worksheets(xlsx_file)
+        worksheets = self._get_worksheets()
         for worksheet in worksheets:
             
             # make RDF.
@@ -334,8 +340,11 @@ class XLSXToRDF():
             rdfobj = RDFObject(worksheet.title, rdf)
 
             # only append valid RDF to @rdfs.
-            if self.validate_rdf(rdfobj.xml):
+            if self.validate(rdfobj.xml):
                 rdfs.append(rdfobj)
+
+        # set @self.rdfs.
+        self.rdfs = rdfs
 
         return rdfs
 
