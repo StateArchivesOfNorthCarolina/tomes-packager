@@ -219,8 +219,8 @@ class AIPMaker():
 
         # if @self.root doesn't exist, the AIP is invalid.
         if not os.path.isdir(self.root):
-            self.logger.warning("AIP folder doesn't exist.".format(self.root))
-            self.logger.info("Trying running .make() first.")
+            self.logger.warning("Root folder doesn't exist; try using .make() first.")
+            self.logger.debug("@self.root: {}".format(self.root))
             return False
         
         # store validation tests.
@@ -271,7 +271,7 @@ class AIPMaker():
 
 
     def make(self):
-        """ Create the AIP structure.
+        """ Creates the AIP structure.
 
         Returns:
             str: The return value.
