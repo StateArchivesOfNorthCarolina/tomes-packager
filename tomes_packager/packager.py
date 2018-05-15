@@ -9,10 +9,6 @@ Todo:
     drop in the METS (and to create DirectoryObject) - also useful if AIP 
     already exists.
         - Can't you just using METSMaker for that now?
-    * Add RDF stuff.
-    * Should I pre-compose th instances of AIP/METS/RDF Makers and DirectoryObject?
-        - At least set a self.mets, self.aip, self.directory_object, self.rdfs, etc. AFTER
-        they are built.
 """
 
 
@@ -48,8 +44,8 @@ class Packager():
             "https://github.com/StateArchivesOfNorthCarolina/tomes-packager/blob/master/docs/documentation.md".
             - preservation_events (dict): Optional preservation events to pass into 
             @mets_template.
-            - rdf_xlsx (str): ???
-            - charset (str): The encoding for the rendered METS file.
+            - rdf_xlsx (str): The Excel 2010+ (.xlsx) file from which to create RDFs. 
+            - charset (str): The encoding for the rendered METS an RDF data.
         """
 
         # set logger; suppress logging by default.
@@ -75,6 +71,12 @@ class Packager():
         self._mets_maker = METSMaker
         self._rdf_maker = RDFMaker
 
+        # creates atttibutes for calculated objects.
+        self.aip = None
+        self.directory = None
+        self.mets = None
+        self.rdf = None
+
 
     def package(self):
         """ Creates the AIP structure and optional METS file.
@@ -92,33 +94,39 @@ class Packager():
         self.logger.info("Packaging: {}".format(aip_dir))
 
         # create AIP structure.
-        aip = self._aip_maker(self.account_id, self.source_dir, self.destination_dir)
-        aip.make()
+        self.aip = self._aip_maker(self.account_id, self.source_dir, self.destination_dir)
+        self.aip.make()
 
         # if the AIP structure isn't valid, warn but continue on.
-        if not aip.validate():
+        if not self.aip.validate():
             self.logger.warning("AIP structure is invalid; continuing anyway.")
 
         # if no METS template was passed; return AIP.
         if self.mets_template == "":
             self.logger.info("No METS template passed; skipping METS creation.")
-            return (aip_dir, None, aip.validate())
+            return (aip_dir, None, self.aip.validate())
 
-        # otherwise, create a DirectoryObject for the AIP.
-        aip_obj = self._directory_object(aip_dir)
+        # create a DirectoryObject for the AIP.
+        self.directory = self._directory_object(aip_dir)
+
+        # if needed, create RDF objects.
+        if self.rdf_xlsx != "":
+            self.rdf = self._rdf_maker(self.rdf_xlsx, charset=self.charset)
+            self.rdf.make()
 
         # create METS from @self.mets_template.
-        mets = self._mets_maker(self.mets_template,
-                timestamp = lambda: datetime.utcnow().isoformat() + "Z", 
-                events = self.preservation_events,
-                folders = aip_obj.dirs, 
-                files = aip_obj.files,
-                graph = "\n" + aip_obj.rdirs.ls())
-        mets.make()
+        self.mets = self._mets_maker(self.mets_template, charset=self.charset,
+                TIMESTAMP = lambda: datetime.utcnow().isoformat() + "Z", 
+                EVENTS = self.preservation_events,
+                FOLDERS = self.directory.dirs, 
+                FILES = self.directory.files,
+                GRAPH = "\n" + self.directory.rdirs.ls(),
+                RDFS = self.rdf.rdfs if self.rdf is not None else [])
+        self.mets.make()
         
         # if the METS template failed to render, return AIP and mark it invalid.
-        if mets.mets is None:
-            self.logger.warning("Can't create METS; invalidating AIP.")
+        if self.mets.xml is None:
+            self.logger.warning("Couldn't create METS; invalidating AIP.")
             return (aip_dir, None, False)
         
         # set the METS file path.
@@ -128,10 +136,10 @@ class Packager():
         
         # write @mets to file.
         with open(mets_path, "w", encoding=self.charset) as mf:
-            mf.write(mets.mets)
+            mf.write(self.mets.xml)
             
         # determine if both the AIP and the METS are valid.
-        validity = bool(aip.validate() * mets.validate())
+        validity = bool(self.aip.validate() * self.mets.validate())
 
         return (aip_dir, mets_file, validity)
 

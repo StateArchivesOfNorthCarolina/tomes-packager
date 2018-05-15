@@ -14,9 +14,9 @@ class METSMaker():
     """ A class for constructing a METS document from a given METS template file.
     
         Attributes:
-            - mets (str): The rendered METS. If the template hasn't been successfully 
+            - xml (str): The rendered METS. If the template hasn't been successfully 
             rendered, this will be None.
-            - mets_el (lxml.etree._Elment): The rendered METS. If the template hasn't been 
+            - element (lxml.etree._Elment): The rendered METS. If the template hasn't been 
             successfully rendered, this will be None.
 
         Example:
@@ -25,11 +25,11 @@ class METSMaker():
             >>>                 folders = [])
             >>> mm.make()
             >>> mm.validate()
-            >>> print(mm.mets)
+            >>> print(mm.xml)
     """
 
 
-    def __init__(self, mets_template, charset="utf-8", evaluate=True, *args, **kwargs):
+    def __init__(self, mets_template, evaluate=True, charset="utf-8", *args, **kwargs):
         """ Sets instance attributes.
         
         Args:
@@ -37,9 +37,9 @@ class METSMaker():
             templates. Note that the Jinja template start AND stopping strings are set to "%%"
             instead of the defaults. Also, XML comments beginning and ending with "<!--#" and
             "#-->" will not be outputted and may be used as in-line template documentation.
-            - charset (str): The encoding for the rendered METS document.
             - evaluate (bool): If True, a time-stamped validation comment will be appended to
             the rendered METS document.
+            - charset (str): The encoding for the rendered METS document.
             - *args/**kwargs: The optional arguments to pass into @mets_template.
 
         Raises:
@@ -73,8 +73,8 @@ class METSMaker():
                 "beautifier.xsl")
 
         # set results containers.
-        self.mets = None
-        self.mets_el = None
+        self.xml = None
+        self.element = None
 
 
     def _beautify_mets(self, mets_el):
@@ -103,7 +103,7 @@ class METSMaker():
         """ Validates @mets_el against @self.xsd.
 
         Args:
-            - mets (lxml.etree._Element): The METS XML to validate. If None, @self.mets_el
+            - mets (lxml.etree._Element): The METS XML to validate. If None, @self.element
             will be used.
 
         Returns:
@@ -114,9 +114,9 @@ class METSMaker():
 
         self.logger.info("Validating METS.")
         
-        # if needed, use @self.mets_el.
+        # if needed, use @self.element.
         if mets_el is None:
-            mets_el = self.mets_el
+            mets_el = self.element
 
         # start with premis that validation hasn't occurred.
         is_valid = None
@@ -209,14 +209,14 @@ class METSMaker():
             self.logger.info("Appending XML comment: {}".format(msg))
             mets_el.append(etree.Comment(msg))
         
-        # beautify @mets_el and set @self.mets_el.
+        # beautify @mets_el and set @self.element.
         mets_el = self._beautify_mets(mets_el)
-        self.mets_el = mets_el
+        self.element = mets_el
         
         # finalize @mets.
         mets = etree.tostring(mets_el, pretty_print=True, encoding=self.charset).decode(
                 self.charset)
-        self.mets = mets
+        self.xml = mets
 
         return mets
 

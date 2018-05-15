@@ -2,7 +2,7 @@
 xmlns:xlink="http://www.w3.org/1999/xlink" 
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd">
-    <metsHdr CREATEDATE="{{ timestamp() }}">
+    <metsHdr CREATEDATE="{{ TIMESTAMP() }}">
         <agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
             <name>TOMES Packager</name>
             <note>Email archiving software developed through the Transforming Online Mail with Embedded Semantics (TOMES) project (https://www.ncdcr.gov/resources/records-management/tomes), a multi-state partnership that includes Kansas, Utah and North Carolina</note>
@@ -14,11 +14,11 @@ xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/m
     </metsHdr>
 	
     <!--# !!! WARNING !!!
-	DO NOT edit below this line. 
+	DO NOT edit below this line unless you are very comfortabel with Python, Jinja templates, and METS.
 	#-->
     <fileSec>
 	<fileGrp ID="FileGrp_ROOT">
-	%% for file in files %%
+	%% for file in FILES %%
 		<file 
 		SIZE="{{ file.size }}" 
 		ID="ROOT_{{ file.index }}" 
@@ -30,7 +30,7 @@ xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/m
 		</file>
 	%% endfor %%
 	</fileGrp>
-	%% for folder in folders %%
+	%% for folder in FOLDERS %%
         <fileGrp ID="FileGrp_{{ folder.name }}">
         %% for file in folder.rfiles %%
             <file 
@@ -49,11 +49,11 @@ xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/m
     <structMap>
         <div>
             <div ID="Div_ROOT">
-			%% for file in files %%
+			%% for file in FILES %%
                 <fptr FILEID="_ROOT_{{ file.index }}"/>
             %% endfor %%
             </div>
-        %% for folder in folders %%
+        %% for folder in FOLDERS %%
             <div ID="Div_{{ folder.name }}">
             %% for file in folder.rfiles %%
                 <fptr FILEID="_{{ folder.name }}_{{ file.index }}"/>
