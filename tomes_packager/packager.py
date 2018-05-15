@@ -2,14 +2,17 @@
 with an optional METS file.
 
 Todo:
-    * Verify template is a file on __init__.
-        - And verify base is a folder.
     * Need to determine constant vars.
-        - ISO/UTC now (aka @timstamp).
+        - ISO/UTC now (aka @timestamp).
         - What else?
     * If AIP restructing works but METS fails, we need a function to JUST
     drop in the METS (and to create DirectoryObject) - also useful if AIP 
     already exists.
+        - Can't you just using METSMaker for that now?
+    * Add RDF stuff.
+    * Should I pre-compose th instances of AIP/METS/RDF Makers and DirectoryObject?
+        - At least set a self.mets, self.aip, self.directory_object, self.rdfs, etc. AFTER
+        they are built.
 """
 
 
@@ -23,6 +26,8 @@ from lxml import etree
 from lib.aip_maker import AIPMaker
 from lib.directory_object import DirectoryObject
 from lib.events_object import EventsObject
+from lib.mets_maker import METSMaker
+from lib.rdf_maker import RDFMaker
 
     
 class Packager():
@@ -31,7 +36,7 @@ class Packager():
 
 
     def __init__(self, account_id, source_dir, destination_dir, mets_template="", 
-            preservation_events={}, charset="utf-8"):
+            preservation_events={}, rdf_xlsx="", charset="utf-8"):
         """ Sets instance attributes.
         
         Args:
@@ -43,6 +48,7 @@ class Packager():
             "https://github.com/StateArchivesOfNorthCarolina/tomes-packager/blob/master/docs/documentation.md".
             - preservation_events (dict): Optional preservation events to pass into 
             @mets_template.
+            - rdf_xlsx (str): ???
             - charset (str): The encoding for the rendered METS file.
         """
 
@@ -60,122 +66,14 @@ class Packager():
         self.destination_dir = self._normalize_path(destination_dir)
         self.preservation_events = EventsObject(preservation_events)
         self.mets_template = mets_template
+        self.rdf_xlsx = rdf_xlsx
         self.charset = charset
 
-        # set attributes for imported modules and data.
+        # set attributes for imported classes.
         self._aip_maker = AIPMaker
         self._directory_object = DirectoryObject
-        self._mets_xsd = self._normalize_path(os.path.dirname(os.path.abspath(__file__)) + 
-                "/lib/mets_1-11.xsd")
-        self._xml_beautifier = self._normalize_path(os.path.dirname(\
-                os.path.abspath(__file__)) + "/lib/beautifier.xsl")
-
-
-    def _beautify_mets(self, mets):
-        """ Beautifies @mets XML with @self.xml_beautifier.
-        
-        Args:
-            - mets (lxml.etree._Element): The METS XML to beautify.
-            
-        Returns:
-            lxml.etree._Element: The return value.
-        """
-      
-        self.logger.info("Beautifying METS XML.")
-      
-        # load XSL beautifier.
-        beautifier = etree.parse(self._xml_beautifier)
-      
-        # beautify @mets.
-        transformer = etree.XSLT(beautifier)
-        mets = transformer(mets)
-        
-        return mets
-    
-
-    def _validate_mets(self, mets):
-        """ Validates @mets XML against @self.xsd.
-        
-        Args:
-            - mets (lxml.etree._Element): The METS XML to validate.
-            
-        Returns:
-            bool: The return value. True for valid, otherwise False.
-            If validation could not be performed due to no Internet connection, None is 
-            returned.
-        """
-
-        self.logger.info("Validating METS XML.")
-        
-        # load XSD.
-        xsd = etree.parse(self._mets_xsd)
-        
-        # create validator or return None if no Internet connection exists.
-        try:
-            validator = etree.XMLSchema(xsd)
-        except etree.XMLSchemaParseError as err:
-            self.logger.warning("Unable to validate XML; likely no Internet connection.")
-            self.logger.error(err)
-            return None
-        
-        # validate @mets.
-        try:
-            validator.assertValid(mets)
-            self.logger.info("METS XML is valid.")            
-            is_valid = True
-        except etree.DocumentInvalid as err:
-            self.logger.warning("METS XML is invalid.")
-            self.logger.error(err)
-            is_valid = False
-
-        return is_valid
-
-
-    def _render_mets(self, *args, **kwargs):
-        """ Renders @self.mets_template via Jinja to return a METS XML document. Note that the
-        Jinja template start AND stopping strings are set to "%%" instead of the defaults. 
-        Also, XML comments beginning and ending with "<!--#" and "#-->" will not be outputted
-        and may be used as in-line template documentation.
-        
-        Args:
-            - *args/**kwargs: The optional arguments to pass to the Jinja formatter.
-            
-        Returns:
-            lxml.etree._Element: The return value.
-            If the template has invalid XML syntax, None is returned.
-
-        Raises:
-            - jinja2.exceptions.UndefinedError: If @self.mets_template can't be rendered.
-        """
-
-        self.logger.info("Rendering template: {}".format(self.mets_template))
-
-        # open @self.mets_template.
-        with open(self.mets_template, encoding=self.charset) as tf:
-                mets = tf.read()
-               
-        # create the Jinja renderer.
-        template = jinja2.Template(mets, trim_blocks=True, lstrip_blocks=True, 
-                block_start_string="%%", block_end_string="%%", comment_start_string="<!--#",
-                comment_end_string="#-->")
-        
-        # render @self.mets_template.
-        try:
-            mets = template.render(*args, **kwargs)
-        except jinja2.exceptions.UndefinedError as err:
-            self.logger.warning("Unable to render template; skipping METS creation.")
-            self.logger.error(err)
-            return None
-        
-        # convert @mets to an lxml.etree._Element.
-        try:
-            mets = etree.fromstring(mets) 
-        except etree.XMLSyntaxError as err:
-            self.logger.warning("XML syntax error in template; skipping METS creation.")
-            self.logger.error(err)
-            return None
-
-        return mets
+        self._mets_maker = METSMaker
+        self._rdf_maker = RDFMaker
 
 
     def package(self):
@@ -189,12 +87,8 @@ class Packager():
             failed to render (likely due to user error). Otherwise, True.
         """
 
-        # create function to get ISO timestamp. 
-        timestamp = lambda: datetime.utcnow().isoformat() + "Z"
-
         # set AIP path.
-        aip_dir = self._abspath(os.path.join(self.destination_dir, 
-            self.account_id))
+        aip_dir = self._abspath(os.path.join(self.destination_dir, self.account_id))
         self.logger.info("Packaging: {}".format(aip_dir))
 
         # create AIP structure.
@@ -214,49 +108,32 @@ class Packager():
         aip_obj = self._directory_object(aip_dir)
 
         # create METS from @self.mets_template.
-        mets = self._render_mets(timestamp = timestamp, 
+        mets = self._mets_maker(self.mets_template,
+                timestamp = lambda: datetime.utcnow().isoformat() + "Z", 
+                events = self.preservation_events,
                 folders = aip_obj.dirs, 
                 files = aip_obj.files,
-                graph = "\n" + aip_obj.rdirs.ls(),
-                events = self.preservation_events)
+                graph = "\n" + aip_obj.rdirs.ls())
+        mets.make()
         
-        # is the METS template failed to render, return AIP and mark it invalid.
-        if mets is None:
+        # if the METS template failed to render, return AIP and mark it invalid.
+        if mets.mets is None:
+            self.logger.warning("Can't create METS; invalidating AIP.")
             return (aip_dir, None, False)
-        
-        # validate @mets and add validation status as an XML comment.
-        is_mets_valid = self._validate_mets(mets)
-        if is_mets_valid is None:
-            msg = "WARNING: METS document could not be validated as of {}.".format(
-                    timestamp())
-            is_mets_valid = False
-        elif not is_mets_valid:
-            msg = "CRITICAL: this METS document is valid as of {}.".format(timestamp())
-        else:
-            msg = "NOTE: this METS document is valid as of {}.".format(timestamp())
-        mets.append(etree.Comment(msg))
-       
-        # beautify @mets.
-        mets = self._beautify_mets(mets)
-
-        # convert @mets to a string.
-        mets = etree.tostring(mets, pretty_print=True, encoding=self.charset).decode(
-                self.charset)
         
         # set the METS file path.
         mets_file = "{}.mets.xml".format(self.account_id)
-        mets_path = os.path.join(self._abspath(self.destination_dir), self.account_id,
-                mets_file)
+        mets_path = os.path.join(self.destination_dir, self.account_id, mets_file)
         mets_path = self._abspath(mets_path)
         
         # write @mets to file.
         with open(mets_path, "w", encoding=self.charset) as mf:
-            mf.write(mets)
+            mf.write(mets.mets)
             
         # determine if both the AIP and the METS are valid.
-        aip_validity = bool(aip.validate() * is_mets_valid)
+        validity = bool(aip.validate() * mets.validate())
 
-        return (aip_dir, mets_file, aip_validity)
+        return (aip_dir, mets_file, validity)
 
 
 # TEST.

@@ -29,7 +29,7 @@ class METSMaker():
     """
 
 
-    def __init__(self, mets_template="", charset="utf-8", evaluate=True, *args, **kwargs):
+    def __init__(self, mets_template, charset="utf-8", evaluate=True, *args, **kwargs):
         """ Sets instance attributes.
         
         Args:
