@@ -3,13 +3,13 @@ with an optional METS file.
 
 Todo:
     * Need to determine constant vars.
-        - ISO/UTC now (aka @timestamp).
-        - What else?
+        - TIMESTAMP (done), What else?
     * If AIP restructing works but METS fails, we need a function to JUST
     drop in the METS (and to create DirectoryObject) - also useful if AIP 
     already exists.
         - Can't you just using METSMaker for that now?
     * Run autoflakes on this and lib/*.
+    * Add CLI.
 """
 
 # import modules.
