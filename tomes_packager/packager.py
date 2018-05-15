@@ -9,6 +9,7 @@ Todo:
     drop in the METS (and to create DirectoryObject) - also useful if AIP 
     already exists.
         - Can't you just using METSMaker for that now?
+    * Run autoflakes on this and lib/*.
 """
 
 # import modules.

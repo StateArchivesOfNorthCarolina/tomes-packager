@@ -20,9 +20,9 @@ class METSMaker():
             successfully rendered, this will be None.
 
         Example:
-            >>> mm = METSMaker("../../mets_templates/test.xml",
-            >>>                 timestamp = lambda: datetime.now().isoformat() + "Z",
-            >>>                 folders = [])
+            >>> from datetime import datetime
+            >>> mm = METSMaker("../../tests/sample_files/sample_mets_template.xml",
+            >>>                 TIMESTAMP = lambda: datetime.now().isoformat() + "Z")
             >>> mm.make()
             >>> mm.validate()
             >>> print(mm.xml)
@@ -114,12 +114,16 @@ class METSMaker():
 
         self.logger.info("Validating METS.")
         
-        # if needed, use @self.element.
-        if mets_el is None:
-            mets_el = self.element
-
         # start with premis that validation hasn't occurred.
         is_valid = None
+        
+        # if needed, use @self.element.
+        if mets_el is None:
+            if self.element is not None:
+                mets_el = self.element
+            else:
+                self.logger.warning("Nothing to validate; trying using .make() first.")
+                return is_valid
         
         # load XSD.
         xsd = etree.parse(self.xsd)

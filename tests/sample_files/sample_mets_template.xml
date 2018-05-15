@@ -1,0 +1,22 @@
+<mets xmlns="http://www.loc.gov/METS/" 
+xmlns:xlink="http://www.w3.org/1999/xlink" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd">
+	<metsHdr CREATEDATE="{{ TIMESTAMP() }}">
+		<agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
+			<name>TOMES Packager</name>
+			<note>Email archiving software developed through the Transforming Online Mail with Embedded Semantics (TOMES) project (https://www.ncdcr.gov/resources/records-management/tomes), a multi-state partnership that includes Kansas, Utah and North Carolina</note>
+		</agent>
+
+		<!-- This is an XMLcomment. It will stay intact. -->
+		<!--# This is a TOMES Packager comment. It will disappear. #-->
+
+	</metsHdr>
+	<structMap>
+		<div />
+	</structMap>
+	
+	<!-- This time now is: {{ TIMESTAMP() }} -->
+	<!-- This time now is: {{ TIMESTAMP() }} -->
+
+</mets>
