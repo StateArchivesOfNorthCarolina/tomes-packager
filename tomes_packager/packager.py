@@ -71,10 +71,10 @@ class Packager():
         self._rdf_maker = RDFMaker
 
         # creates atttibutes for calculated objects.
-        self.aip = None
-        self.directory = None
-        self.mets = None
-        self.rdf = None
+        self.aip_obj = None
+        self.directory_obj = None
+        self.mets_obj = None
+        self.rdf_obj = None
 
 
     def package(self):
@@ -93,38 +93,38 @@ class Packager():
         self.logger.info("Packaging: {}".format(aip_dir))
 
         # create AIP structure.
-        self.aip = self._aip_maker(self.account_id, self.source_dir, self.destination_dir)
-        self.aip.make()
+        self.aip_obj = self._aip_maker(self.account_id, self.source_dir, self.destination_dir)
+        self.aip_obj.make()
 
         # if the AIP structure isn't valid, warn but continue on.
-        if not self.aip.validate():
+        if not self.aip_obj.validate():
             self.logger.warning("AIP structure is invalid; continuing anyway.")
 
         # if no METS template was passed; return AIP.
         if self.mets_template == "":
             self.logger.info("No METS template passed; skipping METS creation.")
-            return (aip_dir, None, self.aip.validate())
+            return (aip_dir, None, self.aip_obj.validate())
 
         # create a DirectoryObject for the AIP.
-        self.directory = self._directory_object(aip_dir)
+        self.directory_obj = self._directory_object(aip_dir)
 
         # if needed, create RDF objects.
         if self.rdf_xlsx != "":
-            self.rdf = self._rdf_maker(self.rdf_xlsx, charset=self.charset)
-            self.rdf.make()
+            self.rdf_obj = self._rdf_maker(self.rdf_xlsx, charset=self.charset)
+            self.rdf_obj.make()
 
         # create METS from @self.mets_template.
-        self.mets = self._mets_maker(self.mets_template, charset=self.charset,
+        self.mets_obj = self._mets_maker(self.mets_template, charset=self.charset,
                 TIMESTAMP = lambda: datetime.utcnow().isoformat() + "Z", 
                 EVENTS = self.preservation_events,
-                FOLDERS = self.directory.dirs, 
-                FILES = self.directory.files,
-                GRAPH = "\n" + self.directory.rdirs.ls(),
-                RDFS = self.rdf.rdfs if self.rdf is not None else [])
-        self.mets.make()
+                FOLDERS = self.directory_obj.dirs, 
+                FILES = self.directory_obj.files,
+                GRAPH = "\n" + self.directory_obj.rdirs.ls(),
+                RDFS = self.rdf_obj.rdfs if self.rdf_obj is not None else [])
+        self.mets_obj.make()
         
         # if the METS template failed to render, return AIP and mark it invalid.
-        if self.mets.xml is None:
+        if self.mets_obj.xml is None:
             self.logger.warning("Couldn't create METS; invalidating AIP.")
             return (aip_dir, None, False)
         
@@ -135,10 +135,10 @@ class Packager():
         
         # write @mets to file.
         with open(mets_path, "w", encoding=self.charset) as mf:
-            mf.write(self.mets.xml)
+            mf.write(self.mets_obj.xml)
             
         # determine if both the AIP and the METS are valid.
-        validity = bool(self.aip.validate() * self.mets.validate())
+        validity = bool(self.aip_obj.validate() * self.mets_obj.validate())
 
         return (aip_dir, mets_file, validity)
 
