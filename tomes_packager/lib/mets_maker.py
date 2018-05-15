@@ -14,19 +14,18 @@ class METSMaker():
     """ A class for constructing a METS document from a given METS template file.
     
         Attributes:
-            - mets (str): The rendered METS. None if the template hasn't been rendered.
-            - mets_el (lxml.etree._Elment): The rendered METS. None if the template hasn't 
-            been rendered.
-            - is_valid (bool): True if the rendered METS is valid per self.xsd. Otherwise, 
-            False. If the METS hasn't been rendered, this will be None.
+            - mets (str): The rendered METS. If the template hasn't been successfully 
+            rendered, this will be None.
+            - mets_el (lxml.etree._Elment): The rendered METS. If the template hasn't been 
+            successfully rendered, this will be None.
 
         Example:
-            >>> test = METSMaker("../../mets_templates/test.xml",
+            >>> mm = METSMaker("../../mets_templates/test.xml",
             >>>                 timestamp = lambda: datetime.now().isoformat() + "Z",
             >>>                 folders = [])
-            >>> test.make()
-            >>> test.is_valid
-            >>> print(test.mets)
+            >>> mm.make()
+            >>> mm.validate()
+            >>> print(mm.mets)
     """
 
 
@@ -76,7 +75,6 @@ class METSMaker():
         # set results containers.
         self.mets = None
         self.mets_el = None
-        self.is_valid = None
 
 
     def _beautify_mets(self, mets_el):
@@ -101,11 +99,12 @@ class METSMaker():
         return mets
     
 
-    def _validate_mets(self, mets_el):
+    def validate(self, mets_el=None):
         """ Validates @mets_el against @self.xsd.
 
         Args:
-            - mets (lxml.etree._Element): The METS XML to validate.
+            - mets (lxml.etree._Element): The METS XML to validate. If None, @self.mets_el
+            will be used.
 
         Returns:
             bool: The return value. True for valid, otherwise False.
@@ -115,6 +114,10 @@ class METSMaker():
 
         self.logger.info("Validating METS.")
         
+        # if needed, use @self.mets_el.
+        if mets_el is None:
+            mets_el = self.mets_el
+
         # start with premis that validation hasn't occurred.
         is_valid = None
         
@@ -144,7 +147,6 @@ class METSMaker():
 
     def make(self):
         """ Renders @self.mets_template via Jinja to return a METS XML document.
-        Sets values for @self.mets, @self.mets_el, and @self.is_valid.
             
         Returns:
             str: The return value.
@@ -179,19 +181,19 @@ class METSMaker():
             self.logger.error(err)
             return None
 
-        # validate @mets_el.
-        self.is_valid = self._validate_mets(mets_el)
-
         # if @self.evaluate is True, add validation status as an XML comment.
         if self.evaluate:
+
+            # validate @mets_el.
+            is_valid = self.validate(mets_el)
             
             # make timestamp function.
             now = lambda: datetime.now().isoformat() + "Z"
             
             # determine validation status.
-            if self.is_valid is None:
+            if is_valid is None:
                 msg = "WARNING: METS document could not be validated as of {}.".format(now())
-            if not self.is_valid:
+            if not is_valid:
                 msg = "CRITICAL: this METS document is invalid as of {}.".format(now())
             else:
                 msg = "NOTE: this METS document is valid as of {}.".format(now())
