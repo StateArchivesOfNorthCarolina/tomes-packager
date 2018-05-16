@@ -1,7 +1,5 @@
-<mets xmlns="http://www.loc.gov/METS/" 
-xmlns:xlink="http://www.w3.org/1999/xlink" 
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd">
+<mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
 	<metsHdr CREATEDATE="{{ TIMESTAMP() }}">
 		<agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
 			<name>TOMES Packager</name>
@@ -21,11 +19,11 @@ xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/m
 	DO NOT edit below this line unless you are very comfortabel with Python, Jinja templates, and METS.
 	#-->
     <fileSec>
-	<fileGrp ID="FileGrp_ROOT">
+	<fileGrp ID="FileGrp_">
 	%% for file in FILES %%
 		<file 
 		SIZE="{{ file.size }}" 
-		ID="ROOT_{{ file.index }}" 
+		ID="_{{ file.index }}" 
 		MIMETYPE="{{ file.mimetype }}" 
 		CREATED="{{ file.created }}" 
 		CHECKSUM="{{ file.checksum }}" 
@@ -52,9 +50,9 @@ xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/m
     </fileSec>
     <structMap>
         <div>
-            <div ID="Div_ROOT">
+            <div ID="Div_">
 			%% for file in FILES %%
-                <fptr FILEID="_ROOT_{{ file.index }}"/>
+                <fptr FILEID="__{{ file.index }}"/>
             %% endfor %%
             </div>
         %% for folder in FOLDERS %%

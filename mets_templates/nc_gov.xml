@@ -1,0 +1,210 @@
+<mets xmlns="http://www.loc.gov/METS/" 
+xmlns:xlink="http://www.w3.org/1999/xlink" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
+
+	<metsHdr CREATEDATE="{{ TIMESTAMP() }}">
+
+		<agent ROLE="CREATOR" TYPE="ORGANIZATION">
+			<name>State Archives of North Carolina</name>
+			<note>DSS??? This is optional. We can delete this element. Do you want to say anything here?</note>
+		</agent>
+
+		<agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
+			<name>TOMES Packager</name>
+			<note>DSS??? Is the following OK?:
+			Email archiving software developed through the Transforming Online Mail with Embedded Semantics (TOMES) project (https://www.ncdcr.gov/resources/records-management/tomes), a multi-state partnership that includes Kansas, Utah and North Carolina.</note>
+		</agent>
+
+	</metsHdr>
+
+	%% for rdf in RDFS %%
+	<dmdSec ID="dmdSec__{{ rdf.name }}">
+		<mdWrap MDTYPE="DC">
+			<xmlData>
+				{{ rdf.xml }}
+			</xmlData>
+		</mdWrap>
+	</dmdSec>
+	%% endfor %%
+
+	<amdSec ID="amdSec__rights">
+		<rightsMD ID="rightsMD__GS_132_1">
+			<mdWrap MDTYPE="PREMIS:RIGHTS">
+				<xmlData>
+					<premis:rights>
+						<premis:rightsStatement>
+							<premis:rightsStatementIdentifier>
+								<premis:rightsStatementIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local">local</premis:rightsStatementIdentifierType>
+								<premis:rightsStatementIdentifierValue>gs_132</premis:rightsStatementIdentifierValue>
+							</premis:rightsStatementIdentifier>
+							<premis:rightsBasis valueURI="http://id.loc.gov/vocabulary/preservation/rightsBasis/sta">sta</premis:rightsBasis>
+							<premis:statuteInformation>
+								<premis:statuteJurisdiction authority="ISO 3166-2:US">US-NC</premis:statuteJurisdiction>
+								<premis:statuteCitation>G.S. 132-1</premis:statuteCitation>
+								<premis:statuteDocumentationIdentifier>
+									<premis:statuteDocumentationIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/uri">uri</premis:statuteDocumentationIdentifierType>
+									<premis:statuteDocumentationIdentifierValue>http://www.ncleg.net/gascripts/statutes/statutelookup.pl?statute=132</premis:statuteDocumentationIdentifierValue>
+									<premis:statuteDocumentationRole>law</premis:statuteDocumentationRole>
+								</premis:statuteDocumentationIdentifier>
+							</premis:statuteInformation>
+						</premis:rightsStatement>
+					</premis:rights>
+				</xmlData>
+			</mdWrap>
+		</rightsMD>
+	</amdSec>
+
+	<amdSec ID="amdSec__agents">
+		%% for agent in AGENTS
+		<techMD ID="techMD__{{ agent.alias }}">
+			<mdWrap MDTYPE="PREMIS:AGENT">
+				<xmlData>
+					<premis:premis>
+						<premis:agent>
+							<premis:agentIdentifier>
+								<premis:agentIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local">local</premis:agentIdentifierType>
+								<premis:agentIdentifierValue>{{ agent.alias }}</premis:agentIdentifierValue>
+							</premis:agentIdentifier>
+							<premis:agentIdentifier>
+								<premis:agentIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/uri">uri</premis:agentIdentifierType>
+								<premis:agentIdentifierValue>{{ agent.uri }}</premis:agentIdentifierValue>
+							</premis:agentIdentifier>
+							<premis:agentName>{{ agent.name }}</premis:agentName>
+							<premis:agentType>software</premis:agentType>
+							<premis:agentVersion>{{ agent.version }}</premis:agentVersion>
+						</premis:agent>
+					</premis:premis>
+				</xmlData>
+			</mdWrap>
+		</techMD>
+		%% endfor %%
+	</amdSec>
+
+	<amdSec ID="amdSec__events">
+		%% for event in EVENTS %%
+		<digiprovMD ID="{{ event.alias }}">
+			<mdWrap MDTYPE="PREMIS:EVENT">
+				<xmlData>
+					<premis:event>
+						<premis:eventIdentifier>
+							<premis:eventIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local">local</premis:eventIdentifierType>
+							<premis:eventIdentifierValue>{{ event.alias }}</premis:eventIdentifierValue>
+						</premis:eventIdentifier>
+						<premis:eventType valueURI="http://id.loc.gov/vocabulary/preservation/eventType/cre">cre</premis:eventType>
+						<premis:eventDateTime>{{ event.timestamp }}</premis:eventDateTime>
+						<premis:eventDetailInformation>
+							<premis:eventDetail>{{ event.description }}</premis:eventDetail>
+						</premis:eventDetailInformation>
+						<premis:linkingAgentIdentifier>
+							<premis:linkingAgentIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local">local</premis:linkingAgentIdentifierType>
+							<premis:linkingAgentIdentifierValue>{{ event.agent.alias }}</premis:linkingAgentIdentifierValue>
+							<premis:linkingAgentRole valueURI="http://id.loc.gov/vocabulary/preservation/eventRelatedAgentRole/exe">exe</premis:linkingAgentRole>
+						</premis:linkingAgentIdentifier>
+						<premis:linkingObjectIdentifier>
+							<premis:linkingObjectIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local">local</premis:linkingObjectIdentifierType>
+							<premis:linkingObjectIdentifierValue>{{ event.object.alias }}</premis:linkingObjectIdentifierValue>
+						</premis:linkingObjectIdentifier>
+					</premis:event>
+				</xmlData>
+			</mdWrap>
+		</digiprovMD>
+		%% endfor %%
+	</amdSec>
+
+	<amdSec ID="amdSec__objects">
+		<techMD ID="object__{{ ACCOUNT }}">
+			<mdWrap MDTYPE="PREMIS:OBJECT">
+				<xmlData>
+					<premis:object>
+						<premis:objectIdentifier>
+							<premis:objectIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local.html">local</premis:objectIdentifierType>
+							<premis:objectIdentifierValue>{{ ACCOUNT}} </premis:objectIdentifierValue>
+						</premis:objectIdentifier>
+						<premis:objectCategory>representation</premis:objectCategory>
+						<premis:preservationLevel>
+							<premis:preservationLevelValue>logical preservation</premis:preservationLevelValue>
+							<premis:preservationLevelRole valueURI="http://id.loc.gov/vocabulary/preservation/preservationLevelRole/int">int</premis:preservationLevelRole>
+							<premis:preservationLevelRationale>institutional policy</premis:preservationLevelRationale>
+						</premis:preservationLevel>
+						<premis:linkingRightsStatementIdentifier>
+							<premis:linkingRightsStatementIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local.html">local></premis:linkingRightsStatementIdentifierType> 
+							<premis:linkingRightsStatementIdentifierValue>gs_132</premis:linkingRightsStatementIdentifierValue>
+						</premis:linkingRightsStatementIdentifier>
+					</premis:object>
+				</xmlData>
+			</mdWrap>
+		</techMD>
+		%% for object in OBJECT %%
+		<techMD ID="object__{{ object.alias }}">
+			<mdWrap MDTYPE="PREMIS:OBJECT">
+				<xmlData>
+					<premis:object>
+						<premis:objectIdentifier>
+							<premis:objectIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local.html">local</premis:objectIdentifierType>
+							<premis:objectIdentifierValue>{{ object.alias }}</premis:objectIdentifierValue>
+						</premis:objectIdentifier>
+						<premis:objectCategory>{{ object.category }}</premis:objectCategory>
+						<premis:linkingRightsStatementIdentifier>
+							<premis:linkingRightsStatementIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local.html">local></premis:linkingRightsStatementIdentifierType> 
+							<premis:linkingRightsStatementIdentifierValue>gs_132</premis:linkingRightsStatementIdentifierValue>
+						</premis:linkingRightsStatementIdentifier>
+					</premis:object>
+				</xmlData>
+			</mdWrap>
+		</techMD>
+		%% endfor %%
+	</amdSec>
+
+	<!--# 
+	!!!!! WARNING !!!!!
+	DO NOT edit below this line unless you are very comfortable with Python, Jinja templates, and METS.
+	#-->
+	<fileSec>
+		<fileGrp ID="fileGrp__">
+	%% for file in FILES %%
+			<file 
+		SIZE="{{ file.size }}" 
+		ID="_{{ file.index }}" 
+		MIMETYPE="{{ file.mimetype }}" 
+		CREATED="{{ file.created }}" 
+		CHECKSUM="{{ file.checksum }}" 
+		CHECKSUMTYPE="{{ file.checksum_algorithm }}">
+				<FLocat xlink:href="{{ file.name }}" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
+			</file>
+	%% endfor %%
+		</fileGrp>
+	%% for folder in FOLDERS %%
+		<fileGrp ID="fileGrp__{{ folder.name }}">
+        %% for file in folder.rfiles %%
+			<file 
+            SIZE="{{ file.size }}" 
+            ID="_{{ folder.name }}_{{ file.index }}" 
+            MIMETYPE="{{ file.mimetype }}" 
+            CREATED="{{ file.created }}" 
+            CHECKSUM="{{ file.checksum }}" 
+            CHECKSUMTYPE="{{ file.checksum_algorithm }}">
+				<FLocat xlink:href="{{ file.name }}" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
+			</file>
+        %% endfor %%
+		</fileGrp>
+    %% endfor %%
+	</fileSec>
+	<structMap ID="{{ ACCOUNT }}">
+		<div>
+			<div ID="div__">
+			%% for file in FILES %%
+				<fptr FILEID="__{{ file.index }}"/>
+            %% endfor %%
+			</div>
+        %% for folder in FOLDERS %%
+			<div ID="div__{{ folder.name }}">
+            %% for file in folder.rfiles %%
+				<fptr FILEID="_{{ folder.name }}_{{ file.index }}"/>
+            %% endfor %%
+			</div>
+        %% endfor %%
+		</div>
+	</structMap>
+
+</mets>
