@@ -1,22 +1,22 @@
 <mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-	<metsHdr CREATEDATE="{{ TIMESTAMP() }}">
-		<agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
-			<name>TOMES Packager</name>
-			<note>Email archiving software developed through the Transforming Online Mail with Embedded Semantics (TOMES) project (https://www.ncdcr.gov/resources/records-management/tomes), a multi-state partnership that includes Kansas, Utah and North Carolina</note>
-		</agent>
+  <metsHdr CREATEDATE="{{ TIMESTAMP() }}">
+    <agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
+      <name>TOMES Packager</name>
+      <note>Email archiving software developed through the Transforming Online Mail with Embedded Semantics (TOMES) project (https://www.ncdcr.gov/resources/records-management/tomes), a multi-state partnership that includes Kansas, Utah and North Carolina</note>
+    </agent>
 
-		<!-- This is an XMLcomment. It will appear in the rendered METS output. -->
+    <!-- This is an XMLcomment. It will appear in the rendered METS output. -->
 
-		<!--# This is a TOMES Packager comment.
-		It will NOT appear in the rendered METS output.
-		Note the placement of "#" marks at the beginning and end of the XML comment syntax.
-		#-->
+    <!--# This is a TOMES Packager comment.
+    It will NOT appear in the rendered METS output.
+    Note the placement of "#" marks at the beginning and end of the XML comment syntax.
+    #-->
 
-	</metsHdr>
+  </metsHdr>
 
-	<structMap>
-		<div />
-	</structMap>
+  <structMap>
+    <div />
+  </structMap>
 
 </mets>
