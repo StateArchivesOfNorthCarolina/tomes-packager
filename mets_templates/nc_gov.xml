@@ -44,7 +44,7 @@ xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
 								<premis:statuteCitation>G.S. 132-1</premis:statuteCitation>
 								<premis:statuteDocumentationIdentifier>
 									<premis:statuteDocumentationIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/uri">uri</premis:statuteDocumentationIdentifierType>
-									<premis:statuteDocumentationIdentifierValue>http://www.ncleg.net/gascripts/statutes/statutelookup.pl?statute=132</premis:statuteDocumentationIdentifierValue>
+									<premis:statuteDocumentationIdentifierValue>http://www.ncleg.net/gascripts/statutes/statutelookup.pl?stat</premis:statuteDocumentationIdentifierValue>
 									<premis:statuteDocumentationRole>law</premis:statuteDocumentationRole>
 								</premis:statuteDocumentationIdentifier>
 							</premis:statuteInformation>
@@ -81,37 +81,6 @@ xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
 		%% endfor %%
 	</amdSec>
 
-	<amdSec ID="amdSec__events">
-		%% for event in EVENTS %%
-		<digiprovMD ID="{{ event.alias }}">
-			<mdWrap MDTYPE="PREMIS:EVENT">
-				<xmlData>
-					<premis:event>
-						<premis:eventIdentifier>
-							<premis:eventIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local">local</premis:eventIdentifierType>
-							<premis:eventIdentifierValue>{{ event.alias }}</premis:eventIdentifierValue>
-						</premis:eventIdentifier>
-						<premis:eventType valueURI="http://id.loc.gov/vocabulary/preservation/eventType/cre">cre</premis:eventType>
-						<premis:eventDateTime>{{ event.timestamp }}</premis:eventDateTime>
-						<premis:eventDetailInformation>
-							<premis:eventDetail>{{ event.description }}</premis:eventDetail>
-						</premis:eventDetailInformation>
-						<premis:linkingAgentIdentifier>
-							<premis:linkingAgentIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local">local</premis:linkingAgentIdentifierType>
-							<premis:linkingAgentIdentifierValue>{{ event.agent.alias }}</premis:linkingAgentIdentifierValue>
-							<premis:linkingAgentRole valueURI="http://id.loc.gov/vocabulary/preservation/eventRelatedAgentRole/exe">exe</premis:linkingAgentRole>
-						</premis:linkingAgentIdentifier>
-						<premis:linkingObjectIdentifier>
-							<premis:linkingObjectIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local">local</premis:linkingObjectIdentifierType>
-							<premis:linkingObjectIdentifierValue>{{ event.object.alias }}</premis:linkingObjectIdentifierValue>
-						</premis:linkingObjectIdentifier>
-					</premis:event>
-				</xmlData>
-			</mdWrap>
-		</digiprovMD>
-		%% endfor %%
-	</amdSec>
-
 	<amdSec ID="amdSec__objects">
 		<techMD ID="object__{{ ACCOUNT }}">
 			<mdWrap MDTYPE="PREMIS:OBJECT">
@@ -119,7 +88,7 @@ xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
 					<premis:object>
 						<premis:objectIdentifier>
 							<premis:objectIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local.html">local</premis:objectIdentifierType>
-							<premis:objectIdentifierValue>{{ ACCOUNT}} </premis:objectIdentifierValue>
+							<premis:objectIdentifierValue>{{ ACCOUNT }} </premis:objectIdentifierValue>
 						</premis:objectIdentifier>
 						<premis:objectCategory>representation</premis:objectCategory>
 						<premis:preservationLevel>
@@ -153,6 +122,37 @@ xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
 				</xmlData>
 			</mdWrap>
 		</techMD>
+		%% endfor %%
+	</amdSec>
+
+	<amdSec ID="amdSec__events">
+		%% for event in EVENTS %%
+		<digiprovMD ID="{{ event.alias }}">
+			<mdWrap MDTYPE="PREMIS:EVENT">
+				<xmlData>
+					<premis:event>
+						<premis:eventIdentifier>
+							<premis:eventIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local">local</premis:eventIdentifierType>
+							<premis:eventIdentifierValue>{{ event.alias }}</premis:eventIdentifierValue>
+						</premis:eventIdentifier>
+						<premis:eventType valueURI="http://id.loc.gov/vocabulary/preservation/eventType/cre">cre</premis:eventType>
+						<premis:eventDateTime>{{ event.timestamp }}</premis:eventDateTime>
+						<premis:eventDetailInformation>
+							<premis:eventDetail>{{ event.description }}</premis:eventDetail>
+						</premis:eventDetailInformation>
+						<premis:linkingAgentIdentifier>
+							<premis:linkingAgentIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local">local</premis:linkingAgentIdentifierType>
+							<premis:linkingAgentIdentifierValue>{{ event.agent.alias }}</premis:linkingAgentIdentifierValue>
+							<premis:linkingAgentRole valueURI="http://id.loc.gov/vocabulary/preservation/eventRelatedAgentRole/exe">exe</premis:linkingAgentRole>
+						</premis:linkingAgentIdentifier>
+						<premis:linkingObjectIdentifier>
+							<premis:linkingObjectIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local">local</premis:linkingObjectIdentifierType>
+							<premis:linkingObjectIdentifierValue>{{ event.object.alias }}</premis:linkingObjectIdentifierValue>
+						</premis:linkingObjectIdentifier>
+					</premis:event>
+				</xmlData>
+			</mdWrap>
+		</digiprovMD>
 		%% endfor %%
 	</amdSec>
 
