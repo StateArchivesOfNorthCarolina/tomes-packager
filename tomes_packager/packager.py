@@ -9,6 +9,8 @@ Todo:
     already exists.
         - Can't you just using METSMaker for that now?
     * Run autoflakes on this and lib/*.
+    * This and DirectoryObject need to pass SHA type to FileObject.
+	- This should be a CLI option, too.
     * Add CLI.
 """
 
