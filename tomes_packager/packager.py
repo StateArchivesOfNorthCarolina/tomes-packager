@@ -139,9 +139,18 @@ class Packager():
             mf.write(self.mets_obj.xml)
             
         # determine if both the AIP and the METS are valid.
-        validity = bool(self.aip_obj.validate() * self.mets_obj.validate())
+        is_valid = bool(self.aip_obj.validate() * self.mets_obj.validate())
+        
+        if is_valid:
+            self.logger.info("Final AIP appears to be valid.")
+        else:
+            self.logger.warning("Final AIP is not valid.")
+            if not self.aip_obj.validate():
+                self.logger.info("Check source files prior to recreating AIP.")
+            if not self.mets_obj.validate():
+                self.logger.info("Check METS template prior to recreating AIP.")
 
-        return (aip_dir, mets_file, validity)
+        return (aip_dir, mets_file, is_valid)
 
 
 # TEST.
@@ -152,7 +161,7 @@ if __name__ == "__main__":
     p = Packager("foo", 
             "../tests/sample_files/hot_folder", 
             "../tests/sample_files", 
-            "../mets_templates/test.xml",
+            "../tests/sample_files/sample_mets_template.xml",
             {"20180101":["fooevent", None]})
     
     aip = p.package()

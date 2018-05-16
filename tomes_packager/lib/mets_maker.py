@@ -172,7 +172,7 @@ class METSMaker():
         except jinja2.exceptions.TemplateSyntaxError as err:
             self.logger.warning("Can't render METS; template syntax is invalid.")
             self.logger.exception(err, exc_info=True)
-            return None
+            return
         
         # render @self.mets_template.
         try:
@@ -182,7 +182,7 @@ class METSMaker():
             msg += "check template for undefined variables or calls to non-functions."
             self.logger.warning(msg)
             self.logger.exception(err, exc_info=True)
-            return None
+            return
         
         # convert @mets to an lxml.etree._Element.
         try:
@@ -190,7 +190,7 @@ class METSMaker():
         except etree.XMLSyntaxError as err:
             self.logger.warning("XML syntax error in template; can't render METS.")
             self.logger.error(err)
-            return None
+            return
 
         # if @self.evaluate is True, add validation status as an XML comment.
         if self.evaluate:

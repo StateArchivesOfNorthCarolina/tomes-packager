@@ -212,10 +212,10 @@ class RDFMaker():
         # get @worksheet header.
         header_map = self._get_header_map(worksheet)
             
-        # if the header is not valid, return None.
+        # if the header is not valid, return.
         if not self._validate_header(header_map):
             self.logger.warning("Skipping invalid worksheet: {}".format(worksheet.title))
-            return None
+            return
         else:
             self.logger.info("Building RDF tree from worksheet: {}".format(worksheet.title))
             
