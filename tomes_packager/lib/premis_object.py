@@ -24,12 +24,11 @@ class PREMISObject(object):
         {"2018-05-17T12:40:53-0400": {"type": "event", "alias": "pst2mime",
         "description": "PST to MIME converted.", "agent": "pst2mime_converter"}}]
         >>> po = PREMISObject(data)
-        >>> po.make()
         >>> po.events # ['pst2mime']
         >>> po.events[0].alias # 'pst2mime'
         >>> po.events[0].agent # 'pst2mime_converter'
-        >>> po.events[0].timestamp # '2018-05-16T23:29:18.245000Z'
-        >>> po[0].agent # '[pst2mime_converter]'
+        >>> po.events[0].timestamp # '2018-05-17T12:40:53-04:00'
+        >>> po.agents[0] # '[pst2mime_converter]'
         >>> po.agents[0] == po.events[0].agent # True
         >>> po.agents[0].__dict__ # show key/value pairs.
     """
@@ -38,10 +37,10 @@ class PREMISObject(object):
         """ Sets instance atttributes.
 
         Args:
-            - premis_list (list): Each item is a dict with an ISO timestamp as key
-            and a dict as its value with required attributes "alias" (str) and "type" with
-            one of the following values: "agent", "event", or "object".
-            Additional attributes may also exist.
+            - premis_list (list): Each item is a dict with an ISO timestamp as key and a dict
+            as its value with required attributes "alias" (str) and "type" with one of the
+            following values: "agent", "event", or "object". Additional attributes may also
+            exist.
 
         Raises:
             - TypeError: If @premis_list is not a list.
@@ -63,6 +62,10 @@ class PREMISObject(object):
         self.events = []
         self.objects = []
         self._type_map = {"agent": self.agents, "event": self.events, "object": self.objects}
+        self._required_keys = ["alias", "type"]
+    
+        # populate attributes.
+        self._get_data()
 
             
     def _get_timestamp(self, timestamp):
@@ -86,21 +89,22 @@ class PREMISObject(object):
         return timestamp
 
 
-    def _validate_metadata(self, metadata):
-        """ ???
+    def _sanitize_metadata(self, metadata):
+        """ Makes sure @metadata is a dict with the required keys in @self._required_keys.
+        Makes sure "type" is one of the keys in @self._type_map.
 
         Args:
-            - metadata (dict): ???
+            - metadata (dict): The dictionary to validate.
         
         Returns:
-            dict: Th return value.
+            dict: The return value.
+            This equals @metadata after it has been validated and stripped of bad keys. 
 
         Raises:
-            - TypeError: If the value of an item in @self.premis_list isn't itself a dict.
-            - KeyError: If the value of an item in @self.premis_list doesn't contain the 
-            keys "alias" and "type".
-            - ValueError: If the "type" key's value doesn't equal "agent", "event", or 
-            "object".
+            - TypeError: If @metadata isn't a dict.
+            - KeyError: If @metadata doesn't contain the required keys in 
+            @self._required_keys.
+            - ValueError: If the "type" key's value isn't in @self._type_map.
         """
 
         # make sure @metadata is a dict.
@@ -109,23 +113,17 @@ class PREMISObject(object):
             self.logger.error(msg)
             raise TypeError(msg)
 
-        # make sure the key "alias" exists.
-        if "alias" not in metadata:
-            msg = "Missing required key: alias"
-            self.logger.error(msg)
-            raise KeyError(msg)
+        # check for required keys.
+        for key in self._required_keys:
+            if key not in metadata:
+                msg = "Missing required key: {}".format(key)
+                self.logger.error(msg)
+                raise KeyError(msg)
 
-        # make sure the key "type" exists.
-        if "type" not in metadata:
-            msg = "Missing required key: type"
-            self.logger.error(msg)
-            raise KeyError(msg)
-
-        # make sure key "type" has a legal value.
-        legal_types = [t for t in self._type_map.keys()]
-        if metadata["type"] not in legal_types:
+        # make sure the "type" key has a legal value.
+        if metadata["type"] not in self._type_map:
             msg = "Key 'type' has illegal value '{}'; must be one of: {}".format(
-                    metadata["type"], legal_types)
+                    metadata["type"], list(self._type_map))
             self.logger.error(msg)
             raise ValueError(msg)
 
@@ -138,12 +136,13 @@ class PREMISObject(object):
         return metadata
 
 
-    def make(self):
-        """ Processes events in @premis_list ???
+    def _get_data(self):
+        """ Processes data items in @self.premis_list and stores the item in the appropriate 
+        list: self.agents, self.events, or self.objects.
 
         Raises:
-            - TypeError: ???
-            - ValueError: ???
+            - TypeError: If an item is not a dict.
+            - ValueError: If an item doesn't have a length of 1.
         """
             
         self.logger.info("Parsing data.")
@@ -163,14 +162,14 @@ class PREMISObject(object):
                 raise ValueError(msg)
                 
             # assign @data to variables.
-            key = [k for k in data][0]
+            key = list(data)[0]
             timestamp = self._get_timestamp(key)
             metadata = data[key]
             
             self.logger.info("Processing: {}: {}".format(timestamp, metadata))
             
             # validate @data.
-            metadata = self._validate_metadata(metadata)
+            metadata = self._sanitize_metadata(metadata)
             
             # create _MetadataObject.
             class _MetadaObject(str):
@@ -185,21 +184,16 @@ class PREMISObject(object):
             
             # append @md_obj to the correct attribute in @self.
             self_attr = self._type_map[md_obj.type]
-            if md_obj.timestamp in self_attr:
-                self.logger.warning("Data '{}' already in '{}'; resetting value.".format(
-                    md_obj.timestamp, self_attr))
+            if md_obj in self_attr:
+                self.logger.warning("Overwriting existing data in attribute: .{}s".format(
+                    md_obj.type))
+                self_attr.remove(md_obj)
+            else:
+                self.logger.info("Updating attribute: .{}s".format(md_obj.type))
             self_attr.append(md_obj)
 
         return
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level="DEBUG")
-    data = [{"2018-05-17T12:40:52-0400": {"type": "agent", "alias":
-        "pst2mime_converter", "name": "TOMES PST Converter", "version": "1"}},
-        {"2018-05-17T12:40:53-0400": {"type": "event", "alias": "pst2mime",
-        "description": "PST to MIME converted.", "agent": "pst2mime_converter"}}]
-    po = PREMISObject(data)
-    po.make()
-    logging.info(po.events[0].timestamp)
     pass
