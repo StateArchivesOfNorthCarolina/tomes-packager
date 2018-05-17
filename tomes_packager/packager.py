@@ -126,12 +126,9 @@ class Packager():
         # create METS from @self.mets_template.
         kwargs = {"TIMESTAMP": lambda: datetime.utcnow().isoformat() + "Z",
                 "ACCOUNT": self.account_id,
-                "AGENTS": self.premis_obj.agents if self.preservation_data is not None
-                else [],
-                "EVENTS": self.premis_obj.events if self.preservation_data is not None
-                else [],
-                "OBJECTS": self.premis_obj.objects if self.preservation_data is not 
-                None else [],
+                "AGENTS": self.premis_obj.agents,
+                "EVENTS": self.premis_obj.events,
+                "OBJECTS": self.premis_obj.objects,
                 "FOLDERS": self.directory_obj.dirs, 
                 "FILES": self.directory_obj.files,
                 "GRAPH": "\n" + self.directory_obj.rdirs.ls(),
