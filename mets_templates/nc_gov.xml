@@ -105,8 +105,8 @@ xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
         </xmlData>
       </mdWrap>
     </techMD>
-	<!-- DSS???
-	Review objects we talked about. -->
+    <!-- DSS???
+    Review objects we talked about. -->
     %% for object in OBJECT %%
     <techMD ID="object__{{ object.alias }}">
       <mdWrap MDTYPE="PREMIS:OBJECT">
