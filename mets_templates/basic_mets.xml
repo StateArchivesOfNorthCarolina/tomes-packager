@@ -27,9 +27,9 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <file 
     SIZE="{{ file.size }}" 
     ID="_{{ file.index }}" 
-    MIMETYPE="{{ file.mimetype }}" 
+    MIMETYPE="{{ file.mimetype() }}" 
     CREATED="{{ file.created }}" 
-    CHECKSUM="{{ file.checksum }}" 
+    CHECKSUM="{{ file.checksum() }}" 
     CHECKSUMTYPE="{{ file.checksum_algorithm }}">
       <FLocat xlink:href="{{ file.name }}" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
     </file>
@@ -41,9 +41,9 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <file 
             SIZE="{{ file.size }}" 
             ID="_{{ folder.name }}_{{ file.index }}" 
-            MIMETYPE="{{ file.mimetype }}" 
+            MIMETYPE="{{ file.mimetype() }}" 
             CREATED="{{ file.created }}" 
-            CHECKSUM="{{ file.checksum }}" 
+            CHECKSUM="{{ file.checksum() }}" 
             CHECKSUMTYPE="{{ file.checksum_algorithm }}">
                 <FLocat xlink:href="{{ file.name }}" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
             </file>

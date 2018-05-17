@@ -12,6 +12,9 @@ Todo:
     * This and DirectoryObject need to pass SHA type to FileObject.
 	- This should be a CLI option, too.
     * Gotta work on PREMISObject stuff here.
+    * Can we support DirectoryObject/METS for acounts with 10k attachments???
+        - Probably not a good idea.
+        - Need to talk about.
     * Add CLI.
 """
 

@@ -162,6 +162,9 @@ xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
     %% endfor %%
   </amdSec>
 
+  <!-- DSS??? We need to talk about skipping over HUGE numbers of attachments below.
+  Shouldn't EAXS already have the SHA?  -->
+  
   <!--# 
   !!!!! WARNING !!!!!
   DO NOT edit below this line unless you are very comfortable with Python, Jinja templates, and METS.
@@ -172,9 +175,9 @@ xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
       <file 
     SIZE="{{ file.size }}" 
     ID="_{{ file.index }}" 
-    MIMETYPE="{{ file.mimetype }}" 
+    MIMETYPE="{{ file.mimetype() }}" 
     CREATED="{{ file.created }}" 
-    CHECKSUM="{{ file.checksum }}" 
+    CHECKSUM="{{ file.checksum() }}" 
     CHECKSUMTYPE="{{ file.checksum_algorithm }}">
         <FLocat xlink:href="{{ file.name }}" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
       </file>
@@ -186,9 +189,9 @@ xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
       <file 
             SIZE="{{ file.size }}" 
             ID="_{{ folder.name }}_{{ file.index }}" 
-            MIMETYPE="{{ file.mimetype }}" 
+            MIMETYPE="{{ file.mimetype() }}" 
             CREATED="{{ file.created }}" 
-            CHECKSUM="{{ file.checksum }}" 
+            CHECKSUM="{{ file.checksum() }}" 
             CHECKSUMTYPE="{{ file.checksum_algorithm }}">
         <FLocat xlink:href="{{ file.name }}" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
       </file>

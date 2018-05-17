@@ -79,8 +79,8 @@ class FileObject(object):
         self.created = _iso_date(os.path.getctime(path))
         self.modified = _iso_date(os.path.getmtime(path))
         self.size = os.path.getsize(self.path)
-        self.mimetype = self._get_mimetype()
-        self.checksum = self._get_checksum()
+        self.mimetype = self._get_mimetype
+        self.checksum = self._get_checksum
 
     
     def _get_mimetype(self):
