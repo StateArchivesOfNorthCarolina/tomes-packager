@@ -3,10 +3,9 @@
   <metsHdr CREATEDATE="{{ TIMESTAMP() }}">
     <agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
       <name>TOMES Packager</name>
-      <note>Email archiving software developed through the Transforming Online Mail with Embedded Semantics (TOMES) project (https://www.ncdcr.gov/resources/records-management/tomes), a multi-state partnership that includes Kansas, Utah and North Carolina</note>
     </agent>
 
-    <!-- This is an XMLcomment. It will appear in the rendered METS output. -->
+    <!-- This is an XML comment. It will appear in the rendered METS output. -->
 
     <!--# This is a TOMES Packager comment.
     It will NOT appear in the rendered METS output.
