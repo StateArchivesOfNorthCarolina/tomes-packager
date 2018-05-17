@@ -11,6 +11,7 @@ Todo:
     * Run autoflakes on this and lib/*.
     * This and DirectoryObject need to pass SHA type to FileObject.
 	- This should be a CLI option, too.
+    * Gotta work on PREMISObject stuff here.
     * Add CLI.
 """
 
@@ -23,7 +24,7 @@ from datetime import datetime
 from lxml import etree
 from lib.aip_maker import AIPMaker
 from lib.directory_object import DirectoryObject
-from lib.events_object import EventsObject
+from lib.premis_object import PREMISObject
 from lib.mets_maker import METSMaker
 from lib.rdf_maker import RDFMaker
 
@@ -34,7 +35,7 @@ class Packager():
 
 
     def __init__(self, account_id, source_dir, destination_dir, mets_template="", 
-            preservation_events={}, rdf_xlsx="", charset="utf-8"):
+            preservation_data=[], rdf_xlsx="", charset="utf-8"):
         """ Sets instance attributes.
         
         Args:
@@ -44,7 +45,7 @@ class Packager():
             - mets_template (str): The file path for the METS template. This will be used to
             render a METS file inside the AIP's root folder. For more information, see: 
             "https://github.com/StateArchivesOfNorthCarolina/tomes-packager/blob/master/docs/documentation.md".
-            - preservation_events (dict): Optional preservation events to pass into 
+            - preservation_data (PreservationObject): Optional preservation data to pass into
             @mets_template.
             - rdf_xlsx (str): The Excel 2010+ (.xlsx) file from which to create RDFs. 
             - charset (str): The encoding for the rendered METS an RDF data.
@@ -57,12 +58,13 @@ class Packager():
         # convenience functions to clean up path notation.
         self._normalize_path = lambda p: os.path.normpath(p).replace("\\", "/")
         self._abspath = lambda p: self._normalize_path(os.path.abspath(p))
+        self._join_paths = lambda *p: self._normalize_path(os.path.join(*p))        
 
         # set attributes.
         self.account_id = str(account_id) 
         self.source_dir = self._normalize_path(source_dir)
         self.destination_dir = self._normalize_path(destination_dir)
-        self.preservation_events = EventsObject(preservation_events)
+        self.preservation_data = preservation_data
         self.mets_template = mets_template
         self.rdf_xlsx = rdf_xlsx
         self.charset = charset
@@ -70,12 +72,14 @@ class Packager():
         # set attributes for imported classes.
         self._aip_maker = AIPMaker
         self._directory_object = DirectoryObject
+        self._premis_object = PREMISObject
         self._mets_maker = METSMaker
         self._rdf_maker = RDFMaker
 
         # creates atttibutes for calculated objects.
         self.aip_obj = None
         self.directory_obj = None
+        self.premis_obj = None
         self.mets_obj = None
         self.rdf_obj = None
 
@@ -111,19 +115,28 @@ class Packager():
         # create a DirectoryObject for the AIP.
         self.directory_obj = self._directory_object(aip_dir)
 
+        # create a PREMISObject.
+        self.premis_obj = self._premis_object(self.preservation_data)
+
         # if needed, create RDF objects.
         if self.rdf_xlsx != "":
             self.rdf_obj = self._rdf_maker(self.rdf_xlsx, charset=self.charset)
             self.rdf_obj.make()
 
         # create METS from @self.mets_template.
-        self.mets_obj = self._mets_maker(self.mets_template, charset=self.charset,
-                TIMESTAMP = lambda: datetime.utcnow().isoformat() + "Z", 
-                EVENTS = self.preservation_events,
-                FOLDERS = self.directory_obj.dirs, 
-                FILES = self.directory_obj.files,
-                GRAPH = "\n" + self.directory_obj.rdirs.ls(),
-                RDFS = self.rdf_obj.rdfs if self.rdf_obj is not None else [])
+        kwargs = {"TIMESTAMP": lambda: datetime.utcnow().isoformat() + "Z",
+                "ACCOUNT": self.account_id,
+                "AGENTS": self.premis_obj.agents if self.preservation_data is not None
+                else [],
+                "EVENTS": self.premis_obj.events if self.preservation_data is not None
+                else [],
+                "OBJECTS": self.premis_obj.objects if self.preservation_data is not 
+                None else [],
+                "FOLDERS": self.directory_obj.dirs, 
+                "FILES": self.directory_obj.files,
+                "GRAPH": "\n" + self.directory_obj.rdirs.ls(),
+                "RDFS": self.rdf_obj.rdfs if self.rdf_obj is not None else []}
+        self.mets_obj = self._mets_maker(self.mets_template, charset=self.charset, **kwargs)
         self.mets_obj.make()
         
         # if the METS template failed to render, return AIP and mark it invalid.
@@ -163,8 +176,7 @@ if __name__ == "__main__":
     p = Packager("foo", 
             "../tests/sample_files/hot_folder", 
             "../tests/sample_files", 
-            "../tests/sample_files/sample_mets_template.xml",
-            {"20180101":["fooevent", None]})
+            "../mets_templates/basic_mets.xml")
     
     aip = p.package()
     print(aip)
