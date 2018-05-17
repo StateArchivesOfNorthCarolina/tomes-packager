@@ -12,7 +12,7 @@ xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
 
     <agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
       <name>TOMES Packager</name>
-      <note>DSS??? Is the following OK?:
+      <note>DSS??? Is the following OK? (Nitin: update basic_mets.xml with this):
       Email archiving software developed through the Transforming Online Mail with Embedded Semantics (TOMES) project (https://www.ncdcr.gov/resources/records-management/tomes), a multi-state partnership that includes Kansas, Utah and North Carolina.</note>
     </agent>
 
@@ -28,6 +28,7 @@ xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
   </dmdSec>
   %% endfor %%
 
+  <!-- DSS??? Note for rights? -->
   <amdSec ID="amdSec__rights">
     <rightsMD ID="rightsMD__GS_132_1">
       <mdWrap MDTYPE="PREMIS:RIGHTS">
@@ -104,6 +105,8 @@ xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
         </xmlData>
       </mdWrap>
     </techMD>
+	<!-- DSS???
+	Review objects we talked about. -->
     %% for object in OBJECT %%
     <techMD ID="object__{{ object.alias }}">
       <mdWrap MDTYPE="PREMIS:OBJECT">
@@ -125,6 +128,9 @@ xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
     %% endfor %%
   </amdSec>
 
+  <!-- DSS???
+  Need descriptions for all events we talked about.
+  -->
   <amdSec ID="amdSec__events">
     %% for event in EVENTS %%
     <digiprovMD ID="{{ event.alias }}">
@@ -142,12 +148,12 @@ xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
             </premis:eventDetailInformation>
             <premis:linkingAgentIdentifier>
               <premis:linkingAgentIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local">local</premis:linkingAgentIdentifierType>
-              <premis:linkingAgentIdentifierValue>{{ event.agent.alias }}</premis:linkingAgentIdentifierValue>
+              <premis:linkingAgentIdentifierValue>{{ event.agent}}</premis:linkingAgentIdentifierValue>
               <premis:linkingAgentRole valueURI="http://id.loc.gov/vocabulary/preservation/eventRelatedAgentRole/exe">exe</premis:linkingAgentRole>
             </premis:linkingAgentIdentifier>
             <premis:linkingObjectIdentifier>
               <premis:linkingObjectIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local">local</premis:linkingObjectIdentifierType>
-              <premis:linkingObjectIdentifierValue>{{ event.object.alias }}</premis:linkingObjectIdentifierValue>
+              <premis:linkingObjectIdentifierValue>{{ event.object }}</premis:linkingObjectIdentifierValue>
             </premis:linkingObjectIdentifier>
           </premis:event>
         </xmlData>
