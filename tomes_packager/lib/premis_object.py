@@ -5,6 +5,7 @@ object. """
 
 # import modules.
 import dateutil.parser
+import dateutil.tz
 import logging
 import logging.config
 
@@ -18,10 +19,10 @@ class PREMISObject(object):
         - objects (list): A list of objects data.
 
     Example:
-        >>> data = {"2018-05-16 19:29:18,235": {"type": "agent", "alias":
-        "pst2mime_converter", "name": "TOMES PST Converter", "version": "1"},
-        "2018-05-16 19:29:18,245": {"type": "event", "alias": "pst2mime",
-        "description": "PST to MIME converted.", "agent": "pst2mime_converter"}}
+        >>> data = [{"2018-05-17T12:40:52-0400": {"type": "agent", "alias":
+        "pst2mime_converter", "name": "TOMES PST Converter", "version": "1"}},
+        {"2018-05-17T12:40:53-0400": {"type": "event", "alias": "pst2mime",
+        "description": "PST to MIME converted.", "agent": "pst2mime_converter"}}]
         >>> po = PREMISObject(data)
         >>> po.make()
         >>> po.events # ['pst2mime']
@@ -30,32 +31,34 @@ class PREMISObject(object):
         >>> po.events[0].timestamp # '2018-05-16T23:29:18.245000Z'
         >>> po[0].agent # '[pst2mime_converter]'
         >>> po.agents[0] == po.events[0].agent # True
+        >>> po.agents[0].__dict__ # show key/value pairs.
     """
 
-    def __init__(self, premis_dict):
+    def __init__(self, premis_list):
         """ Sets instance atttributes.
 
         Args:
-            - premis_dict (dict): Each key is a timestamp; each value is a dict with 
-            required attributes "alias" (str) and "type" ("agent". "event", or "object").
+            - premis_list (list): Each item is a dict with an ISO timestamp as key
+            and a dict as its value with required attributes "alias" (str) and "type" with
+            one of the following values: "agent", "event", or "object".
             Additional attributes may also exist.
 
         Raises:
-            - TypeError: If @premis_dict is not a dict.
+            - TypeError: If @premis_list is not a list.
         """
 
         # set logger; suppress logging by default.
         self.logger = logging.getLogger(__name__)
         self.logger.addHandler(logging.NullHandler())
 
-        # verify @premis_dict is a dict.
-        if not isinstance(premis_dict, dict):
-            msg = "Expected dictionary, got: {}".format(type(premis_dict))
+        # verify @premis_list is a dict.
+        if not isinstance(premis_list, list):
+            msg = "Expected list, got: {}".format(type(premis_list))
             self.logger.error(msg)
             raise TypeError(msg)
         
         # set attributes.
-        self.premis_dict = premis_dict
+        self.premis_list = premis_list
         self.agents = []
         self.events = []
         self.objects = []
@@ -66,19 +69,17 @@ class PREMISObject(object):
         """ Converts a validate date string to ISO 8601 time. 
         
         Args:
-            - timestamp (str): A valid date string.
+            - timestamp (str): A date string, ideally already ISO 8601.
 
         Raises:
-            - ValueError: If @tstamp cannot be parsed as a date.
+            - ValueError: If @timestamp cannot be parsed as a date.
         """
-
-        # convert @timestamp to ISO 8601.
+        
+        # convert @timestamp to ISO format.
         try:
             timestamp = dateutil.parser.parse(timestamp).isoformat()
-            #timestamp = timestamp.astimezone(dateutil.parser.tz.gettz('UTC')).replace(
-            #        tzinfo=None).isoformat() + "Z"
         except (TypeError, ValueError) as err:
-            msg = "Invalid timestamp: {}".format(tstamp)
+            msg = "Invalid timestamp: {}".format(timestamp)
             self.logger.error(msg)
             raise ValueError(msg)
         
@@ -95,8 +96,8 @@ class PREMISObject(object):
             dict: Th return value.
 
         Raises:
-            - TypeError: If the value of an item in @self.premis_dict isn't itself a dict.
-            - KeyError: If the value of an item in @self.premis_dict doesn't contain the 
+            - TypeError: If the value of an item in @self.premis_list isn't itself a dict.
+            - KeyError: If the value of an item in @self.premis_list doesn't contain the 
             keys "alias" and "type".
             - ValueError: If the "type" key's value doesn't equal "agent", "event", or 
             "object".
@@ -138,17 +139,35 @@ class PREMISObject(object):
 
 
     def make(self):
-        """ Processes events in @premis_dict ??? """
+        """ Processes events in @premis_list ???
+
+        Raises:
+            - TypeError: ???
+            - ValueError: ???
+        """
             
-        self.logger.info("Parsing event dictionary.")
+        self.logger.info("Parsing data.")
         
-        for data in self.premis_dict:
+        for data in self.premis_list:
 
-            self.logger.info("Storing data: {}".format(data))
+            # make sure @data is a dict.
+            if not isinstance(data, dict):
+                msg = "Expected data to be a dict; got: {}".format(type(data))
+                self.logger.error(msg)
+                raise TypeError(msg)
 
+            # make sure @data only has one item.
+            if len(data) != 1:
+                msg = "Expected 1 data item, got: {}".format(len(data))
+                self.logger.error(msg)
+                raise ValueError(msg)
+                
             # assign @data to variables.
-            timestamp = self._get_timestamp(data)
-            metadata = self.premis_dict[data]
+            key = [k for k in data][0]
+            timestamp = self._get_timestamp(key)
+            metadata = data[key]
+            
+            self.logger.info("Processing: {}: {}".format(timestamp, metadata))
             
             # validate @data.
             metadata = self._validate_metadata(metadata)
@@ -176,9 +195,11 @@ class PREMISObject(object):
 
 if __name__ == "__main__":
     logging.basicConfig(level="DEBUG")
-    data = {"2018-05-16 19:29:18,235": {"type": "agent", "alias":
-        "pst2mime_converter", "name": "TOMES PST Converter", "version": "1"},
-        "2018-05-16 19:29:18,245": {"type": "event", "alias": "pst2mime",
-        "description": "PST to MIME converted.", "agent": "pst2mime_converter"}}
+    data = [{"2018-05-17T12:40:52-0400": {"type": "agent", "alias":
+        "pst2mime_converter", "name": "TOMES PST Converter", "version": "1"}},
+        {"2018-05-17T12:40:53-0400": {"type": "event", "alias": "pst2mime",
+        "description": "PST to MIME converted.", "agent": "pst2mime_converter"}}]
     po = PREMISObject(data)
     po.make()
+    logging.info(po.events[0].timestamp)
+    pass
