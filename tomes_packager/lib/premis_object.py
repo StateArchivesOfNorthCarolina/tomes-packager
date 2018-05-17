@@ -33,6 +33,7 @@ class PREMISObject(object):
         >>> po.agents[0].__dict__ # show key/value pairs.
     """
 
+
     def __init__(self, premis_list):
         """ Sets instance atttributes.
 
@@ -77,7 +78,9 @@ class PREMISObject(object):
         Raises:
             - ValueError: If @timestamp cannot be parsed as a date.
         """
-        
+       
+        self.logger.info("Formatting timestamp: {}".format(timestamp))
+
         # convert @timestamp to ISO format.
         try:
             timestamp = dateutil.parser.parse(timestamp).isoformat()
@@ -106,6 +109,8 @@ class PREMISObject(object):
             @self._required_keys.
             - ValueError: If the "type" key's value isn't in @self._type_map.
         """
+
+        self.logger.info("Sanitizing metadata.")
 
         # make sure @metadata is a dict.
         if not isinstance(metadata, dict):
