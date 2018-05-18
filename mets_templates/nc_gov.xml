@@ -163,7 +163,9 @@ xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
   </amdSec>
 
   <!-- DSS??? We need to talk about skipping over HUGE numbers of attachments below.
-  Shouldn't EAXS already have the SHA?  -->
+  Shouldn't EAXS already have the SHA? 
+  EMLS also potential issue. Can omit if length of EMLS are over X ... or use JG's idea of 7zip.
+  -->
   
   <!--# 
   !!!!! WARNING !!!!!

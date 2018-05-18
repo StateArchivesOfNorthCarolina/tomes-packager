@@ -24,19 +24,18 @@ class FileObject(object):
         - created (str): The creation date as ISO 8601.
         - modified (str): The modified date as ISO 8601.
         - size (int): The size in bytes.
-        - mimetype (str): The mimetype.
-        - checksum (str): The checksum value per @self.checksum_algorithm.
+        - mimetype (function): Returns the mimetype.
+        - checksum (function): Returns the checksum value per @self.checksum_algorithm.
     """
 
 
-    def __init__(self, path, parent_object, root_object, index, checksum_algorithm="SHA-256"):
+    def __init__(self, path, root_object, index, checksum_algorithm="SHA-256"):
         """ Sets instance attributes.
         
         Args:
             - path (str): A path to an actual file.
-            - parent_object (FolderObject): The parent folder to which the @path file belongs.
             - root_object (FolderObject): The root or "master" folder under which the @path 
-            file and its @parent_object reside.
+            file resides.
             - index (int): The unique identifier for the @path file within the context of the
             @root_object.
             - checksum_algorithm (str): The SHA algorithm with which to calculate the @path
@@ -63,7 +62,6 @@ class FileObject(object):
 
         # set attributes.
         self.path = self._normalize_path(path)
-        self.parent_object = parent_object
         self.root_object = root_object
         self.index = index
         self.checksum_algorithm = checksum_algorithm

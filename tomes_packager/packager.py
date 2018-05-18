@@ -134,7 +134,6 @@ class Packager():
                 "OBJECTS": self.premis_obj.objects,
                 "FOLDERS": self.directory_obj.dirs, 
                 "FILES": self.directory_obj.files,
-                "GRAPH": "\n" + self.directory_obj.rdirs.ls(),
                 "RDFS": self.rdf_obj.rdfs if self.rdf_obj is not None else []}
         self.mets_obj = self._mets_maker(self.mets_template, charset=self.charset, **kwargs)
         self.mets_obj.make()
