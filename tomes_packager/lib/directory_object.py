@@ -3,8 +3,17 @@
 """ This module contains a class for creating a read-only object representation of a folder.
 
 Todo:
-    * FileObject and DirecttoryObkect still need parent names and basenames I think.
-        - Just as strings and NOT objects. :-]
+    * Add graph function.
+        >>> def ls(f):
+                line = " " * f.depth + f.basename + "/"
+                print(line)
+                for l in f.files():
+                        line = " " * f.depth + " " + l.basename
+                        print(line)
+                for d in f.dirs():
+                        ls(d)
+        >>> ls(do)
+    * Fill in ??? comments and double check file_object.py.
 """
 
 # import modules.
@@ -29,24 +38,29 @@ class DirectoryObject(object):
         - depth (int): The distance from @self.root_object.
         - created (str): The creation date as ISO 8601.
         - modified (str): The modified date as ISO 8601.
-        - dirs (generator): All subfolders (non-recursive) within @self.path. Each item is a
-        DirectoryObject.
-        - rdirs (generator): All subfolders (recursive) within @self.path. Each item is a 
-        DirectoryObject.
-        - files (generator): All files (non recursive) within @self.path. Each item is a 
-        FileObject.
-        - rfiles (generator): All files (recursive) within @self.path. Each item is a 
-        FileObject.
+        - dirs (functions): Returns a generator for all subfolders (non-recursive) within 
+        @self.path. Each item is a DirectoryObject.
+        - rdirs (function):  Returns a generator for all subfolders (recursive) within 
+        @self.path. Each item is a DirectoryObject.
+        - files (function): Returns a generator for all files (non recursive) within 
+        @self.path. Each item is a FileObject.
+        - rfiles (function): Returns a generator for all files (recursive) within @self.path.
+        Each item is a FileObject.
     """
 
 
-    def __init__(self, path, root_object=None):
+    def __init__(self, path, parent_object=None, root_object=None, 
+            checksum_algorithm="SHA-256"):
         """ Sets instance attributes.
         
         Args:
             - path (str): A path to an actual folder.
+            - parent_object (DirectoryObject): The parent folder to which the @path file 
+            belongs.
             - root_object (DirectoryObject): The root or "master" folder under which the @path
             folder and its @parent_object reside.
+            - checksum_algorithm (str): The SHA algorithm with which to calculate file 
+            checksum values. Use only SHA-1, SHA-256, SHA-384, or SHA-512
 
         Raises:
             - NotADirectoryError: If @path is not an actual folder path.
@@ -69,7 +83,9 @@ class DirectoryObject(object):
 
         # set attributes.
         self.path = self._normalize_path(path)
+        self.parent_object = parent_object
         self.root_object = self if root_object is None else root_object
+        self.checksum_algorithm = checksum_algorithm
         
         # set path attributes.
         self.depth = self.path.count("/")#depth
@@ -90,10 +106,11 @@ class DirectoryObject(object):
         self._file_object = FileObject
 
         # create generators for non-recursive and recursive files and folders.
-        self.dirs = self._get_dirs()
-        self.rdirs = self._get_dirs(True)
-        self.files = self._get_files()
-        self.rfiles = self._get_files(True)
+        self.dirs = lambda: self._get_dirs()
+        self.rdirs = lambda: self._get_dirs(True)
+        self.files = lambda: self._get_files()
+        self.rfiles = lambda: self._get_files(True)
+
     
     @classmethod
     def _this(cls, *args, **kwargs):
@@ -102,12 +119,12 @@ class DirectoryObject(object):
         return cls(*args, **kwargs)
 
 
-
     def _get_files(self, recursive=False):
-        """ Creates ???.
+        """ Yields a FileObject for every file in @self.path.
 
         Args:
-            - recursive (bool): ???
+            - recursive (bool): If False, FileObjects for files in subfolders will not be 
+            yielded. If True, they will.
 
         Returns:
             generator: The return value.
@@ -115,34 +132,47 @@ class DirectoryObject(object):
 
         #self.logger.info("???")
   
-        def generate_file_obj():
+        # ???
+        def gen_files():
 
-            ndx = 0
+            # track file positions.
+            file_pos = 0
             
-            #for folder in self._path_object.glob(pattern):
             for dirpath, dirnames, filenames in os.walk(self.path):
 
                 for filename in filenames:
 
+                    # ???
                     if not recursive and self._normalize_path(dirpath) != self.path:
                         break
                     
+                    # ???
                     filepath = os.path.join(dirpath, filename)
                     filepath = self._normalize_path(filepath)
 
-                    file_obj = self._file_object(filepath, self.root_object, ndx)
+                    self.logger.info("Creating FileObject for: {}".format(filepath))
+                    
+                    # ???
+                    parent_obj = self._this(path=os.path.dirname(filepath), 
+                            parent_object=dirpath, root_object=self.root_object)
+                    
+                    # ???
+                    file_obj = self._file_object(path=filepath, 
+                            parent_object=parent_obj, root_object=self.root_object, 
+                            index=file_pos, checksum_algorithm=self.checksum_algorithm)
 
                     yield file_obj
-                    ndx += 1
+                    file_pos += 1
 
-        return generate_file_obj()
+        return gen_files()
 
     
     def _get_dirs(self, recursive=False):
-        """ Creates DirectoryObject instances for each folder @self directory.
+        """ Yields a DirectroyObject for every foler in @self.path.
 
         Args:
-            - recursive (bool): ???
+            - recursive (bool): If False, DirectoryObjects for subfolders will not be yielded.
+            If True, they will.
 
         Returns:
             generator: The return value.
@@ -150,39 +180,51 @@ class DirectoryObject(object):
 
         #self.logger.info("???")
   
-        def generate_dir_objs():
+        # iterate through folders and yield DirectoryObject(s).
+        def gen_dirs():
   
-            #for folder in self._path_object.glob(pattern):
             for dirpath, dirnames, filenames in os.walk(self.path):
-
+                
+                # sort folders per: https://stackoverflow.com/a/6670926.
+                dirnames.sort()
+                
                 for dirname in dirnames:
 
+                    # if @recursive is False, don't go into subfolders.
                     if not recursive and self._normalize_path(dirpath) != self.path:
                         break
                     
+                    # set path.
                     folder = os.path.join(dirpath, dirname)
                     folder = self._normalize_path(folder)
                         
+                    # skip yielding @folder if it is @self.path.
                     if folder == self.path:
                         continue
 
-                    current_depth = folder.count("/")
-
-                    self.logger.info("Creating DirectoryObject for '{}' with depth: {}".format(
-                        folder, current_depth))
-                    dir_obj = self._this(folder, self.root_object)
+                    self.logger.info("Creating DirectoryObject for: {}".format(folder))
+                    
+                    # create the parent of @folder as a DirectorObject.
+                    parent_obj = self._this(path=os.path.dirname(folder), 
+                            parent_object=dirpath, root_object=self.root_object,
+                            checksum_algorithm=self.checksum_algorithm)
+                    
+                    # creat the DirectoryObject to yield.
+                    dir_obj = self._this(path=folder, parent_object=parent_obj, 
+                            root_object=self.root_object,
+                            checksum_algorithm=self.checksum_algorithm)
 
                     yield dir_obj
 
-        return generate_dir_objs()
-
+        return gen_dirs()
+    
 
 if __name__ == "__main__":
     logging.basicConfig(level=0)
     do = DirectoryObject("../")
-    for d in do.dirs:
+    for d in do.dirs():
         print(d.name, d.path, sep="; ")
     print("*"*10)
-    for d in do.rdirs:
+    for d in do.rdirs():
         print(d.name, d.path, sep="; ")
     pass

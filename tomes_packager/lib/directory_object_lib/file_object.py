@@ -29,11 +29,12 @@ class FileObject(object):
     """
 
 
-    def __init__(self, path, root_object, index, checksum_algorithm="SHA-256"):
+    def __init__(self, path, parent_object, root_object, index, checksum_algorithm="SHA-256"):
         """ Sets instance attributes.
         
         Args:
             - path (str): A path to an actual file.
+            - parent_object (FolderObject): The parent folder to which the @path file belongs.
             - root_object (FolderObject): The root or "master" folder under which the @path 
             file resides.
             - index (int): The unique identifier for the @path file within the context of the
@@ -62,6 +63,7 @@ class FileObject(object):
 
         # set attributes.
         self.path = self._normalize_path(path)
+        self.parent_object = parent_object
         self.root_object = root_object
         self.index = index
         self.checksum_algorithm = checksum_algorithm
