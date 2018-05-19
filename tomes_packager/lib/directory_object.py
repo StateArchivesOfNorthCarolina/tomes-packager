@@ -105,7 +105,7 @@ class DirectoryObject(object):
         # add dependency attributes.
         self._file_object = FileObject
 
-        # create generators for non-recursive and recursive files and folders.
+        # create attributes for directory and file objects.
         self.dirs = lambda: self._get_dirs()
         self.rdirs = lambda: self._get_dirs(True)
         self.files = lambda: self._get_files()
