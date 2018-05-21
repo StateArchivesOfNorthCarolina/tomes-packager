@@ -38,7 +38,7 @@ class DirectoryObject(object):
         - depth (int): The distance from @self.root_object.
         - created (str): The creation date as ISO 8601.
         - modified (str): The modified date as ISO 8601.
-        - dirs (functions): Returns a generator for all subfolders (non-recursive) within 
+        - dirs (function): Returns a generator for all subfolders (non-recursive) within 
         @self.path. Each item is a DirectoryObject.
         - rdirs (function):  Returns a generator for all subfolders (recursive) within 
         @self.path. Each item is a DirectoryObject.
@@ -198,7 +198,7 @@ class DirectoryObject(object):
                     folder = os.path.join(dirpath, dirname)
                     folder = self._normalize_path(folder)
                         
-                    # skip yielding @folder if it is @self.path.
+                    # if @folder is @self.path, skip it.
                     if folder == self.path:
                         continue
 
