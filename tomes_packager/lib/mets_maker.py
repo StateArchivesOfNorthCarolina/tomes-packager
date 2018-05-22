@@ -234,6 +234,7 @@ if __name__ == "__main__":
     Don't validate the manifest due to size.
 
     Finally, have a streaming=TRUE option OR just always stream the output.
+    And log every nth write to file.
     Issue there is you don't want move the METS into the AIP until the METS is rendered.
     Otherwise, the METS file itself will show.
 
