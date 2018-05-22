@@ -1,0 +1,51 @@
+<mets xmlns="http://www.loc.gov/METS/" 
+xmlns:xlink="http://www.w3.org/1999/xlink" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <!--# !!! WARNING !!!
+  DO NOT edit this template unless you are very comfortable with Python, Jinja templates, and METS.
+  AND if you know how the TOMES Packager lib.DirectoryObject module works.
+  #-->
+  <metsHdr CREATEDATE="{{ TIMESTAMP() }}">
+    <agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
+      <name>TOMES Packager</name>
+    </agent>
+  </metsHdr>
+  <fileSec ID="fileSec">
+    <fileGrp ID="fileGrp_">
+    %% for file in FILES() %%
+	  %% if ".mets.manifest" not in file.basename %%
+      <file SIZE="{{ file.size }}" ID="_{{ file.index }}" MIMETYPE="{{ file.mimetype() }}" CREATED="{{ file.created }}" CHECKSUM="{{ file.checksum() }}" CHECKSUMTYPE="{{ file.checksum_algorithm }}">
+        <FLocat xlink:href="{{ file.name }}" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
+    </file>
+      %% endif %%
+    %% endfor %%
+    </fileGrp>
+    %% for folder in FOLDERS() %%
+    <fileGrp ID="FileGrp_{{ folder.name }}">
+      %% for file in folder.rfiles() %%
+      <file SIZE="{{ file.size }}" ID="_{{ folder.name }}_{{ file.index }}" MIMETYPE="{{ file.mimetype() }}" CREATED="{{ file.created }}" CHECKSUM="{{ file.checksum() }}" CHECKSUMTYPE="{{ file.checksum_algorithm }}">
+        <FLocat xlink:href="{{ file.name }}" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
+      </file>
+      %% endfor %%
+    </fileGrp>
+    %% endfor %%
+  </fileSec>
+  <structMap>
+    <div>
+      <div ID="Div_">
+      %% for file in FILES() %%
+	  	%% if ".mets.manifest" not in file.basename %%
+        <fptr FILEID="_{{ file.index }}"/>
+		%% endif %%
+      %% endfor %%
+      </div>
+      %% for folder in FOLDERS() %%
+      <div ID="Div_{{ folder.name }}">
+        %% for file in folder.rfiles() %%
+        <fptr FILEID="_{{ folder.name }}_{{ file.index }}"/>
+        %% endfor %%
+      </div>
+      %% endfor %%
+    </div>
+  </structMap>
+</mets>
