@@ -1,4 +1,4 @@
-""" This module contains a class for constructing a METS document from a given METS template 
+""" This module contains a class for constructing a METS file from a given METS template 
 file. """
 
 # import modules.
@@ -12,24 +12,22 @@ from lxml import etree
     
 class METSMaker():
     """ A class for constructing a METS document from a given METS template file.
-    
-        Attributes:
-            - xml (str): The rendered METS. If the template hasn't been successfully 
-            rendered, this will be None.
-            - element (lxml.etree._Elment): The rendered METS. If the template hasn't been 
-            successfully rendered, this will be None.
+
+        Attribuutes:
+            - is_valid (bool): Stored validation value if "evaluate" was set to True. 
+            Otherwise, this is None.
 
         Example:
             >>> from datetime import datetime
-            >>> mm = METSMaker("../../tests/sample_files/sample_mets_template.xml",
-            >>>                 TIMESTAMP = lambda: datetime.now().isoformat() + "Z")
-            >>> mm.make()
-            >>> mm.validate()
-            >>> print(mm.xml)
+            >>> mm = METSMaker("../../tests/sample_files/sample_mets_template.xml", "foo.xml",
+            >>>     TIMESTAMP = lambda: datetime.now().isoformat() + "Z")
+            >>> mm.make() # writes "foo.xml" METS file.
+            >>> mm.validate() # True.
     """
 
 
-    def __init__(self, mets_template, evaluate=True, charset="utf-8", *args, **kwargs):
+    def __init__(self, mets_template, filepath, evaluate=True, charset="utf-8", *args,  
+            **kwargs):
         """ Sets instance attributes.
         
         Args:
@@ -37,8 +35,10 @@ class METSMaker():
             templates. Note that the Jinja template start AND stopping strings are set to "%%"
             instead of the defaults. Also, XML comments beginning and ending with "<!--#" and
             "#-->" will not be outputted and may be used as in-line template documentation.
+            - filepath (str): The file path to which to write the METS.
             - evaluate (bool): If True, a time-stamped validation comment will be appended to
-            the rendered METS document.
+            the METS file and it will be beautified. Use False if the METS file output is
+            excepted to be large.
             - charset (str): The encoding for the rendered METS document.
             - *args/**kwargs: The optional arguments to pass into @mets_template.
 
@@ -62,6 +62,7 @@ class METSMaker():
 
         # set attributes.            
         self.mets_template = mets_template
+        self.filepath = filepath
         self.charset = charset
         self.evaluate = evaluate
         self.args = args
@@ -69,19 +70,18 @@ class METSMaker():
 
         # set attributes for imported data.
         self.xsd = self._join_paths(os.path.dirname(__file__),  "mets_1-11.xsd")
-        self.beautifier = self._join_paths(os.path.dirname(__file__),  
+        self._beautifier = self._join_paths(os.path.dirname(__file__),  
                 "beautifier.xsl")
 
-        # set results containers.
-        self.xml = None
-        self.element = None
+        # set validation attribute.
+        self.is_valid = None
 
 
     def _beautify_mets(self, mets_el):
-        """ Beautifies @mets XML with @self.beautifier.
+        """ Beautifies @mets_el XML with @self.beautifier.
         
         Args:
-            - mets (lxml.etree._Element): The METS XML to beautify.
+            - mets_el (lxml.etree._Element): The METS XML to beautify.
             
         Returns:
             lxml.etree._Element: The return value.
@@ -89,54 +89,83 @@ class METSMaker():
       
         self.logger.info("Beautifying METS XML.")
       
-        # load XSL beautifier.
-        beautifier = etree.parse(self.beautifier)
-      
-        # beautify @mets.
-        transformer = etree.XSLT(beautifier)
-        mets = transformer(mets_el)
+        # beautify @mets_el.
+        beautifier = etree.parse(self._beautifier)
+        transform = etree.XSLT(beautifier)
+        mets_el = transform(mets_el)
         
-        return mets
-    
+        return mets_el
 
-    def validate(self, mets_el=None):
-        """ Validates @mets_el against @self.xsd.
+
+    def _evaluate_mets(self, mets_el):
+        """ Appends a validation statement to @mets_el.
 
         Args:
-            - mets (lxml.etree._Element): The METS XML to validate. If None, @self.element
-            will be used.
+            - mets_el (lxml.etree._Element): The METS XML to beautify.
+            
+        Returns:
+            lxml.etree._Element: The return value.
+        """
+
+        is_valid = self.is_valid
+        
+        # make timestamp function.
+        now = lambda: datetime.now().isoformat() + "Z"
+        
+        # determine validation status.
+        if is_valid is None:
+            msg = "WARNING: METS document could not be validated as of {}.".format(now())
+        if not is_valid:
+            msg = "CRITICAL: this METS document is invalid as of {}.".format(now())
+        else:
+            msg = "NOTE: this METS document is valid as of {}.".format(now())
+ 
+        # update @mets_el with validation status.
+        self.logger.info("Appending XML comment: {}".format(msg))
+        mets_el.append(etree.Comment(msg))
+
+        return mets_el
+    
+
+    def validate(self):
+        """ Validates @self.filepath against @self.xsd.
 
         Returns:
             bool: The return value. True for valid, otherwise False.
-            If validation could not be performed because there is no Internet connection, None
-            is returned.
+            None is returned if there is no Internet connection or @self.filepath is not a 
+            file or has invalid XML syntax.
         """
 
-        self.logger.info("Validating METS.")
+        # if no METS is created, return None.
+        if not os.path.isfile(self.filepath):
+            self.logger.warning("Nothing to validate; trying using .make() first.")
+            return is_valid
+        
+        self.logger.info("Validating METS file: {}".format(self.filepath))
         
         # start with premis that validation hasn't occurred.
         is_valid = None
-        
-        # if needed, use @self.element.
-        if mets_el is None:
-            if self.element is not None:
-                mets_el = self.element
-            else:
-                self.logger.warning("Nothing to validate; trying using .make() first.")
-                return is_valid
-        
-        # load XSD.
-        xsd = etree.parse(self.xsd)
-        
-        # create validator or return if no Internet connection exists.
+         
+        # create validator.
         try:
+            xsd = etree.parse(self.xsd)        
             validator = etree.XMLSchema(xsd)
         except etree.XMLSchemaParseError as err:
-            self.logger.warning("Unable to validate XML; likely no Internet connection.")
+            self.logger.warning("Can't parse '{}'; likely no Internet connection.".format(
+                self.xsd))
             self.logger.error(err)
             return is_valid
         
-        # validate @mets.
+        # load @self.filepath.
+        try:
+            with open(self.filepath, encoding=self.charset) as fp:
+                mets_el = etree.fromstring(fp.read())
+        except etree.XMLSyntaxError as err:
+            self.logger.warning("Can't validate malformed '{}'; check template syntax.")
+            self.logger.error(err)
+            return is_valid
+
+        # validate @mets_el.
         try:
             validator.assertValid(mets_el)
             self.logger.info("METS is valid.")            
@@ -146,6 +175,25 @@ class METSMaker():
             self.logger.error(err)
             is_valid = False
 
+        # set @self._is_valid.
+        self.is_valid = is_valid
+
+        # if @self.evaluate is True; append a validation statement to the METS.
+        if self.evaluate:
+            
+            # evaluate and beautify the METS.
+            mets_el = self._evaluate_mets(mets_el)            
+            mets_el = self._beautify_mets(mets_el)
+    
+            # rewrite @self.filepath with the updated METS.
+            with open(self.filepath, "w", encoding=self.charset) as xf:
+                mets = etree.tostring(mets_el, pretty_print=True, encoding=self.charset)
+                mets = mets.decode(self.charset)
+                xf.write(mets)
+
+            # prevent further evaluation.
+            self.evaluate = False
+
         return is_valid
 
 
@@ -154,29 +202,37 @@ class METSMaker():
             
         Returns:
             str: The return value.
-            The METS document as a string.
-            If the METS template has invalid XML or template syntax, None is returned.
+            The METS filepath.
+            If the METS can't be created, None is returned.
         """
 
         self.logger.info("Rendering template: {}".format(self.mets_template))
 
         # open @self.mets_template.
         with open(self.mets_template, encoding=self.charset) as tf:
-                mets = tf.read()
+                mets_template = tf.read()
                
         # create the Jinja renderer.
         try:
-            template = jinja2.Template(mets, trim_blocks=True, lstrip_blocks=True, 
+            template = jinja2.Template(mets_template, trim_blocks=True, lstrip_blocks=True, 
                     block_start_string="%%", block_end_string="%%", 
                     comment_start_string="<!--#", comment_end_string="#-->")
         except jinja2.exceptions.TemplateSyntaxError as err:
-            self.logger.warning("Can't render METS; template syntax is invalid.")
+            self.logger.warning("METS template syntax is invalid.")
             self.logger.exception(err, exc_info=True)
             return
         
-        # render @self.mets_template.
+        # render @self.mets_template; write results to @self.filepath.
         try:
-            mets = template.render(*self.args, **self.kwargs)
+            mets = template.stream(*self.args, **self.kwargs)
+            with open(self.filepath, "w") as f:
+                i = 0
+                for line in mets:
+                    f.write(line)
+                    i += 1
+                    if (i % 100) == 0:
+                        self.logger.info("Lines written: {}".format(i))
+                self.logger.info("Created METS file: {}".format(self.filepath))
         except (AttributeError, TypeError, jinja2.exceptions.UndefinedError) as err:
             msg = "Can't render METS; "
             msg += "check template for undefined variables or calls to non-functions."
@@ -184,45 +240,11 @@ class METSMaker():
             self.logger.exception(err, exc_info=True)
             return
         
-        # convert @mets to an lxml.etree._Element.
-        try:
-            mets_el = etree.fromstring(mets)
-        except etree.XMLSyntaxError as err:
-            self.logger.warning("XML syntax error in template; can't render METS.")
-            self.logger.error(err)
-            return
-
-        # if @self.evaluate is True, add validation status as an XML comment.
+        # if needed, validate METS.
         if self.evaluate:
+            self.validate()
 
-            # validate @mets_el.
-            is_valid = self.validate(mets_el)
-            
-            # make timestamp function.
-            now = lambda: datetime.now().isoformat() + "Z"
-            
-            # determine validation status.
-            if is_valid is None:
-                msg = "WARNING: METS document could not be validated as of {}.".format(now())
-            if not is_valid:
-                msg = "CRITICAL: this METS document is invalid as of {}.".format(now())
-            else:
-                msg = "NOTE: this METS document is valid as of {}.".format(now())
-            
-            # update @mets_el with validation status.
-            self.logger.info("Appending XML comment: {}".format(msg))
-            mets_el.append(etree.Comment(msg))
-        
-        # beautify @mets_el and set @self.element.
-        mets_el = self._beautify_mets(mets_el)
-        self.element = mets_el
-        
-        # finalize @mets.
-        mets = etree.tostring(mets_el, pretty_print=True, encoding=self.charset).decode(
-                self.charset)
-        self.xml = mets
-
-        return mets
+        return self.filepath
 
 
 if __name__ == "__main__":

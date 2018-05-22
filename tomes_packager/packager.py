@@ -4,6 +4,7 @@ with an optional METS file.
 Todo:
     * Need to determine constant vars.
         - TIMESTAMP (done), What else?
+    * Don't revalidate AIP. Set a self.is_valis attr.
     * If AIP restructing works but METS fails, we need a function to JUST
     drop in the METS (and to create DirectoryObject) - also useful if AIP 
     already exists.
@@ -130,6 +131,11 @@ class Packager():
             self.rdf_obj = self._rdf_maker(self.rdf_xlsx, charset=self.charset)
             self.rdf_obj.make()
 
+        # set the METS file path.
+        mets_file = "{}.mets.xml".format(self.account_id)
+        mets_path = os.path.join(self.destination_dir, self.account_id, mets_file)
+        mets_path = self._abspath(mets_path)
+
         # create METS from @self.mets_template.
         kwargs = {"TIMESTAMP": lambda: datetime.utcnow().isoformat() + "Z",
                 "ACCOUNT": self.account_id,
@@ -139,27 +145,21 @@ class Packager():
                 "FOLDERS": self.directory_obj.dirs, 
                 "FILES": self.directory_obj.files,
                 "RDFS": self.rdf_obj.rdfs if self.rdf_obj is not None else []}
-        self.mets_obj = self._mets_maker(self.mets_template, charset=self.charset, **kwargs)
+        self.mets_obj = self._mets_maker(self.mets_template, mets_path, charset=self.charset,
+                **kwargs)
         self.mets_obj.make()
         
         # if the METS template failed to render, return AIP and mark it invalid.
-        if self.mets_obj.xml is None:
+        if self.mets_obj.is_valid is None or not os.path.isfile(self.mets_obj.filepath):
             self.logger.warning("Couldn't create METS; invalidating AIP.")
             return (aip_dir, None, False)
-        
-        # set the METS file path and write to file.
-        mets_file = "{}.mets.xml".format(self.account_id)
-        mets_path = os.path.join(self.destination_dir, self.account_id, mets_file)
-        mets_path = self._abspath(mets_path)
-        with open(mets_path, "w", encoding=self.charset) as mf:
-            mf.write(self.mets_obj.xml)
 
         # if needed, write the METS manifest.
-        if self.mets_manifest_file != "":
+        if self.mets_manifest_template != "":
             pass # ??? TODO: What???
         
         # determine if both the AIP and the METS are valid.
-        is_valid = bool(self.aip_obj.validate() * self.mets_obj.validate())
+        is_valid = bool(self.aip_obj.validate() * self.mets_obj.is_valid)
         
         if is_valid:
             self.logger.info("Final AIP appears to be valid.")
@@ -167,7 +167,7 @@ class Packager():
             self.logger.warning("Final AIP is not valid.")
             if not self.aip_obj.validate():
                 self.logger.info("Check source files prior to recreating AIP.")
-            if not self.mets_obj.validate():
+            if not self.mets_obj.is_valid:
                 self.logger.info("Check METS template prior to recreating AIP.")
 
         return (aip_dir, mets_file, is_valid)
