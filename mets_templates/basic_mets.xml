@@ -17,62 +17,9 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     </mdWrap>
   </dmdSec>
   %% endfor %%
-
-  <!--# !!! WARNING !!!
-  DO NOT edit below this line unless you are very comfortabel with Python, Jinja templates, and METS.
-  #-->
-  <fileSec ID="fileSec">
-    <fileGrp ID="fileGrp_">
-  %% for file in FILES %%
-      <file 
-    SIZE="{{ file.size }}" 
-    ID="_{{ file.index }}" 
-    MIMETYPE="{{ file.mimetype() }}" 
-    CREATED="{{ file.created }}" 
-    CHECKSUM="{{ file.checksum() }}" 
-    CHECKSUMTYPE="{{ file.checksum_algorithm }}">
-        <FLocat xlink:href="{{ file.name }}" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
-      </file>
-  %% endfor %%
-    </fileGrp>
-  %% for folder in FOLDERS %%
-    <fileGrp ID="FileGrp_{{ folder.name }}">
-	%% if folder.basename == "eaxs" %%
-	<!-- Skipping "attachments" folder. See the EAXS file for attachment data. -->
-	%% endif %%
-    %% for file in folder.rfiles %%
-      <!--# %% if file.parent_object.basename != "attachments" %% NO LONGER has parent_object.#--> 
-      <file 
-            SIZE="{{ file.size }}" 
-            ID="_{{ folder.name }}_{{ file.index }}" 
-            MIMETYPE="{{ file.mimetype() }}" 
-            CREATED="{{ file.created }}" 
-            CHECKSUM="{{ file.checksum() }}" 
-            CHECKSUMTYPE="{{ file.checksum_algorithm }}">
-        <FLocat xlink:href="{{ file.name }}" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
-      </file>
-	  <!--# %% endif %% #-->
-    %% endfor %%
-    </fileGrp>
-    %% endfor %%
-  </fileSec>
+ 
   <structMap>
-    <div>
-      <div ID="Div_">
-      %% for file in FILES %%
-        <fptr FILEID="__{{ file.index }}"/>
-            %% endfor %%
-      </div>
-        %% for folder in FOLDERS %%
-      <div ID="Div_{{ folder.name }}">
-      %% for file in folder.rfiles %%
-	    <!--# %% if file.parent_object.basename != "attachments" %% #-->
-        <fptr FILEID="_{{ folder.name }}_{{ file.index }}"/>
-		<!--# %% endif %% #-->
-      %% endfor %%
-      </div>
-        %% endfor %%
-    </div>
+      <div ID="{{ ACCOUNT }}" LABEL="Email account for: {{ ACCOUNT }}" />
   </structMap>
 
 </mets>

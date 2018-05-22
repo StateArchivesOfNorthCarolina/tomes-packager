@@ -9,12 +9,13 @@ Todo:
     already exists.
         - Can't you just using METSMaker for that now?
     * Run autoflakes on this and lib/*.
-    * This and DirectoryObject need to pass SHA type to FileObject.
+    * This needs to pass SHA type to DirectoryObject.
 	- This should be a CLI option, too.
     * Gotta work on PREMISObject stuff here.
     * Can we support DirectoryObject/METS for acounts with 10k attachments???
         - Probably not a good idea.
         - Need to talk about.
+        - Need to stream METS/Jinja and see if that's better for large files.
     * Add CLI.
 """
 
@@ -38,7 +39,7 @@ class Packager():
 
 
     def __init__(self, account_id, source_dir, destination_dir, mets_template="", 
-            preservation_data=[], rdf_xlsx="", charset="utf-8"):
+            mets_manifest_template="", preservation_data=[], rdf_xlsx="", charset="utf-8"):
         """ Sets instance attributes.
         
         Args:
@@ -46,8 +47,9 @@ class Packager():
             - source_dir (str): The folder path from which to transfer data.
             - destination_dir (str): The folder path in which to create the AIP structure.
             - mets_template (str): The file path for the METS template. This will be used to
-            render a METS file inside the AIP's root folder. For more information, see: 
-            "https://github.com/StateArchivesOfNorthCarolina/tomes-packager/blob/master/docs/documentation.md".
+            render a METS file inside the AIP's root folder.
+            - mets_manifest_template (str): The file path for the METS manifest template. 
+            This will be used to render a METS manifest file inside the AIP's root folder.
             - preservation_data (PreservationObject): Optional preservation data to pass into
             @mets_template.
             - rdf_xlsx (str): The Excel 2010+ (.xlsx) file from which to create RDFs. 
@@ -69,6 +71,7 @@ class Packager():
         self.destination_dir = self._normalize_path(destination_dir)
         self.preservation_data = preservation_data
         self.mets_template = mets_template
+        self.mets_manifest_template = mets_manifest_template # ???
         self.rdf_xlsx = rdf_xlsx
         self.charset = charset
 
@@ -143,14 +146,23 @@ class Packager():
             self.logger.warning("Couldn't create METS; invalidating AIP.")
             return (aip_dir, None, False)
         
-        # set the METS file path.
+        # set the METS file path and write to file.
         mets_file = "{}.mets.xml".format(self.account_id)
         mets_path = os.path.join(self.destination_dir, self.account_id, mets_file)
         mets_path = self._abspath(mets_path)
-        
-        # write @mets to file.
         with open(mets_path, "w", encoding=self.charset) as mf:
             mf.write(self.mets_obj.xml)
+
+        # ??? MOVE TO METS MAKER ???
+        try:
+            template = jinja2.Template(open(self.mets_manifest_template).read(), trim_blocks=True, lstrip_blocks=True, 
+                    block_start_string="%%", block_end_string="%%", 
+                    comment_start_string="<!--#", comment_end_string="#-->")
+        except jinja2.exceptions.TemplateSyntaxError as err:
+            self.logger.warning("Can't render METS; template syntax is invalid.")
+            self.logger.exception(err, exc_info=True)
+            return
+        template.stream(**kwargs).dump(mets_path.replace(".xml", ".manifest"), encoding=self.charset)
             
         # determine if both the AIP and the METS are valid.
         is_valid = bool(self.aip_obj.validate() * self.mets_obj.validate())
@@ -175,7 +187,8 @@ if __name__ == "__main__":
     p = Packager("foo", 
             "../tests/sample_files/hot_folder", 
             "../tests/sample_files", 
-            "../mets_templates/basic_mets.xml")
+            "../mets_templates/basic_mets.xml",
+            "../mets_templates/MANIFEST.XML")
     
     aip = p.package()
     print(aip)

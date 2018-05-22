@@ -161,61 +161,9 @@ xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
     </digiprovMD>
     %% endfor %%
   </amdSec>
-
-  <!-- DSS??? We need to talk about skipping over HUGE numbers of attachments below.
-  Shouldn't EAXS already have the SHA? 
-  EMLS also potential issue. Can omit if length of EMLS are over X ... or use JG's idea of 7zip.
-  -->
   
-  <!--# 
-  !!!!! WARNING !!!!!
-  DO NOT edit below this line unless you are very comfortable with Python, Jinja templates, and METS.
-  #-->
-  <fileSec>
-    <fileGrp ID="fileGrp__">
-  %% for file in FILES %%
-      <file 
-    SIZE="{{ file.size }}" 
-    ID="_{{ file.index }}" 
-    MIMETYPE="{{ file.mimetype() }}" 
-    CREATED="{{ file.created }}" 
-    CHECKSUM="{{ file.checksum() }}" 
-    CHECKSUMTYPE="{{ file.checksum_algorithm }}">
-        <FLocat xlink:href="{{ file.name }}" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
-      </file>
-  %% endfor %%
-    </fileGrp>
-  %% for folder in FOLDERS %%
-    <fileGrp ID="fileGrp__{{ folder.name }}">
-        %% for file in folder.rfiles %%
-      <file 
-            SIZE="{{ file.size }}" 
-            ID="_{{ folder.name }}_{{ file.index }}" 
-            MIMETYPE="{{ file.mimetype() }}" 
-            CREATED="{{ file.created }}" 
-            CHECKSUM="{{ file.checksum() }}" 
-            CHECKSUMTYPE="{{ file.checksum_algorithm }}">
-        <FLocat xlink:href="{{ file.name }}" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
-      </file>
-        %% endfor %%
-    </fileGrp>
-    %% endfor %%
-  </fileSec>
-  <structMap ID="{{ ACCOUNT }}">
-    <div>
-      <div ID="div__">
-      %% for file in FILES %%
-        <fptr FILEID="__{{ file.index }}"/>
-            %% endfor %%
-      </div>
-        %% for folder in FOLDERS %%
-      <div ID="div__{{ folder.name }}">
-            %% for file in folder.rfiles %%
-        <fptr FILEID="_{{ folder.name }}_{{ file.index }}"/>
-            %% endfor %%
-      </div>
-        %% endfor %%
-    </div>
+  <structMap>
+      <div ID="{{ ACCOUNT }}" LABEL="Email account for: {{ ACCOUNT }}" />
   </structMap>
 
 </mets>
