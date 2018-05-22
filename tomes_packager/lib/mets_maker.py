@@ -227,3 +227,24 @@ class METSMaker():
 
 if __name__ == "__main__":
     pass
+
+"""
+    So just create another instance of METS MAKER in packager.
+    And set evalute to False.
+    Don't validate the manifest due to size.
+
+    Finally, have a streaming=TRUE option OR just always stream the output.
+    Issue there is you don't want move the METS into the AIP until the METS is rendered.
+    Otherwise, the METS file itself will show.
+
+        # ??? MOVE TO METS MAKER AND HAVE THE TEMPLATE AS A LIB FILE? ???
+        try:
+            template = jinja2.Template(open(self.mets_manifest_template).read(), trim_blocks=True, lstrip_blocks=True, 
+                    block_start_string="%%", block_end_string="%%", 
+                    comment_start_string="<!--#", comment_end_string="#-->")
+        except jinja2.exceptions.TemplateSyntaxError as err:
+            self.logger.warning("Can't render METS; template syntax is invalid.")
+            self.logger.exception(err, exc_info=True)
+            return
+        template.stream(**kwargs).dump(mets_path.replace(".xml", ".manifest"), encoding=self.charset)
+"""

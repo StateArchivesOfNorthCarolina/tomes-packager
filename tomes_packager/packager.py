@@ -16,6 +16,7 @@ Todo:
         - Probably not a good idea.
         - Need to talk about.
         - Need to stream METS/Jinja and see if that's better for large files.
+        - AIP validator needs to check for manifest file now too.
     * Add CLI.
 """
 
@@ -153,17 +154,10 @@ class Packager():
         with open(mets_path, "w", encoding=self.charset) as mf:
             mf.write(self.mets_obj.xml)
 
-        # ??? MOVE TO METS MAKER ???
-        try:
-            template = jinja2.Template(open(self.mets_manifest_template).read(), trim_blocks=True, lstrip_blocks=True, 
-                    block_start_string="%%", block_end_string="%%", 
-                    comment_start_string="<!--#", comment_end_string="#-->")
-        except jinja2.exceptions.TemplateSyntaxError as err:
-            self.logger.warning("Can't render METS; template syntax is invalid.")
-            self.logger.exception(err, exc_info=True)
-            return
-        template.stream(**kwargs).dump(mets_path.replace(".xml", ".manifest"), encoding=self.charset)
-            
+        # if needed, write the METS manifest.
+        if self.mets_manifest_file != "":
+            pass # ??? TODO: What???
+        
         # determine if both the AIP and the METS are valid.
         is_valid = bool(self.aip_obj.validate() * self.mets_obj.validate())
         
