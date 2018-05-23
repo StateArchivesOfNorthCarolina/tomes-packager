@@ -136,7 +136,7 @@ class DirectoryObject(object):
                     filepath = os.path.join(dirpath, filename)
                     filepath = self._normalize_path(filepath)
 
-                    self.logger.info("Creating FileObject for: {}".format(filepath))
+                    self.logger.debug("Creating FileObject for: {}".format(filepath))
                     
                     # build DirectoryObject for parent folder of @filepath.
                     parent_obj = self._this(path=os.path.dirname(filepath), 
@@ -188,7 +188,7 @@ class DirectoryObject(object):
                     if folder == self.path:
                         continue
 
-                    self.logger.info("Creating DirectoryObject for: {}".format(folder))
+                    self.logger.debug("Creating DirectoryObject for: {}".format(folder))
                     
                     # build DirectoryObject for parent folder of @folder.
                     parent_obj = self._this(path=os.path.dirname(folder), 

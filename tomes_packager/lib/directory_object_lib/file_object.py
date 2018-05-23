@@ -44,6 +44,7 @@ class FileObject(object):
 
         Raises:
             - FileNotFoundError: If @path is not an actual file path.
+            - ValueError: If @checksum_algorithm is illegal.
         """
  
         # set logger; suppress logging by default.
@@ -82,7 +83,19 @@ class FileObject(object):
         self.mimetype = self._get_mimetype
         self.checksum = self._get_checksum
 
+        # set checksum function map.
+        self.checksum_map = {"SHA-1": hashlib.sha1(), "SHA-256": hashlib.sha256(), 
+                "SHA-384": hashlib.sha384(), "SHA-512": hashlib.sha512()}
+        
+        # verify that @self.checksum_algorithm is legal.
+        if self.checksum_algorithm not in self.checksum_map:
+            self.logger.warning("Algorithm '{}' is not valid; must be one of: {}".format(
+                self.checksum_algorithm, list(self.checksum_map)))
+            msg = "Illegal checksum algorithm: {}".format(self.checksum_algorithm)
+            self.logger.err(msg)
+            raise ValueError(msg)
     
+
     def _get_mimetype(self):
         """ Returns the MIME type for @self.path.
         
@@ -96,6 +109,7 @@ class FileObject(object):
         if mimetype is None:
             mimetype = "application/octet-stream"
 
+        self.logger.debug("MIME type: {}".format(mimetype))
         return mimetype
 
 
@@ -109,29 +123,14 @@ class FileObject(object):
             the block size would be 1280 (20 * 64).
         
         Returns:
-            str: The return value.
-            
-        Raises:
-             - ValueError: If @self.checksum_algorithm is illegal.
+            str: The return value..
         """
-
-        # assigning hash names to hash functions.
-        checksum_map = {"SHA-1": hashlib.sha1(), "SHA-256": hashlib.sha256(), 
-                "SHA-384": hashlib.sha384(), "SHA-512": hashlib.sha512()}
-        
-        # verify that @self.checksum_algorithm is legal
-        if self.checksum_algorithm not in checksum_map:
-            self.logger.warning("Algorithm '{}' is not valid; must be one of: {}".format(
-                self.checksum_algorithh, checksum_map.keys()))
-            msg = "Illegal checksum algorithm: {}".format(self.checksum_algorith)
-            self.logger.err(msg)
-            raise ValueError(msg)
         
         self.logger.info("Calculating {} checksum value for: {}".format(
-            self.checksum_algorithm, self.abspath))
+            self.checksum_algorithm, self.abspath)) 
 
         # establish hashlib function and block size to use.
-        sha = checksum_map[self.checksum_algorithm]
+        sha = self.checksum_map[self.checksum_algorithm]
         if block_size is None:
             block_size = sha.block_size * 20
 
@@ -156,7 +155,7 @@ class FileObject(object):
 
         checksum = sha.hexdigest()
 
-        self.logger.info("{} checksum: {}".format(self.checksum_algorithm, checksum))
+        self.logger.debug("{} checksum: {}".format(self.checksum_algorithm, checksum))
         return checksum
 
         

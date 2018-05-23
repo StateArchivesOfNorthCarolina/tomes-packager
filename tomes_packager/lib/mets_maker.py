@@ -203,7 +203,7 @@ class METSMaker():
         except jinja2.exceptions.TemplateSyntaxError as err:
             self.logger.warning("METS template syntax is invalid.")
             self.logger.exception(err, exc_info=False)
-            return
+            raise
         
         # render @self.mets_template; write results to @self.filepath.
         self.logger.info("Creating METS file: {}".format(self.filepath))        
@@ -213,15 +213,16 @@ class METSMaker():
                 i = 0
                 for line in mets:
                     f.write(line)
-                    if (i % 100) == 0:
+                    if (i + 1 % 1) == 0:
                         self.logger.debug("METS lines written: {}".format(i))
                     i += 1
         except (AttributeError, TypeError, jinja2.exceptions.UndefinedError) as err:
-            msg = "Can't render METS file."
-            msg += "Check template for undefined variables or calls to non-functions."
+            msg = "Can't fully render METS file."
+            msg += "; check template for undefined variables or calls to non-functions."
+            msg += "; partially rendered files will be invalid."
             self.logger.warning(msg)
             self.logger.exception(err, exc_info=False)
-            return
+            raise
 
         return self.filepath
 

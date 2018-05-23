@@ -2,25 +2,18 @@
 with an optional METS file.
 
 Todo:
-    * Need to determine constant vars.
-        - TIMESTAMP (done), What else?
-        - How about the AIP object itself?
     * EVERY public method in all modules needs to start with a logging statement.
         - Probably privates too.
-    * Don't revalidate AIP. Set a self.is_valis attr.
+    * METS line counting not working.
     * If AIP restructing works but METS fails, we need a function to JUST
     drop in the METS (and to create DirectoryObject) - also useful if AIP 
     already exists.
-        - Can't you just using METSMaker for that now?
+        - Use self.write_mets().
     * Run autoflakes on this and lib/*.
     * This needs to pass SHA type to DirectoryObject.
 	- This should be a CLI option, too.
     * Gotta work on PREMISObject stuff here.
-    * Can we support DirectoryObject/METS for acounts with 10k attachments???
-        - Probably not a good idea.
-        - Need to talk about.
-        - Need to stream METS/Jinja and see if that's better for large files.
-        - AIP validator needs to check for manifest file now too.
+    * Document: self.manifest_obj is still NONE at the time of manifest making, FYI.
     * Add CLI.
 """
 
@@ -44,8 +37,18 @@ class Packager():
 
 
     def __init__(self, account_id, source_dir, destination_dir, mets_template="", 
-            mets_manifest_template="", preservation_data=[], rdf_xlsx="", charset="utf-8"):
+            manifest_template="", preservation_data=[], rdf_xlsx="", charset="utf-8"):
         """ Sets instance attributes.
+
+        Attributes:
+            - aip_obj = ???
+            - directory_obj = ???
+            - premis_obj = ???
+            - mets_obj = ???
+            - manifest_obj = ???
+            - rdf_obj = ???
+            - mets_path = ???
+            - manifest_path = ??? Note, this will still be None at the time of ...
         
         Args:
             - account_id (str): The email account's base identifier, i.e. the file prefix.
@@ -53,7 +56,7 @@ class Packager():
             - destination_dir (str): The folder path in which to create the AIP structure.
             - mets_template (str): The file path for the METS template. This will be used to
             render a METS file inside the AIP's root folder.
-            - mets_manifest_template (str): The file path for the METS manifest template. 
+            - manifest_template (str): The file path for the METS manifest template. 
             This will be used to render a METS manifest file inside the AIP's root folder.
             - preservation_data (PreservationObject): Optional preservation data to pass into
             @mets_template.
@@ -76,7 +79,7 @@ class Packager():
         self.destination_dir = self._normalize_path(destination_dir)
         self.preservation_data = preservation_data
         self.mets_template = mets_template
-        self.mets_manifest_template = mets_manifest_template
+        self.manifest_template = manifest_template
         self.rdf_xlsx = rdf_xlsx
         self.charset = charset
 
@@ -87,24 +90,62 @@ class Packager():
         self._mets_maker = METSMaker
         self._rdf_maker = RDFMaker
 
-        # creates atttibutes for calculated objects.
+        # creates atttibutes for constructed objects.
         self.aip_obj = None
         self.directory_obj = None
         self.premis_obj = None
         self.mets_obj = None
         self.manifest_obj = None
         self.rdf_obj = None
+        self.mets_path = "{}.mets.xml".format(self.account_id)
+        self.manifest_path = "{}.mets.manifest".format(self.account_id)
+
+
+    def write_mets(self, filename, template, xsd_validation=True, *args, **kwargs):
+        """ Writes a METS file to the given @path using the given METS @template.
+
+        Args:
+            - filename (str): The relative file path for the outputted METS file. The file 
+            will be placed inside the AIP directory.
+            - template (str): The path to the METS template file.
+            - xsd_validation (bool): Use True to validate the METS via the METS XSD. Use False
+            to simply determine if the METS file was written or not.
+        
+        Returns:
+            tuple: The return value.
+            The first item is a METSMaker object.
+            The second item is a boolean. This is True if the METS file is valid and 
+            @xsd_validation is True OR if @xsd_validation is False and the METS file is a real
+            file. Otherwise, this is False.
+        """
+
+        # set path for writing METS file.
+        mets_path = os.path.join(self.destination_dir, self.account_id, filename)
+        mets_path = self._abspath(mets_path)
+
+        # create the METS file from @template; determine validity.
+        try:
+            mets_obj = self._mets_maker(template, mets_path, charset=self.charset, **kwargs)
+            mets_obj.make()
+            if xsd_validation:
+                is_valid = mets_obj.validate()
+            else:
+                is_valid = os.path.isfile(mets_obj.filepath)
+        except Exception as err:
+            self.logger.warning("Can't write METS file '{}' from template: {}".format(
+                mets_path, template))
+            is_valid = False
+
+        return (mets_obj, is_valid)
 
 
     def package(self):
         """ Creates the AIP structure and optional METS file.
         
         Returns:
-            tuple: The return value.
-            The first item is he AIP folder's absolute path. The second item is the METS 
-            file's base name (None if no METS was created). The third item is a boolean:
-            False if the AIP structure and/or the METS is invalid and/or the METS template
-            failed to render (likely due to user error). Otherwise, True.
+            bool: The return value.
+            True if the overall AIP structure and any METS files appear to be valid. 
+            Otherwise, False.
         """
 
         # set AIP path.
@@ -120,9 +161,9 @@ class Packager():
         if not is_aip_valid:
             self.logger.warning("AIP structure is invalid; continuing anyway.")
 
-        # if no METS template was passed; return AIP.
-        if self.mets_template == "":
-            self.logger.info("No METS template passed; skipping METS creation.")
+        # if no METS templates were passed; return AIP data.
+        if self.mets_template == "" and self.manifest_template == "":
+            self.logger.info("No METS templates passed; skipping METS creation.")
             return (aip_dir, None, self.aip_obj.validate())
 
         # create a DirectoryObject for the AIP.
@@ -136,13 +177,9 @@ class Packager():
             self.rdf_obj = self._rdf_maker(self.rdf_xlsx, charset=self.charset)
             self.rdf_obj.make()
 
-        # set the METS file path.
-        mets_file = "{}.mets.xml".format(self.account_id)
-        mets_path = os.path.join(self.destination_dir, self.account_id, mets_file)
-        mets_path = self._abspath(mets_path)
-
-        # create METS from @self.mets_template.
-        kwargs = {"TIMESTAMP": lambda: datetime.utcnow().isoformat() + "Z",
+        # set keyword arguments to send to METS templates.
+        kwargs = {"SELF": self,
+                "TIMESTAMP": lambda: datetime.utcnow().isoformat() + "Z",
                 "ACCOUNT": self.account_id,
                 "AGENTS": self.premis_obj.agents,
                 "EVENTS": self.premis_obj.events,
@@ -150,40 +187,44 @@ class Packager():
                 "FOLDERS": self.directory_obj.dirs, 
                 "FILES": self.directory_obj.files,
                 "RDFS": self.rdf_obj.rdfs if self.rdf_obj is not None else []}
-        self.mets_obj = self._mets_maker(self.mets_template, mets_path, charset=self.charset,
-                **kwargs)
-        self.mets_obj.make()
-        is_mets_valid = self.mets_obj.validate()
         
-        # if the METS template failed to render, return AIP and mark it invalid.
-        if not is_mets_valid:
-            self.logger.warning("Couldn't create METS; invalidating AIP.")
-            return (aip_dir, None, False)
+        # if needed, set the METS file path and make the METS file.
+        if self.mets_template != "":
+            self.mets_obj, is_mets_valid = self.write_mets(self.mets_path, self.mets_template,
+                    **kwargs)
+        else:
+            is_mets_valid = True
 
         # if needed, write the METS manifest.
-        if self.mets_manifest_template != "":
-            manifest_path = mets_path.replace(".xml", ".manifest")
-            self.manifest_obj = self._mets_maker(self.mets_manifest_template, manifest_path,
-                    charset=self.charset, **kwargs)
-            self.manifest_obj.make()
+        if self.manifest_template != "":
+            self.manifest_obj, is_manifest_valid = self.write_mets(self.manifest_path, 
+                    self.manifest_template, False, **kwargs)
+        else:
+            is_manifest_valid = True
         
-        # determine if both the AIP and the METS are valid.
-        is_valid = bool(is_aip_valid * is_mets_valid)
-        # TODO: gotta factor in if manifest is a file.
+        # determine overall AIP validity.
+        is_valid = bool(is_aip_valid * is_mets_valid * is_manifest_valid)
         
+        # report according to overall AIP validity.
         if is_valid:
             self.logger.info("Final AIP appears to be valid.")
         else:
-            self.logger.warning("Final AIP is not valid.")
+            self.logger.warning("Final AIP appears to not be valid.")
+            self.logger.info("Please manually investigate and fix the AIP.")
             if not is_aip_valid:
-                self.logger.info("Check source files prior to recreating AIP.")
+                self.logger.warning("Couldn't create valid AIP structure.")
+                self.logger.info("Check source files prior to correcting AIP.")
             if not is_mets_valid:
-                self.logger.info("Check METS template prior to recreating AIP.")
+                self.logger.warning("Couldn't create valid METS: {}".format(mets_path))
+                self.logger.info("Check METS template prior to correcting AIP.")
+            if not is_manifest_valid:
+                self.logger.warning("Couldn't create valid METS manifest: {}".format(
+                    manifest_path))
+                self.logger.info("Check METS manifest template prior to correcting AIP.")
 
-        return (aip_dir, mets_file, is_valid)
+        return is_valid
 
 
-# TEST.
 if __name__ == "__main__":
 
     logging.basicConfig(level="DEBUG")

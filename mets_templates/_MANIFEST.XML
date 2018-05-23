@@ -2,8 +2,9 @@
 xmlns:xlink="http://www.w3.org/1999/xlink" 
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <!--# !!! WARNING !!!
-  DO NOT edit this template unless you are very comfortable with Python, Jinja templates, and METS.
-  AND if you know how the TOMES Packager's lib.DirectoryObject module works.
+  DO NOT edit this template unless:
+	1. You are VERY comfortable with Python, Jinja templates, and METS.
+	2. You are VERY comfortable with how the TOMES Packager modules work.
   #-->
   <metsHdr CREATEDATE="{{ TIMESTAMP() }}">
     <agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
@@ -11,6 +12,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     </agent>
   </metsHdr>
   <fileSec ID="fileSec">
+  	<!-- Note: this METS manifest file itself, {{ SELF.manifest_path }}, is excluded from the <fileSec> element. -->
     <fileGrp ID="fileGrp_">
     %% for file in FILES() %%
 	  %% if ".mets.manifest" not in file.basename %%
@@ -37,7 +39,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     %% endfor %%
   </fileSec>
   %% if skipped|length > 0 %%
-  <!-- Skipped {{ skipped|length }} EAXS attachment files. -->
+  <!-- Skipped {{ skipped|length }} EAXS attachment files. Please see the EAXS file(s) for attachment checksums. -->
   %% endif %%
   <structMap>
     <div>
