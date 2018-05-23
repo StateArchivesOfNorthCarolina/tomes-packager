@@ -5,7 +5,6 @@ Todo:
     * EVERY public method in all modules needs to start with a logging statement.
         - Probably privates too.
     * Fix template XML indents -- Notepad++ !!!.
-    * METS line counting not working.
     * If AIP restructing works but METS fails, we need a function to JUST
     drop in the METS (and to create DirectoryObject) - also useful if AIP 
     already exists.
@@ -195,6 +194,7 @@ class Packager():
         
         # if needed, set the METS file path and make the METS file.
         if self.mets_template != "":
+            self.logger.info("Creating main METS file for AIP.")
             self.mets_obj, is_mets_valid = self.write_mets(self.mets_path, self.mets_template,
                     **kwargs)
         else:
@@ -202,6 +202,7 @@ class Packager():
 
         # if needed, write the METS manifest.
         if self.manifest_template != "":
+            self.logger.info("Creating METS manifest file for AIP.")            
             self.manifest_obj, is_manifest_valid = self.write_mets(self.manifest_path, 
                     self.manifest_template, False, **kwargs)
         else:
@@ -214,18 +215,18 @@ class Packager():
         if is_valid:
             self.logger.info("Final AIP appears to be valid.")
         else:
-            self.logger.warning("Final AIP appears to not be valid.")
+            self.logger.warning("Final AIP appears to be invalid.")
             self.logger.info("Please manually investigate and fix the AIP.")
             if not is_aip_valid:
                 self.logger.warning("Couldn't create valid AIP structure.")
-                self.logger.info("Check source files prior to correcting AIP.")
+                self.logger.info("Check the source files before fixing the AIP.")
             if not is_mets_valid:
-                self.logger.warning("Couldn't create valid METS: {}".format(mets_path))
-                self.logger.info("Check METS template prior to correcting AIP.")
+                self.logger.warning("Couldn't create valid METS: {}".format(self.mets_path))
+                self.logger.info("Check the METS template before fixing the AIP.")
             if not is_manifest_valid:
                 self.logger.warning("Couldn't create valid METS manifest: {}".format(
-                    manifest_path))
-                self.logger.info("Check METS manifest template prior to correcting AIP.")
+                    self.manifest_path))
+                self.logger.info("Check the METS manifest template before fixing the AIP.")
 
         return is_valid
 

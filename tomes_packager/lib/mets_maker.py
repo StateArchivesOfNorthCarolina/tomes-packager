@@ -132,17 +132,16 @@ class METSMaker():
         on very large METS files.
 
         Returns:
-            bool: The return value. True for valid, otherwise False.
-            None is returned if there is no Internet connection or @self.filepath is not a 
-            file or has invalid XML syntax.
+            bool: The return value. True if and only if the METS file could be validated and 
+            is valid. Otherwise, False.
         """
         
         self.logger.info("Validating METS file: {}".format(self.filepath))
 
-        # if no METS is created, return None.
+        # if no METS is created, return False.
         if not os.path.isfile(self.filepath):
             self.logger.warning("Nothing to validate; trying using .make() first.")
-            return
+            return False
 
         # create validator.
         try:
@@ -152,7 +151,7 @@ class METSMaker():
             self.logger.warning("Can't parse '{}'; likely no Internet connection.".format(
                 self.xsd))
             self.logger.error(err)
-            return
+            return False
         
         # load @self.filepath.
         try:
@@ -161,7 +160,7 @@ class METSMaker():
         except etree.XMLSyntaxError as err:
             self.logger.warning("Can't validate malformed '{}'; check template syntax.")
             self.logger.error(err)
-            return
+            return False
 
         # validate @mets_el.
         try:
@@ -193,6 +192,9 @@ class METSMaker():
             str: The return value.
             The METS filepath.
             If the METS can't be created, None is returned.
+
+        Raises:
+            - ValueError: If the Jinja template syntax is incorrect.
         """
 
         self.logger.info("Rendering template: {}".format(self.mets_template))
@@ -202,15 +204,14 @@ class METSMaker():
                 mets_template = tf.read()
                
         # create the Jinja renderer.
-        # Note: without "exc_info=False" tracebacks seem to be going into logs.
         try:
             template = jinja2.Template(mets_template, trim_blocks=True, lstrip_blocks=True, 
                     block_start_string="%%", block_end_string="%%", 
                     comment_start_string="<!--#", comment_end_string="#-->")
         except jinja2.exceptions.TemplateSyntaxError as err:
             self.logger.warning("METS template syntax is invalid.")
-            self.logger.exception(err, exc_info=False)
-            raise
+            self.logger.error(err)
+            raise ValueError(err)
         
         # render @self.mets_template; write results to @self.filepath.
         self.logger.info("Creating METS file: {}".format(self.filepath))        
@@ -228,8 +229,8 @@ class METSMaker():
             msg += "; check template for undefined variables or calls to non-functions."
             msg += "; partially rendered files will be invalid."
             self.logger.warning(msg)
-            self.logger.exception(err, exc_info=False)
-            raise
+            self.logger.error(err)
+            raise ValueError(err)
 
         return self.filepath
 
