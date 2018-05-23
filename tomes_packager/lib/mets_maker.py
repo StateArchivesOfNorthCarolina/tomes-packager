@@ -220,8 +220,8 @@ class METSMaker():
                 i = 0
                 for line in mets:
                     f.write(line)
-                    if (i + 1 % 1) == 0:
-                        self.logger.debug("METS lines written: {}".format(i))
+                    if (i + 1) % 100 == 0:
+                        self.logger.debug("Current write operation: {}".format(i))
                     i += 1
         except (AttributeError, TypeError, jinja2.exceptions.UndefinedError) as err:
             msg = "Can't fully render METS file."

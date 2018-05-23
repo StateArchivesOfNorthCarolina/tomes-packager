@@ -133,7 +133,7 @@ class AIPMaker():
             self.logger.info("Making folder: {}".format(folder))        
             os.mkdir(folder)
         except OSError as err:
-            self.logger.warning("Unable to create folder: {}".format(folder))
+            self.logger.warning("Can't create folder: {}".format(folder))
             self.logger.error(err)
             raise OSError(err)
 
@@ -174,7 +174,7 @@ class AIPMaker():
         # if @data is empty set the corresponsing folder attribute to None, otherwise store 
         # what data should be moved in @self.transfers.
         if len(data) == 0:
-            self.logger.info("Unable to find any candidate data to move.")
+            self.logger.info("Can't find any candidate data to move.")
             for key in self.__dict__:
                 if self.__dict__[key] == destination_dir:
                     self.logger.debug("Setting instance attribute '{}' to None.".format(key))

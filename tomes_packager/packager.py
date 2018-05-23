@@ -69,6 +69,10 @@ class Packager():
         self.logger = logging.getLogger(__name__)
         self.logger.addHandler(logging.NullHandler())
 
+        # suppress verbose DirectoryObject and FileObject logging.
+        logging.getLogger("lib.directory_object").setLevel(logging.INFO)
+        logging.getLogger("lib.file_object").setLevel(logging.WARNING)
+
         # convenience functions to clean up path notation.
         self._normalize_path = lambda p: os.path.normpath(p).replace("\\", "/")
         self._abspath = lambda p: self._normalize_path(os.path.abspath(p))

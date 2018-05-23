@@ -4,13 +4,12 @@
 """
 
 # import modules.
-import sys; sys.path.append("..")
 import glob
 import logging
 import logging.config
 import os
 from datetime import datetime
-from lib.directory_object_lib.file_object import FileObject
+from .file_object import FileObject
 
 
 class DirectoryObject(object):
@@ -216,6 +215,8 @@ class DirectoryObject(object):
             Each item is a line in the graph.
         """
         
+        self.logger.info("Creating graph of: {}".format(self.path))
+
         # set spacing.
         indent = " " * indent
 
