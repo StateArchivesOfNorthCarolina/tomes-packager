@@ -39,6 +39,7 @@ class METSMaker():
             - *args/**kwargs: The optional arguments to pass into @mets_template.
 
         Raises:
+            - FileExistsError: If @filepath is already a file.
             - FileNotFoundError: If @mets_template is not an actual file path.
         """
 
@@ -46,7 +47,13 @@ class METSMaker():
         self.logger = logging.getLogger(__name__)
         self.logger.addHandler(logging.NullHandler())
 
-        # verify @path is a file.
+        # verify @filepath doesn't already exist.
+        if os.path.isfile(filepath):
+            msg = "METS file '{}' already exists.".format(filepath)
+            self.logger.error(msg)
+            raise FileExistsError(msg)
+
+        # verify @mets_template is a file.
         if not os.path.isfile(mets_template):
             msg = "Can't find: {}".format(mets_template)
             self.logger.error(msg)
