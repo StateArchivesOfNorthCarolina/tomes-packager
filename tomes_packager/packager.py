@@ -4,6 +4,7 @@ with an optional METS file.
 Todo:
     * EVERY public method in all modules needs to start with a logging statement.
         - Probably privates too.
+    * Fix template XML indents -- Notepad++ !!!.
     * METS line counting not working.
     * If AIP restructing works but METS fails, we need a function to JUST
     drop in the METS (and to create DirectoryObject) - also useful if AIP 
