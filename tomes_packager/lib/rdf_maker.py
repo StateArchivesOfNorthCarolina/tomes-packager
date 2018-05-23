@@ -284,6 +284,8 @@ class RDFMaker():
             True if @rdf is valid. Otherwise, False.
         """
 
+        self.logger.info("Validating RDF.")
+
         # assume validity.
         is_valid = True
 
@@ -303,6 +305,8 @@ class RDFMaker():
         # log malformed XML for debugging purposes.
         if not is_valid:
             self.logger.debug("Invalid RDF tree: {}".format(repr(rdf)))
+        else:
+            self.logger.info("RDF is valid.")
 
         return is_valid
 
@@ -317,6 +321,8 @@ class RDFMaker():
                 2. element: The RDF XML version of the worksheet as an lxml.etree._Element. 
                 3. xml: The RDF XML as a string.
         """
+        
+        self.logger.info("Making RDF object.")
 
         # create output container.
         rdfs = []
@@ -330,6 +336,8 @@ class RDFMaker():
         # for each worksheet; try to generate RDF.
         worksheets = self._get_worksheets()
         for worksheet in worksheets:
+
+            self.logger.info("Looking for RDF data in worksheet: {}".format(worksheet.title))
             
             # make RDF.
             rdf = self._get_rdf(worksheet)
@@ -337,11 +345,16 @@ class RDFMaker():
                 continue
             
             # make an RDFObject.
-            rdfobj = RDFObject(worksheet.title, rdf)
+            rdf_obj = RDFObject(worksheet.title, rdf)
 
             # only append valid RDF to @rdfs.
-            if self.validate(rdfobj.xml):
-                rdfs.append(rdfobj)
+            if self.validate(rdf_obj.xml):
+                self.logger.info("Found valid RDF data from worksheet.")
+                rdfs.append(rdf_obj)
+            else:
+                self.logger.warning("No valid RDF data found in worksheet.")
+
+        self.logger.info("Totals RDFs found: {}".format(len(rdfs)))
 
         # set @self.rdfs.
         self.rdfs = rdfs
