@@ -2,7 +2,7 @@
 with an optional METS file and an optional METS manifest file.
 
 Todo:
-    * Premis: "ptype" insteaf of "type"? What the official nomenclature?
+    * Investigate event relationship. How realistic is this with time constraints?
     * Populate all "???" comments.
     * EVERY public method in all modules needs to start with a logging statement.
         - Probably privates too.
