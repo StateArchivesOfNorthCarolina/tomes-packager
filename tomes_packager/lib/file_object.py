@@ -107,7 +107,7 @@ class FileObject(object):
 
         Args:
             - checksum_algorithm (str): The SHA algorithm with which to calculate the checksum
-            value for @self.path. Use only SHA-1, SHA-256, SHA-384, or SHA-512.
+            value. Use only SHA-1, SHA-256, SHA-384, or SHA-512.
             - block_size (int): The chunk size with which to iteratively read @self.abspath
             while calculating the checksum. If None, twenty times the block size of the chosen
             SHA algorithm will be used. For example, SHA-256 has a block size of 64, therefore
