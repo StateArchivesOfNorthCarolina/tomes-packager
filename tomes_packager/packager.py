@@ -2,15 +2,17 @@
 with an optional METS file and an optional METS manifest file.
 
 Todo:
+    * Gotta work on PREMISObject stuff here.
     * EVERY public method in all modules needs to start with a logging statement.
         - Probably privates too.
+    * Populate all "???" comments.
     * If AIP restructing works but METS fails, we need a function to JUST
     drop in the METS (and to create DirectoryObject) - also useful if AIP 
-    already exists.
-        - Use self.write_mets().
-    * Run autoflakes on this and lib/*.
-    * Gotta work on PREMISObject stuff here.
+    already exists. 
+        - Use self.write_mets().    
+    * Write unit tests.
     * Add CLI.
+    * Run autoflakes on this and lib/* and unit tests.
 """
 
 # import modules.
