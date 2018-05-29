@@ -55,24 +55,31 @@ class DirectoryObject(object):
         self.logger = logging.getLogger(__name__)
         self.logger.addHandler(logging.NullHandler())
 
+        # convenience function to clean up path notation.
+        self._normalize_path = lambda p: os.path.normpath(p).replace("\\", "/")  
+        
+        # normalize @path and log status.
+        path = self._normalize_path(path)
+        if root_object is None:
+            self.logger.info("Initializing DirectoryObject for: {}".format(path))            
+        else:
+            self.logger.debug("Initializing DirectoryObject for: {}".format(path))            
+
         # verify @path is a folder.
         if not os.path.isdir(path):
             msg = "Can't find: {}".format(path)
             self.logger.error(msg)
             raise NotADirectoryError(msg)
-        self.isdir = True
-        self.isfile = False
- 
-        # convenience function to clean up path notation.
-        self._normalize_path = lambda p: os.path.normpath(p).replace("\\", "/")  
 
         # set attributes.
-        self.path = self._normalize_path(path)
+        self.path = path
         self.parent_object = parent_object
         self.root_object = self if root_object is None else root_object
         self.checksum_algorithm = checksum_algorithm
         
         # set path attributes.
+        self.isdir = True
+        self.isfile = False
         self.depth = self.path.count("/")
         self.abspath = self._normalize_path(os.path.abspath(self.path))
         self.basename = os.path.basename(self.abspath)
@@ -115,7 +122,7 @@ class DirectoryObject(object):
             generator: The return value.
         """
 
-        self.logger.info("Creating FileObject(s) in: {}".format(self.path))
+        self.logger.debug("Creating FileObject(s) in: {}".format(self.path))
   
         # iterate through folders and yield FileObject(s).
         def gen_files():
@@ -135,8 +142,6 @@ class DirectoryObject(object):
                     filepath = os.path.join(dirpath, filename)
                     filepath = self._normalize_path(filepath)
 
-                    self.logger.debug("Creating FileObject for: {}".format(filepath))
-                    
                     # build DirectoryObject for parent folder of @filepath.
                     parent_obj = self._this(path=os.path.dirname(filepath), 
                             parent_object=dirpath, root_object=self.root_object)
@@ -163,7 +168,7 @@ class DirectoryObject(object):
             generator: The return value.
         """
 
-        self.logger.info("Creating DirectoryObject(s) in: {}".format(self.path))
+        self.logger.debug("Creating DirectoryObject(s) in: {}".format(self.path))
   
         # iterate through folders and yield DirectoryObject(s).
         def gen_dirs():
@@ -186,9 +191,7 @@ class DirectoryObject(object):
                     # if @folder is @self.path, skip it.
                     if folder == self.path:
                         continue
-
-                    self.logger.debug("Creating DirectoryObject for: {}".format(folder))
-                    
+ 
                     # build DirectoryObject for parent folder of @folder.
                     parent_obj = self._this(path=os.path.dirname(folder), 
                             parent_object=dirpath, root_object=self.root_object,

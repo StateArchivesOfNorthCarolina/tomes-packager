@@ -120,7 +120,7 @@ class METSMaker():
             msg = "NOTE: this METS file is valid as of {}.".format(now())
  
         # update @mets_el with validation status.
-        self.logger.info("Appending XML comment: {}".format(msg))
+        self.logger.debug("Appending XML comment: {}".format(msg))
         mets_el.append(etree.Comment(msg))
 
         return mets_el

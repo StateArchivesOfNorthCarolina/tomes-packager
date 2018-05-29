@@ -51,25 +51,29 @@ class FileObject(object):
         self.logger = logging.getLogger(__name__)
         self.logger.addHandler(logging.NullHandler())
 
-       # verify @path is a file.
+        # convenience function to clean up path notation.
+        self._normalize_path = lambda p: os.path.normpath(p).replace("\\", "/")
+
+        # normalize @path and log status.
+        path = self._normalize_path(path)
+        self.logger.info("Initializing FileObject for: {}".format(path))        
+        
+        # verify @path is a file.
         if not os.path.isfile(path):
             msg = "Can't find: {}".format(path)
             self.logger.error(msg)
             raise FileNotFoundError(msg)
-        self.isfile = True
-        self.isdir = False
-
-        # convenience function to clean up path notation.
-        self._normalize_path = lambda p: os.path.normpath(p).replace("\\", "/")    
 
         # set attributes.
-        self.path = self._normalize_path(path)
+        self.path = path
         self.parent_object = parent_object
         self.root_object = root_object
         self.index = index
         self.checksum_algorithm = checksum_algorithm
     
         # set path attributes.
+        self.isfile = True
+        self.isdir = False
         self.name = self._normalize_path(os.path.relpath(self.path, 
             start=self.root_object.path))
         self.basename = os.path.basename(self.path)
@@ -103,7 +107,7 @@ class FileObject(object):
             str: The return value.
         """
         
-        self.logger.info("Guessing MIME type for: {}".format(self.abspath))
+        self.logger.debug("Guessing MIME type for: {}".format(self.abspath))
         mimetype = mimetypes.guess_type(self.abspath)[0]
         
         if mimetype is None:
@@ -126,7 +130,7 @@ class FileObject(object):
             str: The return value..
         """
         
-        self.logger.info("Calculating {} checksum value for: {}".format(
+        self.logger.debug("Calculating {} checksum value for: {}".format(
             self.checksum_algorithm, self.abspath)) 
 
         # establish hashlib function and block size to use.
