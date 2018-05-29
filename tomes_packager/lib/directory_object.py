@@ -35,8 +35,7 @@ class DirectoryObject(object):
     """
 
 
-    def __init__(self, path, parent_object=None, root_object=None, 
-            checksum_algorithm="SHA-256"):
+    def __init__(self, path, parent_object=None, root_object=None):
         """ Sets instance attributes.
         
         Args:
@@ -44,8 +43,6 @@ class DirectoryObject(object):
             - parent_object (DirectoryObject): The parent folder to which @path belongs.
             - root_object (DirectoryObject): The root or "master" folder under which the @path
             folder and its @parent_object reside.
-            - checksum_algorithm (str): The SHA algorithm with which to calculate file 
-            checksum values. Use only SHA-1, SHA-256, SHA-384, or SHA-512.
 
         Raises:
             - NotADirectoryError: If @path is not an actual folder path.
@@ -75,7 +72,6 @@ class DirectoryObject(object):
         self.path = path
         self.parent_object = parent_object
         self.root_object = self if root_object is None else root_object
-        self.checksum_algorithm = checksum_algorithm
         
         # set path attributes.
         self.isdir = True
@@ -149,7 +145,7 @@ class DirectoryObject(object):
                     # build FileObject for @filepath.
                     file_obj = self._file_object(path=filepath, 
                             parent_object=parent_obj, root_object=self.root_object, 
-                            index=file_pos, checksum_algorithm=self.checksum_algorithm)
+                            index=file_pos)
 
                     yield file_obj
                     file_pos += 1
@@ -194,13 +190,11 @@ class DirectoryObject(object):
  
                     # build DirectoryObject for parent folder of @folder.
                     parent_obj = self._this(path=os.path.dirname(folder), 
-                            parent_object=dirpath, root_object=self.root_object,
-                            checksum_algorithm=self.checksum_algorithm)
+                            parent_object=dirpath, root_object=self.root_object)
                     
                     # build DirectoryObject for @folder.
                     dir_obj = self._this(path=folder, parent_object=parent_obj, 
-                            root_object=self.root_object,
-                            checksum_algorithm=self.checksum_algorithm)
+                            root_object=self.root_object)
 
                     yield dir_obj
 

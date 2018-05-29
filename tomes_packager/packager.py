@@ -1,19 +1,15 @@
 """ This module contains a class for constructing a TOMES archival information package (AIP)
-with an optional METS file.
+with an optional METS file and an optional METS manifest file.
 
 Todo:
     * EVERY public method in all modules needs to start with a logging statement.
         - Probably privates too.
-    * Fix template XML indents -- Notepad++ !!!.
     * If AIP restructing works but METS fails, we need a function to JUST
     drop in the METS (and to create DirectoryObject) - also useful if AIP 
     already exists.
         - Use self.write_mets().
     * Run autoflakes on this and lib/*.
-    * This needs to pass SHA type to DirectoryObject.
-	- This should be a CLI option, too.
     * Gotta work on PREMISObject stuff here.
-    * Document: self.manifest_obj is still NONE at the time of manifest making, FYI.
     * Add CLI.
 """
 
@@ -33,7 +29,7 @@ from lib.rdf_maker import RDFMaker
     
 class Packager():
     """ A class for constructing a TOMES archival information package (AIP) with an optional 
-    METS file. """
+    METS file and an optional METS manifest file. """
 
 
     def __init__(self, account_id, source_dir, destination_dir, mets_template="", 
@@ -45,10 +41,9 @@ class Packager():
             - directory_obj = ???
             - premis_obj = ???
             - mets_obj = ???
-            - manifest_obj = ???
             - rdf_obj = ???
             - mets_path = ???
-            - manifest_path = ??? Note, this will still be None at the time of ...
+            - manifest_path = ???
         
         Args:
             - account_id (str): The email account's base identifier, i.e. the file prefix.
@@ -99,7 +94,7 @@ class Packager():
         self.directory_obj = None
         self.premis_obj = None
         self.mets_obj = None
-        self.manifest_obj = None
+        self._manifest_obj = None
         self.rdf_obj = None
         self.mets_path = "{}.mets.xml".format(self.account_id)
         self.manifest_path = "{}.mets.manifest".format(self.account_id)
@@ -203,7 +198,7 @@ class Packager():
         # if needed, write the METS manifest.
         if self.manifest_template != "":
             self.logger.info("Creating METS manifest file for AIP.")            
-            self.manifest_obj, is_manifest_valid = self.write_mets(self.manifest_path, 
+            self._manifest_obj, is_manifest_valid = self.write_mets(self.manifest_path, 
                     self.manifest_template, False, **kwargs)
         else:
             is_manifest_valid = True
@@ -239,7 +234,8 @@ if __name__ == "__main__":
             "../tests/sample_files/hot_folder", 
             "../tests/sample_files", 
             "../mets_templates/basic_mets.xml",
-            "../mets_templates/_MANIFEST.XML")
+            "../mets_templates/_MANIFEST.XML",
+            rdf_xlsx="../tests/sample_files/sample_rdf.xlsx")
     
     aip = p.package()
     print(aip)
