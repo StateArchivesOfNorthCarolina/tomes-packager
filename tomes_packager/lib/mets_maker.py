@@ -158,7 +158,8 @@ class METSMaker():
             with open(self.filepath, encoding=self.charset) as fp:
                 mets_el = etree.fromstring(fp.read())
         except etree.XMLSyntaxError as err:
-            self.logger.warning("Can't validate malformed '{}'; check template syntax.")
+            self.logger.warning("Can't validate '{}'; check template syntax.".format(
+                self.filepath))
             self.logger.error(err)
             return False
 

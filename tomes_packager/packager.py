@@ -2,10 +2,11 @@
 with an optional METS file and an optional METS manifest file.
 
 Todo:
-    * Gotta work on PREMISObject stuff here.
+    * Premis: "ptype" insteaf of "type"? What the official nomenclature?
+    * Populate all "???" comments.
     * EVERY public method in all modules needs to start with a logging statement.
         - Probably privates too.
-    * Populate all "???" comments.
+    * Make sure you can never return anything not yet defined (reference error).
     * If AIP restructing works but METS fails, we need a function to JUST
     drop in the METS (and to create DirectoryObject) - also useful if AIP 
     already exists. 
@@ -152,7 +153,7 @@ class Packager():
         
         Returns:
             tuple: The return value.
-            The first item is a METSMaker object.
+            The first item is a METSMaker object. If ??? this is None.
             The second item is a boolean. This is True if the METS file is valid and 
             @xsd_validation is True OR if @xsd_validation is False and the METS file is a real
             file. Otherwise, this is False.
@@ -173,6 +174,7 @@ class Packager():
         except Exception as err:
             self.logger.warning("Can't write METS file '{}' from template: {}".format(
                 mets_path, template))
+            mets_obj = None
             is_valid = False
 
         return (mets_obj, is_valid)
@@ -221,12 +223,10 @@ class Packager():
         kwargs = {"SELF": self,
                 "TIMESTAMP": lambda: datetime.utcnow().isoformat() + "Z",
                 "ACCOUNT": self.account_id,
-                "AGENTS": self.premis_obj.agents if self.premis_obj is not None else [],
-                "EVENTS": self.premis_obj.events if self.premis_obj is not None else [],
-                "OBJECTS": self.premis_obj.objects if self.premis_obj is not None else [],
                 "FOLDERS": self.directory_obj.dirs, 
                 "FILES": self.directory_obj.files,
-                "RDFS": self.rdf_obj.rdfs if self.rdf_obj is not None else []}
+                "PREMIS": self.premis_obj,
+                "RDFS": self.rdf_obj.rdfs}
         
         # if needed, set the METS file path and make the METS file.
         if self.mets_template != "":

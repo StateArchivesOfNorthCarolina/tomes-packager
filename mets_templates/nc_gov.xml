@@ -14,17 +14,23 @@ xmlns:premis="http://www.loc.gov/premis/v3">
 
     <agent ROLE="CREATOR" TYPE="ORGANIZATION">
       <name>State Archives of North Carolina</name>
-      <note>DSS??? This is optional. We can delete this element. Do you want to say anything here?</note>
+	  <!--# DSS??? 
+	  This is optional. We can delete this element. Do you want to say anything here?
+      <note></note>
+	  #-->
     </agent>
 
     <agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
       <name>TOMES Packager</name>
-      <note>DSS??? Is the following OK? (Nitin: update basic_mets.xml with this):
-      Email archiving software developed through the Transforming Online Mail with Embedded Semantics (TOMES) project (https://www.ncdcr.gov/resources/records-management/tomes), a multi-state partnership that includes Kansas, Utah and North Carolina.</note>
+	  <!--# DSS??? 
+	  Is the following OK?
+	  Nitin: update basic_mets.xml with this. #-->
+      <note>Email archiving software developed through the Transforming Online Mail with Embedded Semantics (TOMES) project (https://www.ncdcr.gov/resources/records-management/tomes), a multi-state partnership that includes Kansas, Utah and North Carolina.</note>
     </agent>
 
   </metsHdr>
 
+  %% if RDFS is defined %%
   %% for rdf in RDFS %%
   <dmdSec ID="dmdSec__{{ rdf.name }}">
     <mdWrap MDTYPE="DC">
@@ -34,8 +40,10 @@ xmlns:premis="http://www.loc.gov/premis/v3">
     </mdWrap>
   </dmdSec>
   %% endfor %%
+  %% endif %%
 
-  <!-- DSS??? Note for rights? -->
+  <!--# DSS??? 
+  Note for rights? #-->
   <amdSec ID="rights">
     <rightsMD ID="rights__GS_132_1">
       <mdWrap MDTYPE="PREMIS:RIGHTS">
@@ -63,9 +71,9 @@ xmlns:premis="http://www.loc.gov/premis/v3">
     </rightsMD>
   </amdSec>
 
-  %% if AGENTS is defined %%
+  %% if PREMIS.agents is defined %%
   <amdSec ID="agents">
-    %% for agent in AGENTS %%
+    %% for agent in PREMIS.agents %%
     <techMD ID="agent__{{ agent.alias }}">
       <mdWrap MDTYPE="PREMIS:AGENT">
         <xmlData>
@@ -114,10 +122,10 @@ xmlns:premis="http://www.loc.gov/premis/v3">
         </xmlData>
       </mdWrap>
     </techMD>
-    <!-- DSS???
-    Review objects we talked about. -->
-	%% if OBJECTS is defined %%
-    %% for object in OBJECTS %%
+    <!--# DSS???
+    Review objects we talked about. #-->
+	%% if PREMIS.objects is defined %%
+    %% for object in PREMIS.objects %%
     <techMD ID="object__{{ object.alias }}">
       <mdWrap MDTYPE="PREMIS:OBJECT">
         <xmlData>
@@ -136,16 +144,18 @@ xmlns:premis="http://www.loc.gov/premis/v3">
       </mdWrap>
     </techMD>
     %% endfor %%
-  </amdSec>
   %% endif %%
+  </amdSec>
   
-  <!-- DSS???
+  <!--# DSS???
   Need descriptions for all events we talked about.
   Nitin: I think descriptions might need to if/elses here? Ideally not, because they should be short and agnostic of NC.
-  -->
-  %% if EVENTS is defined %%
+	- eventDetailInformation/eventDetail
+	- eventOutcomeInformation/eventOutcomeDetail
+  #-->
+  %% if PREMIS.events is defined %%
   <amdSec ID="events">
-    %% for event in EVENTS %%
+    %% for event in PREMIS.events %%
     <digiprovMD ID="event__{{ event.alias }}">
       <mdWrap MDTYPE="PREMIS:EVENT">
         <xmlData>
@@ -161,7 +171,7 @@ xmlns:premis="http://www.loc.gov/premis/v3">
             </premis:eventDetailInformation>
             <premis:linkingAgentIdentifier>
               <premis:linkingAgentIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local">local</premis:linkingAgentIdentifierType>
-              <premis:linkingAgentIdentifierValue>{{ event.agent}}</premis:linkingAgentIdentifierValue>
+              <premis:linkingAgentIdentifierValue>{{ event.agent }}</premis:linkingAgentIdentifierValue>
               <premis:linkingAgentRole valueURI="http://id.loc.gov/vocabulary/preservation/eventRelatedAgentRole/exe">exe</premis:linkingAgentRole>
             </premis:linkingAgentIdentifier>
             <premis:linkingObjectIdentifier>
@@ -177,7 +187,7 @@ xmlns:premis="http://www.loc.gov/premis/v3">
   %% endif %%
   
   <structMap>
-      <div ID="{{ ACCOUNT }}" LABEL="Email account." />
+      <div ID="{{ ACCOUNT }}" LABEL="State of North Carolina Email Account" />
   </structMap>
 
 </mets>

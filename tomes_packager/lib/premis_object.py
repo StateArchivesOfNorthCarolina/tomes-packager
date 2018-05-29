@@ -19,9 +19,9 @@ class PREMISObject(object):
         - objects (list): A list of objects data.
 
     Example:
-        >>> data = [{"2018-05-17T12:40:52-0400": {"type": "agent", "alias":
+        >>> data = [{"2018-05-17T12:40:52-0400": {"entity": "agent", "alias":
         "pst2mime_converter", "name": "TOMES PST Converter", "version": "1"}},
-        {"2018-05-17T12:40:53-0400": {"type": "event", "alias": "pst2mime",
+        {"2018-05-17T12:40:53-0400": {"entity": "event", "alias": "pst2mime",
         "description": "PST to MIME converted.", "agent": "pst2mime_converter"}}]
         >>> po = PREMISObject(data)
         >>> po.events # ['pst2mime']
@@ -39,7 +39,7 @@ class PREMISObject(object):
 
         Args:
             - premis_list (list): Each item is a dict with an ISO timestamp as key and a dict
-            as its value with required attributes "alias" (str) and "type" with one of the
+            as its value with required attributes "alias" (str) and "entity" (str) with one of the
             following values: "agent", "event", or "object". Additional attributes may also
             exist.
 
@@ -62,8 +62,8 @@ class PREMISObject(object):
         self.agents = []
         self.events = []
         self.objects = []
-        self._type_map = {"agent": self.agents, "event": self.events, "object": self.objects}
-        self._required_keys = ["alias", "type"]
+        self._entity_map = {"agent": self.agents, "event": self.events, "object": self.objects}
+        self._required_keys = ["alias", "entity"]
     
         # populate attributes.
         self._get_data()
@@ -94,7 +94,7 @@ class PREMISObject(object):
 
     def _sanitize_metadata(self, metadata):
         """ Makes sure @metadata is a dict with the required keys in @self._required_keys.
-        Makes sure "type" is one of the keys in @self._type_map.
+        Makes sure "entity" is one of the keys in @self._entity_map.
 
         Args:
             - metadata (dict): The dictionary to validate.
@@ -107,7 +107,7 @@ class PREMISObject(object):
             - TypeError: If @metadata isn't a dict.
             - KeyError: If @metadata doesn't contain the required keys in 
             @self._required_keys.
-            - ValueError: If the "type" key's value isn't in @self._type_map.
+            - ValueError: If the "entity" key's value isn't in @self._entity_map.
         """
 
         self.logger.info("Sanitizing metadata.")
@@ -125,10 +125,10 @@ class PREMISObject(object):
                 self.logger.error(msg)
                 raise KeyError(msg)
 
-        # make sure the "type" key has a legal value.
-        if metadata["type"] not in self._type_map:
-            msg = "Key 'type' has illegal value '{}'; must be one of: {}".format(
-                    metadata["type"], list(self._type_map))
+        # make sure the "entity" key has a legal value.
+        if metadata["entity"] not in self._entity_map:
+            msg = "Key 'entity' has illegal value '{}'; must be one of: {}".format(
+                    metadata["entity"], list(self._entity_map))
             self.logger.error(msg)
             raise ValueError(msg)
 
@@ -188,13 +188,13 @@ class PREMISObject(object):
             md_obj.timestamp = timestamp      
             
             # append @md_obj to the correct attribute in @self.
-            self_attr = self._type_map[md_obj.type]
+            self_attr = self._entity_map[md_obj.entity]
             if md_obj in self_attr:
                 self.logger.warning("Overwriting existing data in attribute: .{}s".format(
-                    md_obj.type))
+                    md_obj.entity))
                 self_attr.remove(md_obj)
             else:
-                self.logger.info("Updating attribute: .{}s".format(md_obj.type))
+                self.logger.info("Updating attribute: .{}s".format(md_obj.entity))
             self_attr.append(md_obj)
 
         return
