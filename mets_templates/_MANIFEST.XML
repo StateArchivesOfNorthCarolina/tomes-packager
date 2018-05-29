@@ -11,30 +11,32 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       <name>TOMES Packager</name>
     </agent>
   </metsHdr>
-  <fileSec ID="fileSec">
+  <fileSec>
     <!-- Note: this METS manifest file itself, {{ SELF.manifest_path }}, is excluded from the <fileSec> element. -->
-    <fileGrp ID="fileGrp_">
+    <fileGrp ID="__files">
     %% for file in FILES() %%
-    %% if file.basename != SELF.manifest_path %%
+      %% if file.basename != SELF.manifest_path %%
       <file SIZE="{{ file.size }}" ID="_{{ file.index }}" MIMETYPE="{{ file.mimetype() }}" CREATED="{{ file.created }}" CHECKSUM="{{ file.checksum() }}" CHECKSUMTYPE="{{ file.checksum_algorithm }}">
         <FLocat xlink:href="{{ file.name }}" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
       </file>
-     %% endif %%
+       %% endif %%
     %% endfor %%
     </fileGrp>
-  %% set skipped = [] %%
+    %% set skipped = [] %% <!--# Count skipped files. #-->
     %% for folder in FOLDERS() %%
-    <fileGrp ID="FileGrp_{{ folder.name }}">
+    <fileGrp ID="{{ folder.name }}__files">
       %% for file in folder.rfiles() %%
-    %% if file.parent_object.basename != "attachments" and file.parent_object.parent_object.basename != "eaxs" %%
+	  <!--# Skips files in "/eaxs/attachments" because they will already be accounted for in the EAXS file(s).
+	  Also counts skipped files and reports that number in an XML comment. #-->
+      %% if file.parent_object.basename != "attachments" and file.parent_object.parent_object.basename != "eaxs" %%
       <file SIZE="{{ file.size }}" ID="_{{ folder.name }}_{{ file.index }}" MIMETYPE="{{ file.mimetype() }}" CREATED="{{ file.created }}" CHECKSUM="{{ file.checksum() }}" CHECKSUMTYPE="{{ file.checksum_algorithm }}">
         <FLocat xlink:href="{{ file.name }}" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
       </file>
-    %% else %%
-      %% if skipped.append(1) %%
-    %% endif %%
-    %% endif %%
-      %% endfor %%
+      %% else %%
+      %% if skipped.append(1) %% <!--# Increment @skipped. #-->
+      %% endif %%
+      %% endif %%
+    %% endfor %%
     </fileGrp>
     %% endfor %%
   </fileSec>
@@ -42,22 +44,27 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <!-- Skipped {{ skipped|length }} EAXS attachment files. Please see the EAXS file(s) for attachment checksums. -->
   %% endif %%
   <structMap>
-    <div>
-      <div ID="Div_">
+  <!--# To avoid length lists of files, the <fprt> elements are commented out.
+  These can be uncommented if desired.
+  #-->
+    <div LABEL="{{ SELF.account_id }}">
+      <div ID="__filemap" />
+      <!--#<div ID="__filemap">
       %% for file in FILES() %%
-    %% if file.basename != SELF.manifest_path %%
+        %% if file.basename != SELF.manifest_path %%
         <fptr FILEID="_{{ file.index }}"/>
-    %% endif %%
+        %% endif %%
       %% endfor %%
-      </div>
+      </div>#-->
       %% for folder in FOLDERS() %%
-      <div ID="Div_{{ folder.name }}">
+      <div ID="{{ folder.name }}__filemap" />
+      <!--#<div ID="{{ folder.name }}__filemap">
         %% for file in folder.rfiles() %%
-      %% if file.parent_object.basename != "attachments" and file.parent_object.parent_object.basename != "eaxs" %%
+        %% if file.parent_object.basename != "attachments" and file.parent_object.parent_object.basename != "eaxs" %%
         <fptr FILEID="_{{ folder.name }}_{{ file.index }}"/>
         %% endif %%
         %% endfor %%
-      </div>
+      </div>#-->
       %% endfor %%
     </div>
   </structMap>
