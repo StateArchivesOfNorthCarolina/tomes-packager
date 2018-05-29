@@ -1,7 +1,14 @@
 <mets xmlns="http://www.loc.gov/METS/" 
 xmlns:xlink="http://www.w3.org/1999/xlink" 
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
+xmlns:premis="http://www.loc.gov/premis/v3">
+
+<!--# TODO:
+
+	- This needs af "if" so that if there's no premis object, the premis won't get written.
+		- Or just move the for/in statments outside the AMDSEC, etc.
+	- Review all "Nitin" and "DSS" in-line todos.
+#-->
 
   <metsHdr CREATEDATE="{{ TIMESTAMP() }}">
 
@@ -29,8 +36,8 @@ xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
   %% endfor %%
 
   <!-- DSS??? Note for rights? -->
-  <amdSec ID="amdSec__rights">
-    <rightsMD ID="rightsMD__GS_132_1">
+  <amdSec ID="rights">
+    <rightsMD ID="rights__GS_132_1">
       <mdWrap MDTYPE="PREMIS:RIGHTS">
         <xmlData>
           <premis:rights>
@@ -56,9 +63,10 @@ xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
     </rightsMD>
   </amdSec>
 
-  <amdSec ID="amdSec__agents">
-    %% for agent in AGENTS
-    <techMD ID="techMD__{{ agent.alias }}">
+  %% if AGENTS is defined %%
+  <amdSec ID="agents">
+    %% for agent in AGENTS %%
+    <techMD ID="agent__{{ agent.alias }}">
       <mdWrap MDTYPE="PREMIS:AGENT">
         <xmlData>
           <premis:premis>
@@ -81,15 +89,16 @@ xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
     </techMD>
     %% endfor %%
   </amdSec>
+  %% endif %%
 
-  <amdSec ID="amdSec__objects">
+  <amdSec ID="objects">
     <techMD ID="object__{{ ACCOUNT }}">
       <mdWrap MDTYPE="PREMIS:OBJECT">
         <xmlData>
           <premis:object>
             <premis:objectIdentifier>
               <premis:objectIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local.html">local</premis:objectIdentifierType>
-              <premis:objectIdentifierValue>{{ ACCOUNT }} </premis:objectIdentifierValue>
+              <premis:objectIdentifierValue>{{ ACCOUNT }}</premis:objectIdentifierValue>
             </premis:objectIdentifier>
             <premis:objectCategory>representation</premis:objectCategory>
             <premis:preservationLevel>
@@ -98,7 +107,7 @@ xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
               <premis:preservationLevelRationale>institutional policy</premis:preservationLevelRationale>
             </premis:preservationLevel>
             <premis:linkingRightsStatementIdentifier>
-              <premis:linkingRightsStatementIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local.html">local></premis:linkingRightsStatementIdentifierType> 
+              <premis:linkingRightsStatementIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local.html">local</premis:linkingRightsStatementIdentifierType> 
               <premis:linkingRightsStatementIdentifierValue>gs_132</premis:linkingRightsStatementIdentifierValue>
             </premis:linkingRightsStatementIdentifier>
           </premis:object>
@@ -107,7 +116,8 @@ xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
     </techMD>
     <!-- DSS???
     Review objects we talked about. -->
-    %% for object in OBJECT %%
+	%% if OBJECTS is defined %%
+    %% for object in OBJECTS %%
     <techMD ID="object__{{ object.alias }}">
       <mdWrap MDTYPE="PREMIS:OBJECT">
         <xmlData>
@@ -118,7 +128,7 @@ xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
             </premis:objectIdentifier>
             <premis:objectCategory>{{ object.category }}</premis:objectCategory>
             <premis:linkingRightsStatementIdentifier>
-              <premis:linkingRightsStatementIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local.html">local></premis:linkingRightsStatementIdentifierType> 
+              <premis:linkingRightsStatementIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local.html">local</premis:linkingRightsStatementIdentifierType> 
               <premis:linkingRightsStatementIdentifierValue>gs_132</premis:linkingRightsStatementIdentifierValue>
             </premis:linkingRightsStatementIdentifier>
           </premis:object>
@@ -127,13 +137,16 @@ xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
     </techMD>
     %% endfor %%
   </amdSec>
-
+  %% endif %%
+  
   <!-- DSS???
   Need descriptions for all events we talked about.
+  Nitin: I think descriptions might need to if/elses here? Ideally not, because they should be short and agnostic of NC.
   -->
-  <amdSec ID="amdSec__events">
+  %% if EVENTS is defined %%
+  <amdSec ID="events">
     %% for event in EVENTS %%
-    <digiprovMD ID="{{ event.alias }}">
+    <digiprovMD ID="event__{{ event.alias }}">
       <mdWrap MDTYPE="PREMIS:EVENT">
         <xmlData>
           <premis:event>
@@ -161,9 +174,10 @@ xmlns:premis="http://www.loc.gov/premis/v3" version="3.0">
     </digiprovMD>
     %% endfor %%
   </amdSec>
+  %% endif %%
   
   <structMap>
-      <div ID="{{ ACCOUNT }}" LABEL="Email account for: {{ ACCOUNT }}" />
+      <div ID="{{ ACCOUNT }}" LABEL="Email account." />
   </structMap>
 
 </mets>

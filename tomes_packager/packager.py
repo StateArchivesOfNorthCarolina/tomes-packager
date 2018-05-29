@@ -20,6 +20,7 @@ import jinja2
 import logging
 import logging.config
 import os
+import yaml
 from datetime import datetime
 from lxml import etree
 from lib.aip_maker import AIPMaker
@@ -35,7 +36,7 @@ class Packager():
 
 
     def __init__(self, account_id, source_dir, destination_dir, mets_template="", 
-            manifest_template="", preservation_data=[], rdf_xlsx="", charset="utf-8"):
+            manifest_template="", events_log="", rdf_xlsx="", charset="utf-8"):
         """ Sets instance attributes.
 
         Attributes:
@@ -55,7 +56,7 @@ class Packager():
             render a METS file inside the AIP's root folder.
             - manifest_template (str): The file path for the METS manifest template. 
             This will be used to render a METS manifest file inside the AIP's root folder.
-            - preservation_data (PreservationObject): Optional preservation data to pass into
+            - events_log (str): Optional preservation metadata file to pass into 
             @mets_template.
             - rdf_xlsx (str): The Excel 2010+ (.xlsx) file from which to create RDFs. 
             - charset (str): The encoding for the rendered METS an RDF data.
@@ -78,7 +79,7 @@ class Packager():
         self.account_id = str(account_id) 
         self.source_dir = self._normalize_path(source_dir)
         self.destination_dir = self._normalize_path(destination_dir)
-        self.preservation_data = preservation_data
+        self.events_log = events_log
         self.mets_template = mets_template
         self.manifest_template = manifest_template
         self.rdf_xlsx = rdf_xlsx
@@ -101,6 +102,43 @@ class Packager():
         self.mets_path = "{}.mets.xml".format(self.account_id)
         self.manifest_path = "{}.mets.manifest".format(self.account_id)
 
+
+    def _get_premis_object(self):
+        """ ???
+
+        Returns:
+            PREMISObject: The return value.
+            If ??? or ???, None is returned.
+        """
+
+        self.logger.info("???")
+
+        # ???
+        if not os.path.isfile(self.events_log):
+            msg = "???"
+            self.logger.error(msg)
+            return
+
+        # ???
+        events = []
+        try:
+            events = open(self.events_log, encoding=self.charset).readlines()
+        except Exception as err:
+            self.logger.warning("???")
+            self.logger.error(err)
+            return
+    
+        # ???
+        try:
+            events = [yaml.load(e) for e in events]
+        except:
+            # TODO: ???
+            pass
+
+        # ???
+        events = self._premis_object(events)
+        return events
+        
 
     def write_mets(self, filename, template, xsd_validation=True, *args, **kwargs):
         """ Writes a METS file to the given @path using the given METS @template.
@@ -171,7 +209,8 @@ class Packager():
         self.directory_obj = self._directory_object(aip_dir)
 
         # create a PREMISObject.
-        self.premis_obj = self._premis_object(self.preservation_data)
+        if self.events_log is not None:
+            self.premis_obj = self._get_premis_object()
 
         # if needed, create RDF objects.
         if self.rdf_xlsx != "":
@@ -182,9 +221,9 @@ class Packager():
         kwargs = {"SELF": self,
                 "TIMESTAMP": lambda: datetime.utcnow().isoformat() + "Z",
                 "ACCOUNT": self.account_id,
-                "AGENTS": self.premis_obj.agents,
-                "EVENTS": self.premis_obj.events,
-                "OBJECTS": self.premis_obj.objects,
+                "AGENTS": self.premis_obj.agents if self.premis_obj is not None else [],
+                "EVENTS": self.premis_obj.events if self.premis_obj is not None else [],
+                "OBJECTS": self.premis_obj.objects if self.premis_obj is not None else [],
                 "FOLDERS": self.directory_obj.dirs, 
                 "FILES": self.directory_obj.files,
                 "RDFS": self.rdf_obj.rdfs if self.rdf_obj is not None else []}
@@ -235,8 +274,9 @@ if __name__ == "__main__":
     p = Packager("foo", 
             "../tests/sample_files/hot_folder", 
             "../tests/sample_files", 
-            "../mets_templates/basic_mets.xml",
-            "../mets_templates/_MANIFEST.XML",
+            "../mets_templates/nc_gov.xml",
+            "../mets_templates/MANIFEST.XML",
+            events_log="../tests/sample_files/sample_events.log",
             rdf_xlsx="../tests/sample_files/sample_rdf.xlsx")
     
     aip = p.package()
