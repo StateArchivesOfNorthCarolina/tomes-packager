@@ -3,6 +3,7 @@ with an optional METS file and an optional METS manifest file.
 
 Todo:
     * Fill in ???s.
+        - Inlcuding templates.
     * PREMIS attributes should be same ones used in actual PREMIS: eventDetail, etc.
         - This includes the demo file.
     * EVERY public method in all modules needs to start with a logging statement.
@@ -12,7 +13,8 @@ Todo:
     drop in the METS (and to create DirectoryObject) - also useful if AIP 
     already exists. 
         - Use self.write_mets().    
-    * Investigate event relationship. How realistic is this with time constraints?
+    * Investigate event relationship. 
+        - How realistic is this with time constraints? Not very.
     * Write unit tests.
     * Add CLI.
     * Run autoflakes on this and lib/* and unit tests.
@@ -39,7 +41,11 @@ from lib.rdf_maker import RDFMaker
     
 class Packager():
     """ A class for constructing a TOMES archival information package (AIP) with an optional 
-    METS file and an optional METS manifest file. """
+    METS file and an optional METS manifest file. 
+    
+    Example:
+        ???
+    """
 
 
     def __init__(self, account_id, source_dir, destination_dir, mets_template="", 
@@ -72,9 +78,6 @@ class Packager():
             @mets_template.
             - rdf_xlsx (str): The Excel 2010+ (.xlsx) file from which to create RDFs. 
             - charset (str): The encoding for the rendered METS an RDF data.
-
-        Example:
-            ???
         """
 
         # set logger; suppress logging by default.
