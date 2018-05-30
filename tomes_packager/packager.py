@@ -51,6 +51,8 @@ class Packager():
             - premis_obj (PREMISObject): The preservation metadata provided in @events_log.
             - mets_obj (METSMaker): The METS object created from @mets_template.
             - rdf_obj (RDFMaker): The RDF object created from @rdf_xlsx.
+            - time_utc (function): Returns UTC time as ISO 8601.
+            - time_local (function): Returns local time as ISO 8601 with UTC offset.
             - mets_path (str): The base filename for the METS file. This can be manually
             overridden after creating the Packager instance (p = Packager(...); 
             p.mets_path = "myCustomMETSFileName.xml").
@@ -69,8 +71,6 @@ class Packager():
             @mets_template.
             - rdf_xlsx (str): The Excel 2010+ (.xlsx) file from which to create RDFs. 
             - charset (str): The encoding for the rendered METS an RDF data.
-            - time_utc (function): Returns UTC time as ISO 8601.
-            - time_local (function): Returns local time as ISO 8601 with UTC offset.
 
         Example:
             ???
