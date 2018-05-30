@@ -34,7 +34,7 @@ class PREMISObject(object):
         >>> po.agents[0] == po.events[0].agent # True
         >>> po.agents[0].__dict__ # show key/value pairs.
         >>> # or load from a file ...
-        >>> data = premis_object.load_file("sample.txt")
+        >>> data = PREMISObject.load_file("sample.txt")
         >>> po2 = PREMISObject(data)
     """
 
