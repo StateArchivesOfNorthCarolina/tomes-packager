@@ -39,7 +39,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
  
   <!--# Create a basic METS <structMap> element. #-->
   <structMap>
-      <div ID="structmap__{{ SELF.account_id }}" LABEL="Email account." />
+      <div ID="{{ SELF.account_id }}" LABEL="Email account." />
   </structMap>
 
 </mets>

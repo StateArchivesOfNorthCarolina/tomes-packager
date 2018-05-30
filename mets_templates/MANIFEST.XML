@@ -24,7 +24,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     </fileGrp>
     %% set skipped = [] %% <!--# Count skipped files. #-->
     %% for folder in SELF.directory_obj.dirs() %%
-    <fileGrp ID="{{ folder.name }}">
+    <fileGrp ID="{{ folder.name }}__files">
       %% for file in folder.rfiles() %%
 	  <!--# Skips files in "/eaxs/attachments" because they will already be accounted for in the EAXS file(s).
 	  Also counts skipped files and reports that number in an XML comment. #-->

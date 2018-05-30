@@ -62,7 +62,7 @@ xmlns:premis="http://www.loc.gov/premis/v3">
   <!--# ??? #-->
   <!--# DSS??? 
   Note for rights? #-->
-  <amdSec ID="rights">
+  <amdSec ID="amdSec__rights">
     <rightsMD ID="rights__GS_132_1">
       <mdWrap MDTYPE="PREMIS:RIGHTS">
         <xmlData>
@@ -91,7 +91,7 @@ xmlns:premis="http://www.loc.gov/premis/v3">
 
   <!--# ??? #-->
   %% if SELF.premis_obj.agents is defined %%
-  <amdSec ID="agents">
+  <amdSec ID="amdSec__agents">
     %% for agent in SELF.premis_obj.agents %%
     <techMD ID="agent__{{ agent.alias }}">
       <mdWrap MDTYPE="PREMIS:AGENT">
@@ -119,7 +119,7 @@ xmlns:premis="http://www.loc.gov/premis/v3">
   %% endif %%
 
   <!--# ??? #-->
-  <amdSec ID="objects">
+  <amdSec ID="amdSec__objects">
     <techMD ID="object__{{ SELF.account_id }}">
       <mdWrap MDTYPE="PREMIS:OBJECT">
         <xmlData>
@@ -176,7 +176,7 @@ xmlns:premis="http://www.loc.gov/premis/v3">
 	- eventOutcomeInformation/eventOutcomeDetail
   #-->
   %% if SELF.premis_obj.events is defined %%
-  <amdSec ID="events">
+  <amdSec ID="amdSec__events">
     %% for event in SELF.premis_obj.events %%
     <digiprovMD ID="event__{{ event.alias }}">
       <mdWrap MDTYPE="PREMIS:EVENT">
