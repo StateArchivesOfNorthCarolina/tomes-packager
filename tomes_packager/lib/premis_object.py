@@ -8,6 +8,8 @@ import dateutil.parser
 import dateutil.tz
 import logging
 import logging.config
+import os
+import yaml
 
 
 class PREMISObject(object):
@@ -31,6 +33,9 @@ class PREMISObject(object):
         >>> po.agents[0] # '[pst2mime_converter]'
         >>> po.agents[0] == po.events[0].agent # True
         >>> po.agents[0].__dict__ # show key/value pairs.
+        >>> # or load from a file ...
+        >>> data = premis_object.load_file("sample.txt")
+        >>> po2 = PREMISObject(data)
     """
 
 
@@ -39,9 +44,9 @@ class PREMISObject(object):
 
         Args:
             - premis_list (list): Each item is a dict with an ISO timestamp as key and a dict
-            as its value with required attributes "alias" (str) and "entity" (str) with one of the
-            following values: "agent", "event", or "object". Additional attributes may also
-            exist.
+            as its value with required attributes "alias" (str) and "entity" (str) with one
+            of the following values: "agent", "event", or "object". Additional attributes may
+            also exist.
 
         Raises:
             - TypeError: If @premis_list is not a list.
@@ -62,7 +67,8 @@ class PREMISObject(object):
         self.agents = []
         self.events = []
         self.objects = []
-        self._entity_map = {"agent": self.agents, "event": self.events, "object": self.objects}
+        self._entity_map = {"agent": self.agents, "event": self.events, 
+                "object": self.objects}
         self._required_keys = ["alias", "entity"]
     
         # populate attributes.
@@ -198,6 +204,46 @@ class PREMISObject(object):
             self_attr.append(md_obj)
 
         return
+
+
+    @staticmethod
+    def load_file(events_log, charset="utf-8"):
+        """ Converts @events_log to a list.
+
+        Args:
+            - events_log (str): The path to the event log file. Each line must be a YAML
+            compatible dict that conforms to the rules for @premis_list in 
+            PREMISObject.__init__().
+            - charset (str): The encoding with which to open @events_log.
+
+        Returns:
+            list: The return value.
+        
+        Raises:
+            - FileNotFoundError: If @events_log is not a file.
+            - OSError: If @events_log can't be read into memory.
+            - yaml.parser.ParserError: If @events_log isn't YAML compatible.
+        """
+
+        # verify @events_log is a file.
+        if not os.path.isfile(events_log):
+            msg = "Events log '{}' is not a file.".format(events_log)
+            raise FileNotFoundError(msg)
+
+        # open @events_log and store each line in a list.
+        try:
+            events = open(events_log, encoding=charset).readlines()
+        except Exception as err:
+            msg = "Can't read '{}' into memory.".format(events_log)
+            raise OSError(msg)
+
+        # convert each item in @events to YAML.
+        try:
+            events = [yaml.load(e) for e in events]            
+        except yaml.parser.ParserError as err:
+            raise yaml.parser.ParserError(err)
+
+        return events
 
 
 if __name__ == "__main__":

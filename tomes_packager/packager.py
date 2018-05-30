@@ -2,8 +2,10 @@
 with an optional METS file and an optional METS manifest file.
 
 Todo:
+    * Fill in ???s.
     * Investigate event relationship. How realistic is this with time constraints?
-    * Populate all "???" comments.
+    * PREMIS attributes should be same ones used in actual PREMIS: eventDetail, etc.
+        - This includes the demo file.
     * EVERY public method in all modules needs to start with a logging statement.
         - Probably privates too.
     * Make sure you can never return anything not yet defined (reference error).
@@ -14,13 +16,14 @@ Todo:
     * Write unit tests.
     * Add CLI.
     * Run autoflakes on this and lib/* and unit tests.
+    * Review this and module docstrings.    
 """
 
 # import modules.
-import jinja2
 import logging
 import logging.config
 import os
+import plac
 import yaml
 from datetime import datetime
 from lxml import etree
@@ -41,13 +44,13 @@ class Packager():
         """ Sets instance attributes.
 
         Attributes:
-            - aip_obj = ???
-            - directory_obj = ???
-            - premis_obj = ???
-            - mets_obj = ???
-            - rdf_obj = ???
-            - mets_path = ???
-            - manifest_path = ???
+            - aip_obj (AIPMaker): The object versio of the AIP located at @destination_dir.
+            - directory_obj (DirectoryObject): The object version of @destination_dir.
+            - premis_obj (PREMISObject): The preservation metadata provided in @events_log.
+            - mets_obj (METSMaker): The METS object created from @mets_template.
+            - rdf_obj (RDFMaker): The RDF object created from @rdf_xlsx.
+            - mets_path (str): The base filename for the METS file.
+            - manifest_path (str): The base filename for the METS manifest file.
         
         Args:
             - account_id (str): The email account's base identifier, i.e. the file prefix.
@@ -61,6 +64,9 @@ class Packager():
             @mets_template.
             - rdf_xlsx (str): The Excel 2010+ (.xlsx) file from which to create RDFs. 
             - charset (str): The encoding for the rendered METS an RDF data.
+
+        Example:
+            ???
         """
 
         # set logger; suppress logging by default.
@@ -94,52 +100,19 @@ class Packager():
         self._rdf_maker = RDFMaker
 
         # creates atttibutes for constructed objects.
+        self.aip_dir = self._abspath(os.path.join(self.destination_dir, self.account_id))
         self.aip_obj = None
         self.directory_obj = None
         self.premis_obj = None
         self.mets_obj = None
         self._manifest_obj = None
         self.rdf_obj = None
-        self.mets_path = "{}.mets.xml".format(self.account_id)
-        self.manifest_path = "{}.mets.manifest".format(self.account_id)
+        self.mets_path, self.manifest_path = None, None
+        if self.mets_template != "":
+            self.mets_path = "{}.mets.xml".format(self.account_id)
+        if self.manifest_template != "":
+            self.manifest_path = "{}.mets.manifest".format(self.account_id)
 
-
-    def _get_premis_object(self):
-        """ ???
-
-        Returns:
-            PREMISObject: The return value.
-            If ??? or ???, None is returned.
-        """
-
-        self.logger.info("???")
-
-        # ???
-        if not os.path.isfile(self.events_log):
-            msg = "???"
-            self.logger.error(msg)
-            return
-
-        # ???
-        events = []
-        try:
-            events = open(self.events_log, encoding=self.charset).readlines()
-        except Exception as err:
-            self.logger.warning("???")
-            self.logger.error(err)
-            return
-    
-        # ???
-        try:
-            events = [yaml.load(e) for e in events]
-        except:
-            # TODO: ???
-            pass
-
-        # ???
-        events = self._premis_object(events)
-        return events
-        
 
     def write_mets(self, filename, template, xsd_validation=True, *args, **kwargs):
         """ Writes a METS file to the given @path using the given METS @template.
@@ -153,7 +126,7 @@ class Packager():
         
         Returns:
             tuple: The return value.
-            The first item is a METSMaker object. If ??? this is None.
+            The first item is a METSMaker object. None if the METS couldn't be created.
             The second item is a boolean. This is True if the METS file is valid and 
             @xsd_validation is True OR if @xsd_validation is False and the METS file is a real
             file. Otherwise, this is False.
@@ -162,6 +135,24 @@ class Packager():
         # set path for writing METS file.
         mets_path = os.path.join(self.destination_dir, self.account_id, filename)
         mets_path = self._abspath(mets_path)
+
+        # create a DirectoryObject.
+        if self.directory_obj is None:
+            self.directory_obj = self._directory_object(self.aip_dir)
+
+        # if needed, create a PREMISObject.
+        if self.events_log != "" and self.premis_obj is None:
+            events = self._premis_object.load_file(self.events_log)
+            self.premis_obj = self._premis_object(events)
+
+        # if needed, create an RDFObject.
+        if self.rdf_xlsx != "" and self.rdf_obj is None:
+            self.rdf_obj = self._rdf_maker(self.rdf_xlsx, charset=self.charset)
+            self.rdf_obj.make()
+
+        # add reserved variables to @kwargs to send to METS templates.
+        kwargs["SELF"] = self
+        kwargs["TIMESTAMP"] = lambda: datetime.utcnow().isoformat() + "Z"
 
         # create the METS file from @template; determine validity.
         try:
@@ -180,9 +171,12 @@ class Packager():
         return (mets_obj, is_valid)
 
 
-    def package(self):
+    def package(self, move_data=True):
         """ Creates the AIP structure and optional METS file.
         
+        Args:
+            - move_data (bool): ???
+
         Returns:
             bool: The return value.
             True if the overall AIP structure and any METS files appear to be valid. 
@@ -190,12 +184,12 @@ class Packager():
         """
 
         # set AIP path.
-        aip_dir = self._abspath(os.path.join(self.destination_dir, self.account_id))
-        self.logger.info("Packaging: {}".format(aip_dir))
+        self.logger.info("Packaging: {}".format(self.aip_dir))
 
         # create AIP structure.
         self.aip_obj = self._aip_maker(self.account_id, self.source_dir, self.destination_dir)
-        self.aip_obj.make()
+        if move_data:
+            self.aip_obj.make()
         is_aip_valid = self.aip_obj.validate()
 
         # if the AIP structure isn't valid, warn but continue on.
@@ -205,34 +199,12 @@ class Packager():
         # if no METS templates were passed; return AIP data.
         if self.mets_template == "" and self.manifest_template == "":
             self.logger.info("No METS templates passed; skipping METS creation.")
-            return (aip_dir, None, self.aip_obj.validate())
+            return (self.aip_dir, None, self.aip_obj.validate())
 
-        # create a DirectoryObject for the AIP.
-        self.directory_obj = self._directory_object(aip_dir)
-
-        # create a PREMISObject.
-        if self.events_log is not None:
-            self.premis_obj = self._get_premis_object()
-
-        # if needed, create RDF objects.
-        if self.rdf_xlsx != "":
-            self.rdf_obj = self._rdf_maker(self.rdf_xlsx, charset=self.charset)
-            self.rdf_obj.make()
-
-        # set keyword arguments to send to METS templates.
-        kwargs = {"SELF": self,
-                "TIMESTAMP": lambda: datetime.utcnow().isoformat() + "Z",
-                "ACCOUNT": self.account_id,
-                "FOLDERS": self.directory_obj.dirs, 
-                "FILES": self.directory_obj.files,
-                "PREMIS": self.premis_obj,
-                "RDFS": self.rdf_obj.rdfs}
-        
         # if needed, set the METS file path and make the METS file.
         if self.mets_template != "":
             self.logger.info("Creating main METS file for AIP.")
-            self.mets_obj, is_mets_valid = self.write_mets(self.mets_path, self.mets_template,
-                    **kwargs)
+            self.mets_obj, is_mets_valid = self.write_mets(self.mets_path, self.mets_template)
         else:
             is_mets_valid = True
 
@@ -240,7 +212,7 @@ class Packager():
         if self.manifest_template != "":
             self.logger.info("Creating METS manifest file for AIP.")            
             self._manifest_obj, is_manifest_valid = self.write_mets(self.manifest_path, 
-                    self.manifest_template, False, **kwargs)
+                    self.manifest_template, False)
         else:
             is_manifest_valid = True
         
@@ -267,14 +239,61 @@ class Packager():
         return is_valid
 
 
+# CLI.
+def main(account_id: "email account identifier", 
+        source_dir: ("path to email account hot-folder"),
+        destination_dir: ("path to final AIP"),
+        silent: ("disable console logs", "flag", "s"),
+        mets_template: ("METS template")="",
+        manifest_template: ("METS manifest template")="",
+        events_log: ("preservation metadata log file")="",
+        rdf_xlsx: (".xlsx RDF/Dublin Core file")=""):
+
+    "???.\
+    \nexample: `py -3 packager.py ../tests/sample_files/???`"
+
+    # make sure logging directory exists.
+    logdir = "log"
+    if not os.path.isdir(logdir):
+        os.mkdir(logdir)
+
+    # get absolute path to logging config file.
+    config_dir = os.path.dirname(os.path.abspath(__file__))
+    config_file = os.path.join(config_dir, "logger.yaml")
+    
+    # load logging config file.
+    with open(config_file) as cf:
+        config = yaml.safe_load(cf.read())
+    if silent:
+        config["handlers"]["console"]["level"] = 100
+    logging.config.dictConfig(config)
+    
+    # create class instance.
+    packager = Packager(account_id, source_dir, destination_dir, mets_template, 
+            manifest_template, events_log, rdf_xlsx)
+    
+    # ???
+    logging.info("Running CLI: " + " ".join(sys.argv))
+    try:
+        packager.package()
+        logging.info("Done.")
+        sys.exit()
+    except Exception as err:
+        logging.critical(err)
+        sys.exit(err.__repr__())
+        
+
 if __name__ == "__main__":
+    
+    #import plac
+    #plac.call(main)
 
     logging.basicConfig(level="DEBUG")
 
     p = Packager("foo", 
             "../tests/sample_files/hot_folder", 
             "../tests/sample_files", 
-            "../mets_templates/nc_gov.xml",
+            "../mets_templates/basic.xml",
             "../mets_templates/MANIFEST.XML",
             events_log="../tests/sample_files/sample_events.log",
             rdf_xlsx="../tests/sample_files/sample_rdf.xlsx")

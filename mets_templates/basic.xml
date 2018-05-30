@@ -1,0 +1,27 @@
+<mets xmlns="http://www.loc.gov/METS/" 
+xmlns:xlink="http://www.w3.org/1999/xlink" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <metsHdr CREATEDATE="{{ TIMESTAMP() }}">
+    <agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
+      <name>TOMES Packager</name>
+    </agent>
+  </metsHdr>
+
+  %% if SELF.rdf_obj.rdfs is defined %%
+  %% for rdf in SELF.rdf_obj.rdfs %%
+  <dmdSec ID="dmdSec__{{ rdf.name }}">
+    <mdWrap MDTYPE="DC">
+      <xmlData>
+        {{ rdf.xml }}
+      </xmlData>
+    </mdWrap>
+  </dmdSec>
+  %% endfor %%
+  %% endif %%
+ 
+  <structMap>
+      <div ID="{{ SELF.account_id }}" LABEL="Email account." />
+  </structMap>
+
+</mets>
