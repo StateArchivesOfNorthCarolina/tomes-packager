@@ -31,7 +31,7 @@ xmlns:premis="http://www.loc.gov/premis/v3">
 
   </metsHdr>
 
-  <!--# If RDF data has been passed into the template, otherwise use generic descriptive metadata. #-->
+  <!--# If RDF data has been passed into the template, use it. Otherwise use generic descriptive metadata. #-->
   %% if SELF.rdf_obj.rdfs is defined %%
   %% for rdf in SELF.rdf_obj.rdfs %%
   <dmdSec ID="dmdSec__{{ rdf.name }}">
