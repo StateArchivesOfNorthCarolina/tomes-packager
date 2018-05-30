@@ -114,15 +114,16 @@ class Packager():
             self.manifest_path = "{}.mets.manifest".format(self.account_id)
 
 
-    def write_mets(self, filename, template, xsd_validation=True, *args, **kwargs):
+    def write_mets(self, filename, template, xsd_validation=True, **kwargs):
         """ Writes a METS file to the given @path using the given METS @template.
 
         Args:
             - filename (str): The relative file path for the outputted METS file. The file 
             will be placed inside the AIP directory.
-            - template (str): The path to the METS template file.
+            - template (str): The path to the METS Jinja template file.
             - xsd_validation (bool): Use True to validate the METS via the METS XSD. Use False
             to simply determine if the METS file was written or not.
+            - **kwargs: Any optional keyword arguments to pass into the METS @template.
         
         Returns:
             tuple: The return value.
