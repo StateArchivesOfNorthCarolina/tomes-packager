@@ -19,6 +19,7 @@ Todo:
     * Add CLI.
     * Run autoflakes on this and lib/* and unit tests.
     * Review this and module docstrings.
+        - Examples that reference files should use real sample files.
     * Work on PREMIS logging for DarcMail, PST Converter, and Tagger.
 """
 
