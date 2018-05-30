@@ -16,7 +16,8 @@ Todo:
     * Write unit tests.
     * Add CLI.
     * Run autoflakes on this and lib/* and unit tests.
-    * Review this and module docstrings.    
+    * Review this and module docstrings.
+    * Work on PREMIS logging for DarcMail, PST Converter, and Tagger.
 """
 
 # import modules.
