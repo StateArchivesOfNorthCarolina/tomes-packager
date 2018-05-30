@@ -24,6 +24,8 @@ import logging
 import logging.config
 import os
 import plac
+import sys
+import time
 import yaml
 from datetime import datetime
 from lxml import etree
@@ -67,6 +69,8 @@ class Packager():
             @mets_template.
             - rdf_xlsx (str): The Excel 2010+ (.xlsx) file from which to create RDFs. 
             - charset (str): The encoding for the rendered METS an RDF data.
+            - time_utc (function): Returns UTC time as ISO 8601.
+            - time_local (function): Returns local time as ISO 8601 with UTC offset.
 
         Example:
             ???
@@ -115,6 +119,8 @@ class Packager():
             self.mets_path = "{}.mets.xml".format(self.account_id)
         if self.manifest_template != "":
             self.manifest_path = "{}.mets.manifest".format(self.account_id)
+        self.time_utc = lambda: datetime.utcnow().isoformat() + "Z"
+        self.time_local = lambda: time.strftime("'%Y-%m-%dT%H:%M:%S%z'")[1:-1]
 
 
     def write_mets(self, filename, template, xsd_validation=True, **kwargs):
@@ -154,9 +160,8 @@ class Packager():
             self.rdf_obj = self._rdf_maker(self.rdf_xlsx, charset=self.charset)
             self.rdf_obj.make()
 
-        # add reserved variables to @kwargs to send to METS templates.
+        # add @self to @kwargs so that it can be called in METS templates.
         kwargs["SELF"] = self
-        kwargs["TIMESTAMP"] = lambda: datetime.utcnow().isoformat() + "Z"
 
         # create the METS file from @template; determine validity.
         try:
@@ -249,15 +254,13 @@ def main(account_id: "email account identifier",
         source_dir: ("path to email accounts hot-folder"),
         destination_dir: ("AIP destination path"),
         silent: ("disable console logs", "flag", "s"),
-        ignore_source: ("ignore @source_dir and package @destination_dir in place", "flag", 
-            "i"),
-        mets_template: ("METS template")="../mets_templates/basic.xml",
+        mets_template: ("METS template")="",
         manifest_template: ("METS manifest template")="../mets_templates/MANIFEST.XML",
         events_log: ("preservation metadata log file")="",
         rdf_xlsx: (".xlsx RDF/Dublin Core file")=""):
 
-    "???.\
-    \nexample: `py -3 packager.py ../tests/sample_files/???`"
+    "Creates a TOMES Archival Information Package.\
+    \nexample: `py -3 packager.py foo ../tests/sample_files/hot_folder ../tests/sample_files`"
 
     # make sure logging directory exists.
     logdir = "log"
@@ -292,7 +295,7 @@ def main(account_id: "email account identifier",
 
 if __name__ == "__main__":
     
-    #import plac
+    import plac
     #plac.call(main)
 
     logging.basicConfig(level="DEBUG")
@@ -303,8 +306,8 @@ if __name__ == "__main__":
             "../mets_templates/basic.xml",
             "../mets_templates/MANIFEST.XML",
             events_log="../tests/sample_files/sample_events.log",
-            rdf_xlsx="../tests/sample_files/sample_rdf.xlsx")
+            #rdf_xlsx="../tests/sample_files/sample_rdf.xlsx",
+            )
     #p.mets_path = "foo.xml"
     aip = p.package()
     print(aip)
-    pass

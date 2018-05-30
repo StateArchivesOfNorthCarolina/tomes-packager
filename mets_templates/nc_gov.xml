@@ -8,9 +8,10 @@ xmlns:premis="http://www.loc.gov/premis/v3">
 	- This needs af "if" so that if there's no premis object, the premis won't get written.
 		- Or just move the for/in statments outside the AMDSEC, etc.
 	- Review all "Nitin" and "DSS" in-line todos.
+	- Fill in ???s.
 #-->
 
-  <metsHdr CREATEDATE="{{ TIMESTAMP() }}">
+  <metsHdr CREATEDATE="{{ SELF.time_utc() }}">
 
     <agent ROLE="CREATOR" TYPE="ORGANIZATION">
       <name>State Archives of North Carolina</name>
@@ -30,6 +31,7 @@ xmlns:premis="http://www.loc.gov/premis/v3">
 
   </metsHdr>
 
+  <!--# If RDF data has been passed into the template, otherwise use generic descriptive metadata. #-->
   %% if SELF.rdf_obj.rdfs is defined %%
   %% for rdf in SELF.rdf_obj.rdfs %%
   <dmdSec ID="dmdSec__{{ rdf.name }}">
@@ -40,8 +42,24 @@ xmlns:premis="http://www.loc.gov/premis/v3">
     </mdWrap>
   </dmdSec>
   %% endfor %%
+  %% else %% 
+  <dmdSec ID="dmdSec__000">
+    <mdWrap MDTYPE="DC">
+      <xmlData>
+        <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+          <rdf:Description rdf:ID="_000">
+            <dc:title>Email Account for "{{ SELF.account_id }}"</dc:title>
+            <dc:date>{{ SELF.time_local() }}</dc:date>
+            <dc:description>Archival email account.</dc:description>
+            <dc:identifier>{{ SELF.account_id }}</dc:identifier>
+          </rdf:Description>
+        </rdf:RDF>
+      </xmlData>
+    </mdWrap>
+  </dmdSec>
   %% endif %%
 
+  <!--# ??? #-->
   <!--# DSS??? 
   Note for rights? #-->
   <amdSec ID="rights">
@@ -71,6 +89,7 @@ xmlns:premis="http://www.loc.gov/premis/v3">
     </rightsMD>
   </amdSec>
 
+  <!--# ??? #-->
   %% if SELF.premis_obj.agents is defined %%
   <amdSec ID="agents">
     %% for agent in SELF.premis_obj.agents %%
@@ -99,6 +118,7 @@ xmlns:premis="http://www.loc.gov/premis/v3">
   </amdSec>
   %% endif %%
 
+  <!--# ??? #-->
   <amdSec ID="objects">
     <techMD ID="object__{{ SELF.account_id }}">
       <mdWrap MDTYPE="PREMIS:OBJECT">
@@ -122,6 +142,7 @@ xmlns:premis="http://www.loc.gov/premis/v3">
         </xmlData>
       </mdWrap>
     </techMD>
+	<!--# ??? #-->
     <!--# DSS???
     Review objects we talked about. #-->
 	%% if SELF.premis_obj.objects is defined %%
@@ -147,6 +168,7 @@ xmlns:premis="http://www.loc.gov/premis/v3">
   %% endif %%
   </amdSec>
   
+  <!--# ??? #-->
   <!--# DSS???
   Need descriptions for all events we talked about.
   Nitin: I think descriptions might need to if/elses here? Ideally not, because they should be short and agnostic of NC.
