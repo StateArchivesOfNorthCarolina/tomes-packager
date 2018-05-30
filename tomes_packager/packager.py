@@ -3,7 +3,6 @@ with an optional METS file and an optional METS manifest file.
 
 Todo:
     * Fill in ???s.
-    * Investigate event relationship. How realistic is this with time constraints?
     * PREMIS attributes should be same ones used in actual PREMIS: eventDetail, etc.
         - This includes the demo file.
     * EVERY public method in all modules needs to start with a logging statement.
@@ -13,6 +12,7 @@ Todo:
     drop in the METS (and to create DirectoryObject) - also useful if AIP 
     already exists. 
         - Use self.write_mets().    
+    * Investigate event relationship. How realistic is this with time constraints?
     * Write unit tests.
     * Add CLI.
     * Run autoflakes on this and lib/* and unit tests.
@@ -49,8 +49,11 @@ class Packager():
             - premis_obj (PREMISObject): The preservation metadata provided in @events_log.
             - mets_obj (METSMaker): The METS object created from @mets_template.
             - rdf_obj (RDFMaker): The RDF object created from @rdf_xlsx.
-            - mets_path (str): The base filename for the METS file.
-            - manifest_path (str): The base filename for the METS manifest file.
+            - mets_path (str): The base filename for the METS file. This can be manually
+            overridden after creating the Packager instance (p = Packager(...); 
+            p.mets_path = "myCustomMETSFileName.xml").
+            - manifest_path (str): The base filename for the METS manifest file. As with
+            @mets_path, this can be manually overridden.
         
         Args:
             - account_id (str): The email account's base identifier, i.e. the file prefix.
@@ -172,11 +175,10 @@ class Packager():
         return (mets_obj, is_valid)
 
 
-    def package(self, move_data=True):
-        """ Creates the AIP structure and optional METS file.
-        
-        Args:
-            - move_data (bool): ???
+    def package(self):
+        """ Creates the AIP structure and optional METS file. Note: if @self.source_dir and
+        @self.destination_dir are the same, then no files will be moved, however the AIP
+        will still be validated and optional METS files created.
 
         Returns:
             bool: The return value.
@@ -189,8 +191,10 @@ class Packager():
 
         # create AIP structure.
         self.aip_obj = self._aip_maker(self.account_id, self.source_dir, self.destination_dir)
-        if move_data:
+        if self.source_dir != self.destination_dir:
             self.aip_obj.make()
+        else:
+            self.logger.info("Source path equals destination path; no files will be moved.")
         is_aip_valid = self.aip_obj.validate()
 
         # if the AIP structure isn't valid, warn but continue on.
@@ -242,11 +246,13 @@ class Packager():
 
 # CLI.
 def main(account_id: "email account identifier", 
-        source_dir: ("path to email account hot-folder"),
-        destination_dir: ("path to final AIP"),
+        source_dir: ("path to email accounts hot-folder"),
+        destination_dir: ("AIP destination path"),
         silent: ("disable console logs", "flag", "s"),
-        mets_template: ("METS template")="",
-        manifest_template: ("METS manifest template")="",
+        ignore_source: ("ignore @source_dir and package @destination_dir in place", "flag", 
+            "i"),
+        mets_template: ("METS template")="../mets_templates/basic.xml",
+        manifest_template: ("METS manifest template")="../mets_templates/MANIFEST.XML",
         events_log: ("preservation metadata log file")="",
         rdf_xlsx: (".xlsx RDF/Dublin Core file")=""):
 
@@ -273,7 +279,7 @@ def main(account_id: "email account identifier",
     packager = Packager(account_id, source_dir, destination_dir, mets_template, 
             manifest_template, events_log, rdf_xlsx)
     
-    # ???
+    # package the email account.
     logging.info("Running CLI: " + " ".join(sys.argv))
     try:
         packager.package()
@@ -293,12 +299,12 @@ if __name__ == "__main__":
 
     p = Packager("foo", 
             "../tests/sample_files/hot_folder", 
-            "../tests/sample_files", 
+            "../tests/sample_files/", 
             "../mets_templates/basic.xml",
             "../mets_templates/MANIFEST.XML",
             events_log="../tests/sample_files/sample_events.log",
             rdf_xlsx="../tests/sample_files/sample_rdf.xlsx")
-    
+    #p.mets_path = "foo.xml"
     aip = p.package()
     print(aip)
     pass

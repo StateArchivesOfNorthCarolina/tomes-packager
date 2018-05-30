@@ -30,8 +30,8 @@ xmlns:premis="http://www.loc.gov/premis/v3">
 
   </metsHdr>
 
-  %% if RDFS is defined %%
-  %% for rdf in RDFS %%
+  %% if SELF.rdf_obj.rdfs is defined %%
+  %% for rdf in SELF.rdf_obj.rdfs %%
   <dmdSec ID="dmdSec__{{ rdf.name }}">
     <mdWrap MDTYPE="DC">
       <xmlData>
@@ -71,9 +71,9 @@ xmlns:premis="http://www.loc.gov/premis/v3">
     </rightsMD>
   </amdSec>
 
-  %% if PREMIS.agents is defined %%
+  %% if SELF.premis_obj.agents is defined %%
   <amdSec ID="agents">
-    %% for agent in PREMIS.agents %%
+    %% for agent in SELF.premis_obj.agents %%
     <techMD ID="agent__{{ agent.alias }}">
       <mdWrap MDTYPE="PREMIS:AGENT">
         <xmlData>
@@ -100,13 +100,13 @@ xmlns:premis="http://www.loc.gov/premis/v3">
   %% endif %%
 
   <amdSec ID="objects">
-    <techMD ID="object__{{ ACCOUNT }}">
+    <techMD ID="object__{{ SELF.account_id }}">
       <mdWrap MDTYPE="PREMIS:OBJECT">
         <xmlData>
           <premis:object>
             <premis:objectIdentifier>
               <premis:objectIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local.html">local</premis:objectIdentifierType>
-              <premis:objectIdentifierValue>{{ ACCOUNT }}</premis:objectIdentifierValue>
+              <premis:objectIdentifierValue>{{ SELF.account_id }}</premis:objectIdentifierValue>
             </premis:objectIdentifier>
             <premis:objectCategory>representation</premis:objectCategory>
             <premis:preservationLevel>
@@ -124,8 +124,8 @@ xmlns:premis="http://www.loc.gov/premis/v3">
     </techMD>
     <!--# DSS???
     Review objects we talked about. #-->
-	%% if PREMIS.objects is defined %%
-    %% for object in PREMIS.objects %%
+	%% if SELF.premis_obj.objects is defined %%
+    %% for object in SELF.premis_obj.objects %%
     <techMD ID="object__{{ object.alias }}">
       <mdWrap MDTYPE="PREMIS:OBJECT">
         <xmlData>
@@ -153,9 +153,9 @@ xmlns:premis="http://www.loc.gov/premis/v3">
 	- eventDetailInformation/eventDetail
 	- eventOutcomeInformation/eventOutcomeDetail
   #-->
-  %% if PREMIS.events is defined %%
+  %% if SELF.premis_obj.events is defined %%
   <amdSec ID="events">
-    %% for event in PREMIS.events %%
+    %% for event in SELF.premis_obj.events %%
     <digiprovMD ID="event__{{ event.alias }}">
       <mdWrap MDTYPE="PREMIS:EVENT">
         <xmlData>
@@ -187,7 +187,7 @@ xmlns:premis="http://www.loc.gov/premis/v3">
   %% endif %%
   
   <structMap>
-      <div ID="{{ ACCOUNT }}" LABEL="State of North Carolina Email Account" />
+      <div ID="{{ SELF.account_id }}" LABEL="State of North Carolina Email Account" />
   </structMap>
 
 </mets>

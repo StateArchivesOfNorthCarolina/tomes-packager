@@ -14,7 +14,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <fileSec>
     <!-- Note: this METS manifest file ({{ SELF.manifest_path }}) is excluded from the <fileSec> element. -->
     <fileGrp ID="ROOT__files">
-    %% for file in FILES() %%
+    %% for file in SELF.directory_obj.files() %%
       %% if file.basename != SELF.manifest_path %%
       <file SIZE="{{ file.size }}" ID="_{{ file.index }}" MIMETYPE="{{ file.mimetype() }}" CREATED="{{ file.created }}" CHECKSUM="{{ file.checksum('SHA-256') }}" CHECKSUMTYPE="SHA-256">
         <FLocat xlink:href="{{ file.name }}" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
@@ -23,7 +23,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     %% endfor %%
     </fileGrp>
     %% set skipped = [] %% <!--# Count skipped files. #-->
-    %% for folder in FOLDERS() %%
+    %% for folder in SELF.directory_obj.dirs() %%
     <fileGrp ID="{{ folder.name }}__files">
       %% for file in folder.rfiles() %%
 	  <!--# Skips files in "/eaxs/attachments" because they will already be accounted for in the EAXS file(s).
@@ -50,13 +50,13 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <div LABEL="{{ SELF.account_id }}">
       <div ID="ROOT__folder" />
       <!--#<div ID="ROOT__folder">
-      %% for file in FILES() %%
+      %% for file in SELF.directory_obj.files() %%
         %% if file.basename != SELF.manifest_path %%
         <fptr FILEID="_{{ file.index }}"/>
         %% endif %%
       %% endfor %%
       </div>#-->
-      %% for folder in FOLDERS() %%
+      %% for folder in SELF.directory_obj.dirs() %%
       <div ID="{{ folder.name }}__folder" />
       <!--#<div ID="{{ folder.name }}__folder">
         %% for file in folder.rfiles() %%
