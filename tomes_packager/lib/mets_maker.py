@@ -114,7 +114,7 @@ class METSMaker():
         # determine validation status.
         if is_valid is None:
             msg = "WARNING: METS file could not be validated as of {}.".format(now())
-        if not is_valid:
+        elif not is_valid:
             msg = "CRITICAL: this METS file is invalid as of {}.".format(now())
         else:
             msg = "NOTE: this METS file is valid as of {}.".format(now())
@@ -148,34 +148,40 @@ class METSMaker():
             xsd = etree.parse(self.xsd)        
             validator = etree.XMLSchema(xsd)
         except etree.XMLSchemaParseError as err:
-            self.logger.warning("Can't parse '{}'; likely no Internet connection.".format(
+            self.logger.warning("Can't parse '{}'; check Internet connection.".format(
                 self.xsd))
             self.logger.error(err)
-            return False
+            validator = None        
         
         # load @self.filepath.
         try:
             with open(self.filepath, encoding=self.charset) as fp:
                 mets_el = etree.fromstring(fp.read())
         except etree.XMLSyntaxError as err:
-            self.logger.warning("Can't validate '{}'; check template syntax.".format(
+            self.logger.warning("Bad XML syntax in '{}'; check template.".format(
                 self.filepath))
             self.logger.error(err)
             return False
 
         # validate @mets_el.
-        try:
-            validator.assertValid(mets_el)
-            self.logger.info("METS is valid.")            
-            is_valid = True
-        except etree.DocumentInvalid as err:
-            self.logger.warning("METS is invalid.")
-            self.logger.error(err)
-            is_valid = False
+        is_valid = False
+        if validator is not None:
+            try:
+                validator.assertValid(mets_el)
+                self.logger.info("METS is valid.") 
+                is_valid = True
+            except etree.DocumentInvalid as err:
+                self.logger.warning("METS is invalid.")
+                self.logger.error(err)
+        else:
+            self.logger.warning("Unable to perform validation.")
 
-        # add validation statement to METS and beautify it.
-        mets_el = self._evaluate_mets(mets_el, is_valid)            
-        mets_el = self._beautify_mets(mets_el)
+        # add validation statement to METS; beautify XML.
+        if validator is not None:
+            mets_el = self._evaluate_mets(mets_el, is_valid)
+        else:
+            mets_el = self._evaluate_mets(mets_el, None)
+        mets_el = self._beautify_mets(mets_el) 
         mets = etree.tostring(mets_el, pretty_print=True, encoding=self.charset)
         mets = mets.decode(self.charset)    
         

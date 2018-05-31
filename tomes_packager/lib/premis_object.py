@@ -85,7 +85,7 @@ class PREMISObject(object):
             - ValueError: If @timestamp cannot be parsed as a date.
         """
        
-        self.logger.info("Formatting timestamp: {}".format(timestamp))
+        self.logger.debug("Formatting timestamp: {}".format(timestamp))
 
         # convert @timestamp to ISO format.
         try:
@@ -156,7 +156,7 @@ class PREMISObject(object):
             - ValueError: If an item doesn't have a length of 1.
         """
             
-        self.logger.info("Parsing data.")
+        self.logger.info("Parsing events.")
         
         for data in self.premis_list:
 
@@ -177,7 +177,7 @@ class PREMISObject(object):
             timestamp = self._get_timestamp(key)
             metadata = data[key]
             
-            self.logger.info("Processing: {}: {}".format(timestamp, metadata))
+            self.logger.info("Processing event: {}: {}".format(timestamp, metadata))
             
             # validate @data.
             metadata = self._sanitize_metadata(metadata)
@@ -200,11 +200,10 @@ class PREMISObject(object):
                     md_obj.entity))
                 self_attr.remove(md_obj)
             else:
-                self.logger.info("Updating attribute: .{}s".format(md_obj.entity))
+                self.logger.debug("Updating attribute: .{}s".format(md_obj.entity))
             self_attr.append(md_obj)
 
         return
-
 
     @staticmethod
     def load_file(events_log, charset="utf-8"):
@@ -218,30 +217,40 @@ class PREMISObject(object):
 
         Returns:
             list: The return value.
-        
-        Raises:
-            - FileNotFoundError: If @events_log is not a file.
-            - OSError: If @events_log can't be read into memory.
-            - yaml.parser.ParserError: If @events_log isn't YAML compatible.
+            None is returned if @events_log is not a file, can't be read into memory, or isn't
+            YAML compatible.
         """
+
+        # add logger.
+        logger = logging.getLogger(__name__)
+        logger.addHandler(logging.NullHandler())
+
+        logger.info("Loading events in: {}".format(events_log))
 
         # verify @events_log is a file.
         if not os.path.isfile(events_log):
-            msg = "Events log '{}' is not a file.".format(events_log)
-            raise FileNotFoundError(msg)
+            logger.warning("'{}' is not a file; aborting.".format(events_log))
+            return
 
         # open @events_log and store each line in a list.
         try:
             events = open(events_log, encoding=charset).readlines()
         except Exception as err:
-            msg = "Can't read '{}' into memory.".format(events_log)
-            raise OSError(msg)
+            logger.warning("Can't read '{}' into memory; aborting.".format(events_log))
+            logger.error(err)
+            return
 
         # convert each item in @events to YAML.
-        try:
-            events = [yaml.load(e) for e in events]            
-        except yaml.parser.ParserError as err:
-            raise yaml.parser.ParserError(err)
+        i = 0
+        for event in events:
+            try:
+                events[i] = yaml.load(event)
+                i += 1
+            except yaml.parser.ParserError as err:
+                logger.warning("Can't parse line {} as YAML; aborting.".format(
+                    events.index(event) + 1))
+                logger.error(msg)
+                return
 
         return events
 

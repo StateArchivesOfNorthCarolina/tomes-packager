@@ -106,10 +106,10 @@ class Packager():
         self.account_id = str(account_id) 
         self.source_dir = self._normalize_path(source_dir)
         self.destination_dir = self._normalize_path(destination_dir)
-        self.events_log = events_log
-        self.mets_template = mets_template
-        self.manifest_template = manifest_template
-        self.rdf_xlsx = rdf_xlsx
+        self.events_log = self._normalize_path(events_log)
+        self.mets_template = self._normalize_path(mets_template)
+        self.manifest_template = self._normalize_path(manifest_template)
+        self.rdf_xlsx = self._normalize_path(rdf_xlsx)
         self.charset = charset
 
         # set attributes for imported classes.
@@ -254,19 +254,15 @@ class Packager():
         if is_valid:
             self.logger.info("Final AIP appears to be valid.")
         else:
-            self.logger.warning("Final AIP appears to be invalid.")
-            self.logger.info("Please manually investigate and fix the AIP.")
             if not is_aip_valid:
                 self.logger.warning("Couldn't create valid AIP structure.")
-                self.logger.info("Check the source files before fixing the AIP.")
             if not is_mets_valid:
                 self.logger.warning("Couldn't create valid METS: {}".format(self.mets_path))
-                self.logger.info("Check the METS template before fixing the AIP.")
             if not is_manifest_valid:
                 self.logger.warning("Couldn't create valid METS manifest: {}".format(
                     self.manifest_path))
-                self.logger.info("Check the METS manifest template before fixing the AIP.")
-
+            self.logger.warning("Final AIP appears to be invalid.")
+            self.logger.info("Manual intervention might be needed to fix the AIP.")
         return is_valid
 
 
@@ -327,7 +323,7 @@ if __name__ == "__main__":
             "../mets_templates/basic.xml",
             "../mets_templates/MANIFEST.XML",
             events_log="../tests/sample_files/sample_events.log",
-            #rdf_xlsx="../tests/sample_files/sample_rdf.xlsx",
+            rdf_xlsx="../tests/sample_files/sample_rdf.xlsx",
             )
 
     aip = pkgr.package()
