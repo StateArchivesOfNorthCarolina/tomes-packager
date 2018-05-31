@@ -25,10 +25,9 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <mdWrap MDTYPE="DC">
       <xmlData>
         <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-          <rdf:Description rdf:ID="_000">
-            <dc:title>Email Account for "{{ SELF.account_id }}"</dc:title>
+          <rdf:Description rdf:ID="_{{ SELF.time_hash() }}">
+            <dc:title>Email account: {{ SELF.account_id }}</dc:title>
             <dc:date>{{ SELF.time_local() }}</dc:date>
-            <dc:description>Archival email account.</dc:description>
             <dc:identifier>{{ SELF.account_id }}</dc:identifier>
           </rdf:Description>
         </rdf:RDF>

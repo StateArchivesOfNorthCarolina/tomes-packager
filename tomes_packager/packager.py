@@ -2,28 +2,20 @@
 with an optional METS file and an optional METS manifest file.
 
 Todo:
-    * Fill in ???s.
-        - Inlcuding templates.
-    * PREMIS attributes should be same ones used in actual PREMIS: eventDetail, etc.
-        - This includes the demo file.
     * EVERY public method in all modules needs to start with a logging statement.
         - Probably privates too.
     * Make sure you can never return anything not yet defined (reference error).
-    * If AIP restructing works but METS fails, we need a function to JUST
-    drop in the METS (and to create DirectoryObject) - also useful if AIP 
-    already exists. 
-        - Use self.write_mets().    
-    * Investigate event relationship. 
-        - How realistic is this with time constraints? Not very.
     * Write unit tests.
     * Add CLI.
     * Run autoflakes on this and lib/* and unit tests.
     * Review this and module docstrings.
         - Examples that reference files should use real sample files.
     * Work on PREMIS logging for DarcMail, PST Converter, and Tagger.
+    * Documentation and README.
 """
 
 # import modules.
+import hashlib
 import logging
 import logging.config
 import os
@@ -45,7 +37,22 @@ class Packager():
     METS file and an optional METS manifest file. 
     
     Example:
-        ???
+        >>> from os.path import isfile
+        >>> pkgr = Packager("foo", 
+            "../tests/sample_files/hot_folder", 
+            "../tests/sample_files/", 
+            "../mets_templates/basic.xml",
+            "../mets_templates/MANIFEST.XML",
+            events_log="../tests/sample_files/sample_events.log",
+            rdf_xlsx="../tests/sample_files/sample_rdf.xlsx",
+            )
+        >>> pkgr.mets_path # "../tests/sample_files/foo/foo.mets.xml"
+        >>> isfile(pkgr.mets_path) # False
+        >>> pkgr.package() # True
+        >>> pkgr.aip_dir #  "../tests/sample_files/foo"
+        >>> isfile(pkgr.mets_path) # True
+        >>> pkg = Packager("foo", "../tests/sample_files", "../tests/sample_files")
+        >>> pkg.package() # validates the existing AIP structure but doesn't move files.
     """
 
 
@@ -54,6 +61,7 @@ class Packager():
         """ Sets instance attributes.
 
         Attributes:
+            - aip_dir (str): The path to the AIP.
             - aip_obj (AIPMaker): The object versio of the AIP located at @destination_dir.
             - directory_obj (DirectoryObject): The object version of @destination_dir.
             - premis_obj (PREMISObject): The preservation metadata provided in @events_log.
@@ -61,10 +69,11 @@ class Packager():
             - rdf_obj (RDFMaker): The RDF object created from @rdf_xlsx.
             - time_utc (function): Returns UTC time as ISO 8601.
             - time_local (function): Returns local time as ISO 8601 with UTC offset.
-            - mets_path (str): The base filename for the METS file. This can be manually
-            overridden after creating the Packager instance (p = Packager(...); 
-            p.mets_path = "myCustomMETSFileName.xml").
-            - manifest_path (str): The base filename for the METS manifest file. As with
+            - time_hash (function) Returns the last 7 characters of the SHA-256 version of
+            time_utc().
+            - mets_path (str): The file path for the METS file. If needed, this can be 
+            manually overridden prior to running .package().
+            - manifest_path (str): The file path for the METS manifest file. As with 
             @mets_path, this can be manually overridden.
         
         Args:
@@ -91,7 +100,6 @@ class Packager():
 
         # convenience functions to clean up path notation.
         self._normalize_path = lambda p: os.path.normpath(p).replace("\\", "/")
-        self._abspath = lambda p: self._normalize_path(os.path.abspath(p))
         self._join_paths = lambda *p: self._normalize_path(os.path.join(*p))        
 
         # set attributes.
@@ -112,20 +120,32 @@ class Packager():
         self._rdf_maker = RDFMaker
 
         # creates atttibutes for constructed objects.
-        self.aip_dir = self._abspath(os.path.join(self.destination_dir, self.account_id))
+        self.aip_dir = self._join_paths(self.destination_dir, self.account_id)
         self.aip_obj = None
         self.directory_obj = None
         self.premis_obj = None
         self.mets_obj = None
         self._manifest_obj = None
-        self.rdf_obj = None
-        self.mets_path, self.manifest_path = None, None
+        self.rdf_obj = None           
+
+        # set METS paths.
+        self.mets_path = None
         if self.mets_template != "":
-            self.mets_path = "{}.mets.xml".format(self.account_id)
+            mets_path = "{}.mets.xml".format(self.account_id)
+            self.mets_path = self._join_paths(self.destination_dir, self.account_id, 
+                    mets_path)
+
+        self.manifest_path = None        
         if self.manifest_template != "":
-            self.manifest_path = "{}.mets.manifest".format(self.account_id)
+            manifest_path = "{}.mets.manifest".format(self.account_id)
+            self.manifest_path = self._join_paths(self.destination_dir, self.account_id,
+                    manifest_path)
+
+        # set template-accessible time functions.
         self.time_utc = lambda: datetime.utcnow().isoformat() + "Z"
         self.time_local = lambda: time.strftime("'%Y-%m-%dT%H:%M:%S%z'")[1:-1]
+        self.time_hash = lambda: hashlib.sha256(self.time_utc().encode(
+            self.charset)).hexdigest()[:7]
 
 
     def write_mets(self, filename, template, xsd_validation=True, **kwargs):
@@ -147,10 +167,6 @@ class Packager():
             file. Otherwise, this is False.
         """
 
-        # set path for writing METS file.
-        mets_path = os.path.join(self.destination_dir, self.account_id, filename)
-        mets_path = self._abspath(mets_path)
-
         # create a DirectoryObject.
         if self.directory_obj is None:
             self.directory_obj = self._directory_object(self.aip_dir)
@@ -170,7 +186,7 @@ class Packager():
 
         # create the METS file from @template; determine validity.
         try:
-            mets_obj = self._mets_maker(template, mets_path, charset=self.charset, **kwargs)
+            mets_obj = self._mets_maker(template, filename, charset=self.charset, **kwargs)
             mets_obj.make()
             if xsd_validation:
                 is_valid = mets_obj.validate()
@@ -178,7 +194,7 @@ class Packager():
                 is_valid = os.path.isfile(mets_obj.filepath)
         except Exception as err:
             self.logger.warning("Can't write METS file '{}' from template: {}".format(
-                mets_path, template))
+                filename, template))
             mets_obj = None
             is_valid = False
 
@@ -211,10 +227,10 @@ class Packager():
         if not is_aip_valid:
             self.logger.warning("AIP structure is invalid; continuing anyway.")
 
-        # if no METS templates were passed; return AIP data.
+        # if no METS templates were passed; return AIP validity.
         if self.mets_template == "" and self.manifest_template == "":
             self.logger.info("No METS templates passed; skipping METS creation.")
-            return (self.aip_dir, None, self.aip_obj.validate())
+            return is_aip_valid
 
         # if needed, set the METS file path and make the METS file.
         if self.mets_template != "":
@@ -305,7 +321,7 @@ if __name__ == "__main__":
 
     logging.basicConfig(level="DEBUG")
 
-    p = Packager("foo", 
+    pkgr = Packager("foo", 
             "../tests/sample_files/hot_folder", 
             "../tests/sample_files/", 
             "../mets_templates/basic.xml",
@@ -313,6 +329,8 @@ if __name__ == "__main__":
             events_log="../tests/sample_files/sample_events.log",
             #rdf_xlsx="../tests/sample_files/sample_rdf.xlsx",
             )
-    #p.mets_path = "foo.xml"
-    aip = p.package()
+
+    aip = pkgr.package()
     print(aip)
+    print(pkgr.mets_path)
+    print(os.path.isfile(pkgr.mets_path))

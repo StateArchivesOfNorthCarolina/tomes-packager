@@ -3,19 +3,11 @@ xmlns:xlink="http://www.w3.org/1999/xlink"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xmlns:premis="http://www.loc.gov/premis/v3">
 
-<!--# TODO:
-
-	- This needs af "if" so that if there's no premis object, the premis won't get written.
-		- Or just move the for/in statments outside the AMDSEC, etc.
-	- Review all "Nitin" and "DSS" in-line todos.
-	- Fill in ???s.
-#-->
-
   <metsHdr CREATEDATE="{{ SELF.time_utc() }}">
 
     <agent ROLE="CREATOR" TYPE="ORGANIZATION">
       <name>State Archives of North Carolina</name>
-	  <!--# DSS??? 
+	  <!--# ?DSS?
 	  This is optional. We can delete this element. Do you want to say anything here?
       <note></note>
 	  #-->
@@ -23,7 +15,7 @@ xmlns:premis="http://www.loc.gov/premis/v3">
 
     <agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
       <name>TOMES Packager</name>
-	  <!--# DSS??? 
+	  <!--# ?DSS?
 	  Is the following OK?
 	  Nitin: update basic_mets.xml with this. #-->
       <note>Email archiving software developed through the Transforming Online Mail with Embedded Semantics (TOMES) project (https://www.ncdcr.gov/resources/records-management/tomes), a multi-state partnership that includes Kansas, Utah and North Carolina.</note>
@@ -47,11 +39,13 @@ xmlns:premis="http://www.loc.gov/premis/v3">
     <mdWrap MDTYPE="DC">
       <xmlData>
         <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-          <rdf:Description rdf:ID="_000">
-            <dc:title>Email Account for "{{ SELF.account_id }}"</dc:title>
+          <rdf:Description rdf:ID="_{{ SELF.time_hash() }}">
+            <dc:title>Email correspondence: {{ SELF.account_id }}</dc:title>
+            <dc:creator>North Carolina Department of Natural and Cultural Resources</dc:creator>
+            <dc:creator>State of North Carolina</dc:creator>
             <dc:date>{{ SELF.time_local() }}</dc:date>
-            <dc:description>Archival email account.</dc:description>
             <dc:identifier>{{ SELF.account_id }}</dc:identifier>
+            <dc:type>dataset</dc:type>
           </rdf:Description>
         </rdf:RDF>
       </xmlData>
@@ -59,9 +53,9 @@ xmlns:premis="http://www.loc.gov/premis/v3">
   </dmdSec>
   %% endif %%
 
-  <!--# ??? #-->
-  <!--# DSS??? 
+  <!--# ?DSS?
   Note for rights? #-->
+  <!--# Fixed rights statement for North Carolina. #-->
   <amdSec ID="amdSec__rights">
     <rightsMD ID="rights__GS_132_1">
       <mdWrap MDTYPE="PREMIS:RIGHTS">
@@ -89,7 +83,7 @@ xmlns:premis="http://www.loc.gov/premis/v3">
     </rightsMD>
   </amdSec>
 
-  <!--# ??? #-->
+  <!--# Create a PREMIS Agent for each existing one in SELF. #-->
   %% if SELF.premis_obj.agents is defined %%
   <amdSec ID="amdSec__agents">
     %% for agent in SELF.premis_obj.agents %%
@@ -118,7 +112,7 @@ xmlns:premis="http://www.loc.gov/premis/v3">
   </amdSec>
   %% endif %%
 
-  <!--# ??? #-->
+  <!--# Create a PREMIS Object for each existing one in SELF. #-->
   <amdSec ID="amdSec__objects">
     <techMD ID="object__{{ SELF.account_id }}">
       <mdWrap MDTYPE="PREMIS:OBJECT">
@@ -143,7 +137,7 @@ xmlns:premis="http://www.loc.gov/premis/v3">
       </mdWrap>
     </techMD>
 	<!--# ??? #-->
-    <!--# DSS???
+    <!--# ?DSS?
     Review objects we talked about. #-->
 	%% if SELF.premis_obj.objects is defined %%
     %% for object in SELF.premis_obj.objects %%
@@ -168,8 +162,8 @@ xmlns:premis="http://www.loc.gov/premis/v3">
   %% endif %%
   </amdSec>
   
-  <!--# ??? #-->
-  <!--# DSS???
+  <!--# Create a PREMIS Event for each existing one in SELF. #-->
+  <!--# ?DSS?
   Need descriptions for all events we talked about.
   Nitin: I think descriptions might need to if/elses here? Ideally not, because they should be short and agnostic of NC.
 	- eventDetailInformation/eventDetail
