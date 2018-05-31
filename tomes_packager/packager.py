@@ -2,6 +2,7 @@
 with an optional METS file and an optional METS manifest file.
 
 Todo:
+    * Prep Excel so we can write EventDetail in meeting.
     * EVERY public method in all modules needs to start with a logging statement.
         - Probably privates too.
     * Make sure you can never return anything not yet defined (reference error).
@@ -99,8 +100,9 @@ class Packager():
         logging.getLogger("lib.file_object").setLevel(logging.WARNING)
 
         # convenience functions to clean up path notation.
-        self._normalize_path = lambda p: os.path.normpath(p).replace("\\", "/")
-        self._join_paths = lambda *p: self._normalize_path(os.path.join(*p))        
+        self._normalize_path = lambda p: os.path.normpath(p).replace(
+                "\\", "/") if p != "" else ""
+        self._join_paths = lambda *p: self._normalize_path(os.path.join(*p))
 
         # set attributes.
         self.account_id = str(account_id) 
@@ -143,7 +145,7 @@ class Packager():
 
         # set template-accessible time functions.
         self.time_utc = lambda: datetime.utcnow().isoformat() + "Z"
-        self.time_local = lambda: time.strftime("'%Y-%m-%dT%H:%M:%S%z'")[1:-1]
+        self.time_local = lambda: time.strftime("%Y-%m-%dT%H:%M:%S%z")
         self.time_hash = lambda: hashlib.sha256(self.time_utc().encode(
             self.charset)).hexdigest()[:7]
 
@@ -322,9 +324,8 @@ if __name__ == "__main__":
             "../tests/sample_files/", 
             "../mets_templates/basic.xml",
             "../mets_templates/MANIFEST.XML",
-            events_log="../tests/sample_files/sample_events.log",
-            rdf_xlsx="../tests/sample_files/sample_rdf.xlsx",
-            )
+            #rdf_xlsx="../tests/sample_files/sample_rdf.xlsx",
+            events_log="../tests/sample_files/sample_events.log")
 
     aip = pkgr.package()
     print(aip)
