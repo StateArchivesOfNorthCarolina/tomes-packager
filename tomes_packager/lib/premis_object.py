@@ -26,11 +26,11 @@ class PREMISObject(object):
         {"2018-05-17T12:40:53-0400": {"entity": "event", "alias": "pst2mime",
         "description": "PST to MIME converted.", "agent": "pst2mime_converter"}}]
         >>> po = PREMISObject(data)
-        >>> po.events # ['pst2mime']
-        >>> po.events[0].alias # 'pst2mime'
-        >>> po.events[0].agent # 'pst2mime_converter'
-        >>> po.events[0].timestamp # '2018-05-17T12:40:53-04:00'
-        >>> po.agents[0] # '[pst2mime_converter]'
+        >>> po.events # ["pst2mime"]
+        >>> po.events[0].alias # "pst2mime"
+        >>> po.events[0].agent # "pst2mime_converter"
+        >>> po.events[0].timestamp # "2018-05-17T12:40:53-04:00"
+        >>> po.agents[0] # "[pst2mime_converter]"
         >>> po.agents[0] == po.events[0].agent # True
         >>> po.agents[0].__dict__ # show key/value pairs.
         >>> # or load from a file ...
@@ -217,8 +217,11 @@ class PREMISObject(object):
 
         Returns:
             list: The return value.
-            None is returned if @events_log is not a file, can't be read into memory, or isn't
-            YAML compatible.
+            None is returned if @events_log can't be read into memory, or isn't YAML 
+            compatible.
+
+        Raises:
+            - FileNotFoundError: If @events_log is not an actual file.
         """
 
         # add logger.
@@ -229,14 +232,15 @@ class PREMISObject(object):
 
         # verify @events_log is a file.
         if not os.path.isfile(events_log):
-            logger.warning("'{}' is not a file; aborting.".format(events_log))
-            return
+            msg = ("'{}' is not a file; aborting.".format(events_log))
+            logger.error(msg)
+            raise FileNotFoundError(msg)
 
         # open @events_log and store each line in a list.
         try:
             events = open(events_log, encoding=charset).readlines()
         except Exception as err:
-            logger.warning("Can't read '{}' into memory; aborting.".format(events_log))
+            logger.warning("Can't read '{}' into memory; skipping events.".format(events_log))
             logger.error(err)
             return
 
@@ -247,7 +251,7 @@ class PREMISObject(object):
                 events[i] = yaml.load(event)
                 i += 1
             except yaml.parser.ParserError as err:
-                logger.warning("Can't parse line {} as YAML; aborting.".format(
+                logger.warning("Can't parse line {} as YAML; skipping events.".format(
                     events.index(event) + 1))
                 logger.error(msg)
                 return
