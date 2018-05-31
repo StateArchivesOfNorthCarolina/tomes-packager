@@ -52,8 +52,16 @@ class Packager():
         >>> pkgr.package() # True
         >>> pkgr.aip_dir #  "../tests/sample_files/foo"
         >>> isfile(pkgr.mets_path) # True
-        >>> pkg = Packager("foo", "../tests/sample_files", "../tests/sample_files")
-        >>> pkg.package() # validates the existing AIP structure but doesn't move files.
+        >>> 
+        >>> # to only validate the AIP, pass in the same path for source and destination.
+        >>> repkg = Packager("foo", "../tests/sample_files", "../tests/sample_files")
+        >>> repkg.package() # True
+        >>> 
+        >>> # to create a new METS file in the existing AIP ...
+        >>> repkg = Packager("foo", "../tests/sample_files", "../tests/sample_files", 
+                mets_template="../mets_templates/basic.xml")
+        >>> repkg.mets_path = "../tests/sample_files/foo/mets2.xml"
+        >>> repkg.package() # True
     """
 
 
@@ -318,7 +326,7 @@ if __name__ == "__main__":
     #plac.call(main)
 
     logging.basicConfig(level="DEBUG")
-
+    
     pkgr = Packager("foo", 
             "../tests/sample_files/hot_folder", 
             "../tests/sample_files/", 
