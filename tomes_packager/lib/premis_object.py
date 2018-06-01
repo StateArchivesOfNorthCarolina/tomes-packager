@@ -206,6 +206,7 @@ class PREMISObject(object):
 
         return
 
+
     @staticmethod
     def load_file(events_log, charset="utf-8"):
         """ Converts @events_log to a list.

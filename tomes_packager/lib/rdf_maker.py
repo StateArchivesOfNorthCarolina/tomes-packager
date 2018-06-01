@@ -180,6 +180,8 @@ class RDFMaker():
         """
         
         self.logger.info("Checking header validity.")
+        
+        # assume header is valid.
         is_valid = True
 
         # check for required fields.
