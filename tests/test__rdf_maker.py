@@ -39,10 +39,10 @@ class Test_RDFMaker(unittest.TestCase):
 
 
 # CLI.
-def main(rdf_xlsx: "RDF/Dublin Core .xlsx file", output_file: "output XML file"):
+def main(rdf_xlsx: "RDF/Dublin Core .xlsx file"):
     
-    "Converts RDF/Dublin Core .xlsx file to an XML file.\
-    \nexample: `py -3 test_rdf_maker.py sample_files/sample_rdf.xlsx out.xml`"
+    "Converts RDF/Dublin Core .xlsx file to XML and prints it to screen.\
+    \nexample: `py -3 test__rdf_maker.py sample_files/sample_rdf.xlsx`"
 	
     # create root XML element.
     root = etree.Element("root")
@@ -55,10 +55,9 @@ def main(rdf_xlsx: "RDF/Dublin Core .xlsx file", output_file: "output XML file")
 
     # write @root to @output_file.
     utf8 = "utf-8"
-    with open(output_file, "w", encoding=utf8) as xf:
-        xstring = etree.tostring(root, xml_declaration=True, encoding=utf8, 
-                pretty_print=True).decode(utf8)
-        xf.write(xstring)
+    xstring = etree.tostring(root, xml_declaration=True, encoding=utf8, 
+            pretty_print=True).decode(utf8)
+    print(xstring)
 
 
 if __name__ == "__main__":
