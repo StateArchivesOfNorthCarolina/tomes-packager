@@ -25,8 +25,11 @@ class AIPMaker():
         self.make().
         - metadata_dir (str): The optional "/metadata" folder within the AIP or None if empty 
         after self.make().
-        - transfers (dict): The log of file transfers with keys: "attempted", "passed", and
-        "failed". Each key's value is a list.
+        - transfers (dict): The log of file or folder transfers with keys: "attempted", 
+        "passed", and "failed". Each key's value is a list.
+        - transfer_stats (function): Returns a dict for each key in @transfers. The value
+        of each key is the number of items for that key in @transfers.
+        
 
     Example:
         >>> sample_dir = "../../tests/sample_files/"
@@ -87,6 +90,8 @@ class AIPMaker():
 
         # track data regarding transfer attempts.
         self.transfers = {"attempted": [], "passed": [], "failed": []}
+        self.transfer_stats = lambda: dict((k, len(self.transfers[k])) 
+                for k in self.transfers)
 
 
     def _remove_folder(self, folder):
@@ -299,6 +304,7 @@ class AIPMaker():
         # move stray metadata files in @self.source_dir to @self.metadata_dir.
         self._transfer_data(self.source_dir, self.metadata_dir)
 
+        self.logger.info("Data transfer stats: {}".format(self.transfer_stats()))
         return self.root
 
 
