@@ -2,6 +2,7 @@
 with an optional METS file and an optional METS manifest file.
 
 Todo:
+    * All etree.tostring's need to use the "encoding" arg.
     * Write unit tests.
     * Review this and module docstrings.
         - Examples that reference files should use real sample files.
@@ -9,6 +10,8 @@ Todo:
     * Work on PREMIS logging for DarcMail, PST Converter, and Tagger.
     * Add EventDetail phrases in NC template.    
     * Documentation and README.
+    * setup.py
+        - Will it still find the template files?
 """
 
 # import modules.
