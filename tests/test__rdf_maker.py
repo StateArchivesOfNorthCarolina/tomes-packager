@@ -43,7 +43,7 @@ def main(rdf_xlsx: "RDF/Dublin Core .xlsx file", output_file: "output XML file")
     
     "Converts RDF/Dublin Core .xlsx file to an XML file.\
     \nexample: `py -3 test_rdf_maker.py sample_files/sample_rdf.xlsx out.xml`"
-
+	
     # create root XML element.
     root = etree.Element("root")
 
