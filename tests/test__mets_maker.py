@@ -45,7 +45,7 @@ def main(template: "METS template file", output_file: "output METS XML file"):
     "Renders METS template with callable \"TIMESTAMP()\" variable to a METS XML file.\
     \nexample: `py -3 test__mets_maker.py sample_files/sample_mets_template.xml out.xml`"
 
-    # create RDF object and append all etree._Element's to @root.
+    # create and self-validate METS file.
     mm = METSMaker(template, output_file, 
             TIMESTAMP = lambda: datetime.now().isoformat() + "Z")
     mm.make()
