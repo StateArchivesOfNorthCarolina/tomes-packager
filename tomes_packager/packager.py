@@ -3,8 +3,6 @@ with an optional METS file and an optional METS manifest file.
 
 Todo:
     * Prep Excel so we can write EventDetail in meeting.
-    * EVERY public method in all modules needs to start with a logging statement.
-        - Probably privates too.
     * Make sure you can never return anything not yet defined (reference error).
     * Write unit tests.
     * Add CLI.
@@ -32,7 +30,7 @@ from lib.premis_object import PREMISObject
 from lib.mets_maker import METSMaker
 from lib.rdf_maker import RDFMaker
 
-    
+
 class Packager():
     """ A class for constructing a TOMES archival information package (AIP) with an optional 
     METS file and an optional METS manifest file. 
@@ -52,11 +50,11 @@ class Packager():
         >>> pkgr.aip_dir #  "../tests/sample_files/foo"
         >>> isfile(pkgr.mets_path) # True
         >>> 
-        >>> # to only validate the AIP, pass in the same path for source and destination.
+        >>> # to validate the existing AIP, pass in the same path for source and destination.
         >>> repkg = Packager("foo", "../tests/sample_files", "../tests/sample_files")
         >>> repkg.package() # True
         >>> 
-        >>> # to create a new METS file in the existing AIP ...
+        >>> # to create a new METS file in the existing AIP, override @mets_path.
         >>> repkg = Packager("foo", "../tests/sample_files", "../tests/sample_files", 
                 mets_template="../mets_templates/basic.xml")
         >>> repkg.mets_path = "../tests/sample_files/foo/mets2.xml"
@@ -102,7 +100,7 @@ class Packager():
         self.logger = logging.getLogger(__name__)
         self.logger.addHandler(logging.NullHandler())
 
-        # suppress verbose DirectoryObject and FileObject logging.
+        # suppress verbose module logging.
         logging.getLogger("lib.directory_object").setLevel(logging.INFO)
         logging.getLogger("lib.file_object").setLevel(logging.WARNING)
 
@@ -175,6 +173,8 @@ class Packager():
             @xsd_validation is True OR if @xsd_validation is False and the METS file is a real
             file. Otherwise, this is False.
         """
+
+        self.logger.info("Writing METS file '{}' from template: {}".format(filename, template))
 
         # create a DirectoryObject.
         if self.directory_obj is None:
@@ -259,7 +259,7 @@ class Packager():
         # determine overall AIP validity.
         is_valid = bool(is_aip_valid * is_mets_valid * is_manifest_valid)
         
-        # report according to overall AIP validity.
+        # report overall AIP validity.
         if is_valid:
             self.logger.info("Final AIP appears to be valid.")
         else:
@@ -272,6 +272,7 @@ class Packager():
                     self.manifest_path))
             self.logger.warning("Final AIP appears to be invalid.")
             self.logger.info("Manual intervention might be needed to fix the AIP.")
+        
         return is_valid
 
 

@@ -104,17 +104,18 @@ class AIPMaker():
             None
         """
 
+        self.logger.info("Deleting folder: {}".format(folder))
+
         # check if @folder is empty.
         if len(os.listdir(folder)) != 0:
             self.logger.warning("Can't delete non-empty folder: {}".format(folder))
             return
         
         # delete @folder.
-        self.logger.info("Deleting folder: {}".format(folder))
         try:
             shutil.rmtree(folder)
         except OSError as err:
-            self.logger.warning("Can't delete source folder: {}".format(folder))
+            self.logger.warning("Can't delete folder: {}".format(folder))
             self.logger.error(err)
         
         return
@@ -133,12 +134,13 @@ class AIPMaker():
             - OSError: If the folder can't be created.
         """
 
+        self.logger.debug("Making folder: {}".format(folder))    
+
         # make @folder.
-        try:
-            self.logger.info("Making folder: {}".format(folder))        
+        try:    
             os.mkdir(folder)
         except OSError as err:
-            self.logger.warning("Can't create folder: {}".format(folder))
+            self.logger.warning("Can't make folder: {}".format(folder))
             self.logger.error(err)
             raise OSError(err)
 
@@ -220,7 +222,7 @@ class AIPMaker():
             True if the AIP appears to be valid. Otherwise, False.
         """
     
-        self.logger.info("Testing if AIP structure is valid.")
+        self.logger.info("Testing AIP structure validity.")
 
         # if @self.root doesn't exist, the AIP is invalid.
         if not os.path.isdir(self.root):

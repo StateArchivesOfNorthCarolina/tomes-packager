@@ -108,6 +108,8 @@ class METSMaker():
             lxml.etree._Element: The return value.
         """
  
+        self.logger.info("Evaluating METS XML.")
+
         # make timestamp function.
         now = lambda: datetime.now().isoformat() + "Z"
         
@@ -204,7 +206,7 @@ class METSMaker():
             - ValueError: If the Jinja template syntax is incorrect.
         """
 
-        self.logger.info("Rendering template: {}".format(self.mets_template))
+        self.logger.info("Rendering METS template: {}".format(self.mets_template))
 
         # open @self.mets_template.
         with open(self.mets_template, encoding=self.charset) as tf:
