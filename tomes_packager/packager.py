@@ -2,14 +2,12 @@
 with an optional METS file and an optional METS manifest file.
 
 Todo:
-    * Prep Excel so we can write EventDetail in meeting.
-    * Make sure you can never return anything not yet defined (reference error).
     * Write unit tests.
-    * Add CLI.
-    * Run autoflakes on this and lib/* and unit tests.
     * Review this and module docstrings.
         - Examples that reference files should use real sample files.
+    * Run autoflakes on this and lib/* and unit tests.
     * Work on PREMIS logging for DarcMail, PST Converter, and Tagger.
+    * Add EventDetail phrases in NC template.    
     * Documentation and README.
 """
 
@@ -234,7 +232,7 @@ class Packager():
 
         # if the AIP structure isn't valid, warn but continue on.
         if not is_aip_valid:
-            self.logger.warning("AIP structure is invalid; continuing anyway.")
+            self.logger.warning("AIP structure appears to be invalid; continuing anyway.")
 
         # if no METS templates were passed; return AIP validity.
         if self.mets_template == "" and self.manifest_template == "":
@@ -278,13 +276,14 @@ class Packager():
 
 # CLI.
 def main(account_id: "email account identifier", 
-        source_dir: ("path to email accounts hot-folder"),
+        source_dir: ("path to email \"hot folder\""),
         destination_dir: ("AIP destination path"),
         silent: ("disable console logs", "flag", "s"),
-        mets_template: ("METS template")="",
-        manifest_template: ("METS manifest template")="../mets_templates/MANIFEST.XML",
-        events_log: ("preservation metadata log file")="",
-        rdf_xlsx: (".xlsx RDF/Dublin Core file")=""):
+        mets_template: ("path to METS template")="",
+        manifest_template: ("path to METS manifest template")=\
+                "../mets_templates/MANIFEST.XML",
+        events_log: ("path to preservation metadata log")="",
+        rdf_xlsx: ("path to RDF/Dublin Core .xlsx file")=""):
 
     "Creates a TOMES Archival Information Package.\
     \nexample: `py -3 packager.py foo ../tests/sample_files/hot_folder ../tests/sample_files`"
@@ -323,19 +322,4 @@ def main(account_id: "email account identifier",
 if __name__ == "__main__":
     
     import plac
-    #plac.call(main)
-
-    logging.basicConfig(level="DEBUG")
-    
-    pkgr = Packager("foo", 
-            "../tests/sample_files/hot_folder", 
-            "../tests/sample_files/", 
-            "../mets_templates/basic.xml",
-            "../mets_templates/MANIFEST.XML",
-            #rdf_xlsx="../tests/sample_files/sample_rdf.xlsx",
-            events_log="../tests/sample_files/sample_events.log")
-
-    aip = pkgr.package()
-    print(aip)
-    print(pkgr.mets_path)
-    print(os.path.isfile(pkgr.mets_path))
+    plac.call(main)
