@@ -44,8 +44,8 @@ class Packager():
             "../tests/sample_files/", 
             "../mets_templates/basic.xml",
             "../mets_templates/MANIFEST.XML",
-            events_log="../tests/sample_files/sample_events.log",
-            rdf_xlsx="../tests/sample_files/sample_rdf.xlsx")
+            "../tests/sample_files/sample_events.log",
+            "../tests/sample_files/sample_rdf.xlsx")
         >>> pkgr.mets_path # "../tests/sample_files/foo/foo.mets.xml"
         >>> isfile(pkgr.mets_path) # False
         >>> pkgr.package() # True
