@@ -7,8 +7,6 @@ import logging
 import os
 import random
 import shutil
-import tempfile
-from datetime import datetime
 from zipfile import ZipFile
 from tomes_packager.lib.aip_maker import *
 
