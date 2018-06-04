@@ -35,7 +35,7 @@ class DirectoryObject(object):
     """
 
 
-    def __init__(self, path, parent_object=None, root_object=None):
+    def __init__(self, path, parent_object=None, root_object=None, depth=0):
         """ Sets instance attributes.
         
         Args:
@@ -43,6 +43,7 @@ class DirectoryObject(object):
             - parent_object (DirectoryObject): The parent folder to which @path belongs.
             - root_object (DirectoryObject): The root or "master" folder under which the @path
             folder and its @parent_object reside.
+            - depth (int): ???
 
         Raises:
             - NotADirectoryError: If @path is not an actual folder path.
@@ -72,11 +73,11 @@ class DirectoryObject(object):
         self.path = path
         self.parent_object = parent_object
         self.root_object = self if root_object is None else root_object
-        
+        self.depth = depth
+
         # set path attributes.
         self.isdir = True
         self.isfile = False
-        self.depth = self.path.count("/")
         self.abspath = self._normalize_path(os.path.abspath(self.path))
         self.basename = os.path.basename(self.abspath)
         if root_object is not None:
@@ -190,22 +191,20 @@ class DirectoryObject(object):
  
                     # build DirectoryObject for parent folder of @folder.
                     parent_obj = self._this(path=os.path.dirname(folder), 
-                            parent_object=dirpath, root_object=self.root_object)
+                            parent_object=dirpath, root_object=self.root_object, 
+                            depth = self.depth - 1)
                     
                     # build DirectoryObject for @folder.
                     dir_obj = self._this(path=folder, parent_object=parent_obj, 
-                            root_object=self.root_object)
+                            root_object=self.root_object, depth = self.depth + 1)
 
                     yield dir_obj
 
         return gen_dirs()
     
 
-    def graph(self, indent=2):
+    def graph(self):
         """ Creates a visual tree representation of @self.path.
-        
-        Args:
-            indent (int): The indentation to use for subfolders and files.
             
         Returns:
             generator: The return value.
@@ -214,19 +213,17 @@ class DirectoryObject(object):
         
         self.logger.info("Creating graph of: {}".format(self.path))
 
-        # set spacing.
-        indent = " " * indent
-
         # iterate through files and folders to create graph lines.
         def grapher(path=self):
-            line = indent * path.depth + path.basename + "/"
+
+            line = ("  " * path.depth) + path.basename + "/"
             yield line
             for fil in path.files():
-                    line = indent * path.depth + indent + fil.basename
-                    yield line
+                line = ("  " * path.depth) + "  " + fil.basename
+                yield line
             for folder in path.dirs():
-                    for line in grapher(folder):
-                        yield line
+                for line in grapher(folder):
+                    yield line
 
         return grapher()
 
