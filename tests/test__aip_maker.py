@@ -15,6 +15,7 @@ from tomes_packager.lib.aip_maker import *
 # enable logging.
 logging.basicConfig(level=logging.DEBUG)
 
+
 # set variables.
 ACCOUNTS = ["foo", "bar"]
 SAMPLE_FOLDER = os.path.join(os.path.dirname(__file__), "sample_files")
