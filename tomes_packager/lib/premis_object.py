@@ -90,7 +90,6 @@ class PREMISObject(object):
         # convert @timestamp to ISO format.
         try:
             timestamp = dateutil.parser.parse(timestamp).isoformat()
-            self.logger.debug("Formatted timestamp: {}".format(timestamp))
         except (TypeError, ValueError) as err:
             msg = "Invalid timestamp: {}".format(timestamp)
             self.logger.error(msg)

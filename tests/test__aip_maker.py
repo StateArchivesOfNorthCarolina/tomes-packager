@@ -2,11 +2,11 @@
 
 # import modules.
 import sys; sys.path.append("..")
-import unittest
 import logging
 import os
 import random
 import shutil
+import unittest
 from zipfile import ZipFile
 from tomes_packager.lib.aip_maker import *
 
@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 # set variables.
 ACCOUNTS = ["foo", "bar"]
-SAMPLE_FOLDER = os.path.join(os.path.dirname(__file__), "sample_files")
+SAMPLE_FOLDER = "sample_files"
 HOT_FILE = os.path.join(SAMPLE_FOLDER, "hot_folder.zip")
 HOT_FOLDER = os.path.join(SAMPLE_FOLDER, "hot_folder")
 
@@ -92,7 +92,10 @@ def main(account_id:("email account identifier", "positional", None, str, ACCOUN
         cleanup(am.root)
 
     # print if the AIP is/was valid.
-    print(is_valid)
+    if is_valid:
+        print("AIP is valid.")
+    else:
+        print("AIP is not valid.")
 
 
 if __name__ == "__main__":

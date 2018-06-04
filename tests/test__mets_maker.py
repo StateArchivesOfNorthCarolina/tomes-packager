@@ -2,9 +2,9 @@
 
 # import modules.
 import sys; sys.path.append("..")
-import unittest
 import logging
 import tempfile
+import unittest
 from datetime import datetime
 from tomes_packager.lib.mets_maker import *
 

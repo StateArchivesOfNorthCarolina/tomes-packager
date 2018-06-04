@@ -2,8 +2,8 @@
 
 # import modules.
 import sys; sys.path.append("..")
-import unittest
 import logging
+import unittest
 from lxml import etree
 from tomes_packager.lib.rdf_maker import *
 
