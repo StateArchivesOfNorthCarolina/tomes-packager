@@ -281,8 +281,7 @@ class AIPMaker():
         """ Creates the AIP structure.
 
         Returns:
-            str: The return value.
-            The path to the AIP structure's root. 
+            None 
 
         Raises:
             IsADirectoryError: If @self.root already exists.
@@ -307,7 +306,7 @@ class AIPMaker():
         self._transfer_data(self.source_dir, self.metadata_dir)
 
         self.logger.info("Data transfer stats: {}".format(self.transfer_stats()))
-        return self.root
+        return
 
 
 if __name__ == "__main__":
