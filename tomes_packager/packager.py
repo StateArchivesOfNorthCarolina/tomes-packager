@@ -2,12 +2,14 @@
 with an optional METS file and an optional METS manifest file.
 
 Todo:
-    * Write unit tests.
+    * How do I pass an optional to PLAC?
+        - Use "option" tuple.
+    * When validating existing AIPS: METS needs to be skipped too.
     * All etree.tostring's need to use the "encoding" arg.
     * Review this and module docstrings.
         - Examples that reference files should use real sample files.
     * Run autoflakes on this and lib/* and unit tests.
-    * Work on PREMIS logging for DarcMail, PST Converter, and Tagger.
+    * Work on PREMIS logging for DarcMail, PST Converter, and Tagger(DONE).
     * Add EventDetail phrases in NC template.    
     * Documentation and README.
     * setup.py
@@ -289,7 +291,10 @@ def main(account_id: "email account identifier",
         rdf_xlsx: ("path to RDF/Dublin Core .xlsx file")=""):
 
     "Creates a TOMES Archival Information Package.\
-    \nexample: `py -3 packager.py foo ../tests/sample_files/hot_folder ../tests/sample_files`"
+    \nexample: `py -3 packager.py foo ../tests/sample_files/hot_folder ../tests/sample_files`\
+    \n\n\
+Validate an existing TOMES Archival Information Package.\
+    \nexample: `py -3 packager.py foo ../tests/sample_files ../tests/sample_files`"
 
     # make sure logging directory exists.
     logdir = "log"
