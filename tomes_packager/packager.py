@@ -5,6 +5,7 @@ Todo:
     * How do I pass an optional to PLAC?
         - Use "option" tuple.
     * When validating existing AIPS: METS writing needs to be skipped too.
+    * Why is "D:/" not a directory?
     * All etree.tostring's need to use the "encoding" arg.
     * Review this and module docstrings.
         - Examples that reference files should use real sample files.
