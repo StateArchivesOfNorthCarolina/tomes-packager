@@ -1,6 +1,6 @@
-'2018-01-01T12:00:00-0400': {'entity': 'agent', 'name': 'AGENT ONE', 'alias': 'agent1', 'uri': 'http://agents/1', version: '1.0'}
-'2018-01-01T12:00:00-0400': {'entity': 'agent', 'name': 'AGENT TWO', 'alias': 'agent2', 'uri': 'http://agents/2', version: '2.0'}
-'2018-01-01T12:00:00-0400': {'entity': 'object', 'alias': 'object1', 'category': 'representation'}
-'2018-01-01T12:00:00-0400': {'entity': 'object', 'alias': 'object2', 'category': 'representation'}
-'2018-01-01T12:00:00-0400': {'entity': 'event', 'alias': 'event1', 'agent': 'agent1', 'object': 'object1'}
-'2018-01-01T12:00:00-0400': {'entity': 'event', 'alias': 'event2', 'agent': 'agent2', 'object': 'object2'}
+'2018-01-01T12:00:00-0400': {'entity': 'agent', 'fullname': 'AGENT ONE', 'name': 'agent1', 'uri': 'http://agents/1', version: '1.0'}
+'2018-01-01T12:00:00-0400': {'entity': 'agent', 'fullname': 'AGENT TWO', 'name': 'agent2', 'uri': 'http://agents/2', version: '2.0'}
+'2018-01-01T12:00:00-0400': {'entity': 'object', 'name': 'object1', 'category': 'representation'}
+'2018-01-01T12:00:00-0400': {'entity': 'object', 'name': 'object2', 'category': 'representation'}
+'2018-01-01T12:00:00-0400': {'entity': 'event', 'name': 'event1', 'agent': 'agent1', 'object': 'object1'}
+'2018-01-01T12:00:00-0400': {'entity': 'event', 'name': 'event2', 'agent': 'agent2', 'object': 'object2'}

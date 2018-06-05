@@ -21,13 +21,13 @@ class PREMISObject(object):
         - objects (list): A list of objects data.
 
     Example:
-        >>> data = [{"2018-05-17T12:40:52-0400": {"entity": "agent", "alias":
+        >>> data = [{"2018-05-17T12:40:52-0400": {"entity": "agent", "name":
         "pst2mime_converter", "name": "TOMES PST Converter", "version": "1"}},
-        {"2018-05-17T12:40:53-0400": {"entity": "event", "alias": "pst2mime",
+        {"2018-05-17T12:40:53-0400": {"entity": "event", "name": "pst2mime",
         "description": "PST to MIME converted.", "agent": "pst2mime_converter"}}]
         >>> po = PREMISObject(data)
         >>> po.events # ["pst2mime"]
-        >>> po.events[0].alias # "pst2mime"
+        >>> po.events[0].name # "pst2mime"
         >>> po.events[0].agent # "pst2mime_converter"
         >>> po.events[0].timestamp # "2018-05-17T12:40:53-04:00"
         >>> po.agents[0] # "[pst2mime_converter]"
@@ -44,8 +44,8 @@ class PREMISObject(object):
 
         Args:
             - premis_list (list): Each item is a dict with an ISO timestamp as key and a dict
-            as its value with required attributes "alias" (str) and "entity" (str) with one
-            of the following values: "agent", "event", or "object". Additional attributes may
+            as its value with required attributes "name" (str) and "entity" (str) with one of 
+            the following values: "agent", "event", or "object". Additional attributes may
             also exist.
 
         Raises:
@@ -69,7 +69,7 @@ class PREMISObject(object):
         self.objects = []
         self._entity_map = {"agent": self.agents, "event": self.events, 
                 "object": self.objects}
-        self._required_keys = ["alias", "entity"]
+        self._required_keys = ["name", "entity"]
     
         # populate attributes.
         self._get_data()
@@ -185,7 +185,7 @@ class PREMISObject(object):
             # create _MetadataObject.
             class _MetadaObject(str):
                 pass
-            md_obj = _MetadaObject(metadata["alias"])
+            md_obj = _MetadaObject(metadata["name"])
 
             # set @md_obj attributes.
             for key in metadata:
