@@ -4,7 +4,7 @@ with an optional METS file and an optional METS manifest file.
 Todo:
     * How do I pass an optional to PLAC?
         - Use "option" tuple.
-    * When validating existing AIPS: METS needs to be skipped too.
+    * When validating existing AIPS: METS writing needs to be skipped too.
     * All etree.tostring's need to use the "encoding" arg.
     * Review this and module docstrings.
         - Examples that reference files should use real sample files.
