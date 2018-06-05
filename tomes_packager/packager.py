@@ -2,8 +2,8 @@
 with an optional METS file and an optional METS manifest file.
 
 Todo:
-    * All etree.tostring's need to use the "encoding" arg.
     * Write unit tests.
+    * All etree.tostring's need to use the "encoding" arg.
     * Review this and module docstrings.
         - Examples that reference files should use real sample files.
     * Run autoflakes on this and lib/* and unit tests.

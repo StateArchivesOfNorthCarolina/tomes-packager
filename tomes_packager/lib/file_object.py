@@ -34,11 +34,12 @@ class FileObject(object):
         
         Args:
             - path (str): A path to an actual file.
-            - parent_object (FolderObject): The parent folder to which the @path file belongs.
-            - root_object (FolderObject): The root or "master" folder under which the @path 
+            - parent_object (DirectoryObject): The parent folder to which the @path file 
+            belongs.
+            - root_object (DirectoryObject): The root or "master" folder under which the @path
             file resides.
-            - index (int): The unique identifier for the @path file within the context of the
-            @root_object.
+            - index (int): The unique position identifier for the @path file within the 
+            context of the @root_object.
 
         Raises:
             - FileNotFoundError: If @path is not an actual file path.
