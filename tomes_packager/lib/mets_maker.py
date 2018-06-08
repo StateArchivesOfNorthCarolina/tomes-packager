@@ -39,19 +39,12 @@ class METSMaker():
             - *args/**kwargs: The optional arguments to pass into @mets_template.
 
         Raises:
-            - FileExistsError: If @filepath is already a file.
             - FileNotFoundError: If @mets_template is not an actual file path.
         """
 
         # set logger; suppress logging by default.
         self.logger = logging.getLogger(__name__)
         self.logger.addHandler(logging.NullHandler())
-
-        # verify @filepath doesn't already exist.
-        if os.path.isfile(filepath):
-            msg = "METS file '{}' already exists.".format(filepath)
-            self.logger.error(msg)
-            raise FileExistsError(msg)
 
         # verify @mets_template is a file.
         if not os.path.isfile(mets_template):
@@ -64,8 +57,8 @@ class METSMaker():
         self._join_paths = lambda *p: self._normalize_path(os.path.join(*p))
 
         # set attributes.            
-        self.mets_template = mets_template
-        self.filepath = filepath
+        self.mets_template = self._normalize_path(mets_template)
+        self.filepath = self._normalize_path(filepath)
         self.charset = charset
         self.evaluate = evaluate
         self.args = args
@@ -130,8 +123,8 @@ class METSMaker():
 
     def validate(self):
         """ Validates @self.filepath against @self.xsd. In addition, a validation comment is
-        appended to the METS file. The METS file is also beautified. DO NOT use this method 
-        on very large METS files.
+        appended to the METS file. The METS file is also beautified. Note: this reads the METS
+        file into memory and rewrites it. DO NOT use this method on very large METS files.
 
         Returns:
             bool: The return value. True if and only if the METS file could be validated and 
@@ -143,6 +136,11 @@ class METSMaker():
         # if no METS is created, return False.
         if not os.path.isfile(self.filepath):
             self.logger.warning("Nothing to validate; trying using .make() first.")
+            return False
+
+        # if the METS file is greater than 10 megabytes, return False.
+        if os.stat(self.filepath).st_size > 10485760:
+            self.logger.warning("METS file is too large to validate; returning False.")
             return False
 
         # create validator.
@@ -195,18 +193,24 @@ class METSMaker():
 
 
     def make(self):
-        """ Renders @self.mets_template via Jinja to return a METS XML document.
+        """ Renders @self.mets_template via Jinja to return a METS XML document provided
+        @self.filepath is not an existing file.
             
         Returns:
-            str: The return value.
-            The METS filepath.
-            If the METS can't be created, None is returned.
+            None: The return value.
 
         Raises:
             - ValueError: If the Jinja template syntax is incorrect.
         """
 
-        self.logger.info("Rendering METS template: {}".format(self.mets_template))
+        # verify @filepath doesn't already exist.
+        if os.path.isfile(self.filepath):
+            msg = "METS file '{}' already exists; it will not be overwritten.".format(
+                    self.filepath)
+            self.logger.info(msg)
+            return
+        else:
+            self.logger.info("Rendering METS template: {}".format(self.mets_template))
 
         # open @self.mets_template.
         with open(self.mets_template, encoding=self.charset) as tf:
@@ -241,7 +245,7 @@ class METSMaker():
             self.logger.error(err)
             raise ValueError(err)
 
-        return self.filepath
+        return
 
 
 if __name__ == "__main__":

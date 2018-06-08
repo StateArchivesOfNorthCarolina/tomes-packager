@@ -291,7 +291,7 @@ class AIPMaker():
         # if @self.source_dir equals @self.destination_dir, return.
         if self.source_dir == self.destination_dir:
             msg = "Source and destination paths are the same; no data will be moved."
-            self.logger.warning(msg)
+            self.logger.info(msg)
             return
 
         # verify @self.root doesn't already exist.

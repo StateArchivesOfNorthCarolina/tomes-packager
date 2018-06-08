@@ -4,10 +4,10 @@ with an optional METS file and an optional METS manifest file.
 Todo:
     * Review this and module docstrings.
         - Examples that reference files should use real sample files.
-    * Work on PREMIS logging for DarcMail, PST Converter, and Tagger(DONE).
     * Documentation and README.
-    * setup.py
+    * Finish setup.py.
         - Will it still find the template files?
+    * Work on PREMIS logging for DarcMail, PST Converter, and Tagger(DONE).
 """
 
 # import modules.
@@ -170,7 +170,8 @@ class Packager():
             file. Otherwise, this is False.
         """
 
-        self.logger.info("Writing METS file '{}' from template: {}".format(filename, template))
+        self.logger.info("Writing METS file '{}' from template: {}".format(
+            filename, template))
 
         # create a DirectoryObject.
         if self.directory_obj is None:
