@@ -2,14 +2,25 @@
 with an optional METS file and an optional METS manifest file.
 
 Todo:
+    * No pip for install. Use "setup.py install" otherwise no data files.
+        - Update tagger's setup.py and edit it and Entities' documentation.md.
     * Finish setup.py.
         - Will it still find the template files?
+        - I think they need to go under "/tomes_packager"?
     * Monthly reports.
     * Review this and module docstrings.
         - Examples that reference files should use real sample files.
     * Documentation.
     * Work on PREMIS logging for DarcMail, PST Converter, and Tagger(DONE).
 """
+
+__NAME__ = "tomes_packager"
+__FULLNAME__ = "TOMES Packager"
+__DESCRIPTION__ = "Part of the TOMES project: creates a TOMES archival information package (AIP)."
+__URL__ = "https://github.com/StateArchivesOfNorthCarolina/tomes-packager"
+__VERSION__ = "0.0.1"
+__AUTHOR__ = "Nitin Arora",
+__AUTHOR_EMAIL__ = "nitin.a.arora@ncdcr.gov"
 
 # import modules.
 import hashlib
