@@ -2,11 +2,12 @@
 with an optional METS file and an optional METS manifest file.
 
 Todo:
-    * Review this and module docstrings.
-        - Examples that reference files should use real sample files.
-    * Documentation and README.
     * Finish setup.py.
         - Will it still find the template files?
+    * Monthly reports.
+    * Review this and module docstrings.
+        - Examples that reference files should use real sample files.
+    * Documentation.
     * Work on PREMIS logging for DarcMail, PST Converter, and Tagger(DONE).
 """
 
@@ -227,13 +228,14 @@ class Packager():
         self.aip_obj.make()
         is_aip_valid = self.aip_obj.validate()
 
-        # if the AIP structure isn't valid, warn but continue on.
+        # if the AIP structure isn't valid, return False.
         if not is_aip_valid:
-            self.logger.warning("AIP structure appears to be invalid; continuing anyway.")
+            self.logger.warning("AIP structure appears to be invalid; aborting.")
+            return is_aip_valid
 
         # if no METS templates were passed; return AIP validity.
         if self.mets_template == "" and self.manifest_template == "":
-            self.logger.info("No METS templates passed; skipping METS creation.")
+            self.logger.info("No METS or manifest templates passed; skipping METS creation.")
             return is_aip_valid
 
         # if needed, set the METS file path and make the METS file.
@@ -241,6 +243,10 @@ class Packager():
             self.logger.info("Creating main METS file for AIP.")
             self.mets_obj, is_mets_valid = self.write_mets(self.mets_path, self.mets_template)
         else:
+            self.logger.info("No METS template passed.")
+            for mets_addition in [self.events_log, self.rdf_xlsx]:
+                if mets_addition != "":
+                    self.logger.warning("Ignoring: {}".format(mets_addition))
             is_mets_valid = True
 
         # if needed, write the METS manifest.
@@ -249,6 +255,7 @@ class Packager():
             self._manifest_obj, is_manifest_valid = self.write_mets(self.manifest_path, 
                     self.manifest_template, False)
         else:
+            self.logger.info("No manifest template passed.")            
             is_manifest_valid = True
         
         # determine overall AIP validity.
@@ -276,7 +283,7 @@ def main(account_id: "email account identifier",
         source_dir: ("path to email \"hot folder\""),
         destination_dir: ("AIP destination path"),
         silent: ("disable console logs", "flag", "s"),
-        mets_template: ("path to METS template", "option")="",
+        mets_template: ("path to METS template", "option")="../mets_templates/basic.xml",
         manifest_template: ("path to METS manifest template", "option")=\
                 "../mets_templates/MANIFEST.XML",
         events_log: ("path to preservation metadata log", "option")="",

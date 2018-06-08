@@ -252,10 +252,10 @@ class PREMISObject(object):
             try:
                 events[i] = yaml.load(event)
                 i += 1
-            except yaml.parser.ParserError as err:
+            except (yaml.parser.ParserError, yaml.scanner.ScannerError) as err:
                 logger.warning("Can't parse line {} as YAML; skipping events.".format(
                     events.index(event) + 1))
-                logger.error(msg)
+                logger.error(err)
                 return
 
         return events
