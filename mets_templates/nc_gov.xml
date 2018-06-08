@@ -164,12 +164,11 @@ xmlns:premis="http://www.loc.gov/premis/v3">
   
   <!--# Create a PREMIS Event for each existing one in SELF. #-->
   <!--# ?DSS?
-  Need descriptions for all events we talked about.
-  Nitin: I think descriptions might need to if/elses here? Ideally not, because they should be short and agnostic of NC.
-	- eventDetailInformation/eventDetail
-	- eventOutcomeInformation/eventOutcomeDetail
+  Need descriptions for all events we talked about. See @DETAILS below.
   #-->
   %% if SELF.premis_obj.events is defined and SELF.premis_obj.events|length > 0 %%
+  <!--# Create dict for <eventDail> based on event name. #-->
+  %% set DETAILS = {"pst_to_mime": "PST converted to MIME.", "mime_to_eaxs": "MIME converted to EAXS.", "eaxs_to_tagged": "Created tagged EAXS."} %%
   <amdSec ID="amdSec__events">
     %% for event in SELF.premis_obj.events %%
     <digiprovMD ID="event__{{ event.name }}">
@@ -182,9 +181,9 @@ xmlns:premis="http://www.loc.gov/premis/v3">
             </premis:eventIdentifier>
             <premis:eventType valueURI="http://id.loc.gov/vocabulary/preservation/eventType/cre">cre</premis:eventType>
             <premis:eventDateTime>{{ event.timestamp }}</premis:eventDateTime>
-            <!-- <premis:eventDetailInformation> -->
-              <!-- <premis:eventDetail>{{ event.description }}</premis:eventDetail> -->
-            <!-- </premis:eventDetailInformation> -->
+            <premis:eventDetailInformation>
+              <premis:eventDetail>{{ DETAILS[event.name] }}</premis:eventDetail>
+            </premis:eventDetailInformation>
             <premis:linkingAgentIdentifier>
               <premis:linkingAgentIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local">local</premis:linkingAgentIdentifierType>
               <premis:linkingAgentIdentifierValue>{{ event.agent }}</premis:linkingAgentIdentifierValue>

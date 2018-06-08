@@ -22,7 +22,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
        %% endif %%
     %% endfor %%
     </fileGrp>
-    %% set skipped = [] %% <!--# Count skipped files. #-->
+    <!--# Count skipped files. #-->
+    %% set SKIPPED = [] %%
     %% for folder in SELF.directory_obj.dirs() %%
     <fileGrp ID="{{ folder.name }}__files">
       %% for file in folder.rfiles() %%
@@ -33,14 +34,14 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <FLocat xlink:href="{{ file.name }}" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" />
       </file>
       %% else %%
-      %% if skipped.append(1) %% <!--# Increment @skipped. #-->
+      %% if SKIPPED.append(1) %% <!--# Increment @SKIPPED. #-->
       %% endif %%
       %% endif %%
     %% endfor %%
     </fileGrp>
     %% endfor %%
-  %% if skipped|length > 0 %%
-  <!-- Skipped {{ skipped|length }} EAXS attachment files. Please see the EAXS file(s) for attachment checksums. -->
+  %% if SKIPPED|length > 0 %%
+  <!-- Skipped {{ SKIPPED|length }} EAXS attachment files. Please see the EAXS file(s) for attachment checksums. -->
   %% endif %%
   </fileSec>
   <structMap>
