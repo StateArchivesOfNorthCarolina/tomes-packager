@@ -333,7 +333,8 @@ class RDFMaker():
         class RDFObject(object):
             def __init__(self, name, element, _charset=self.charset):
                 self.name, self.element = name, element
-                self.xml = etree.tostring(rdf, pretty_print=True).decode(_charset)
+                self.xml = etree.tostring(rdf, pretty_print=True, encoding=_charset).decode(
+                        _charset)
 
         # for each worksheet; try to generate RDF.
         worksheets = self._get_worksheets()
