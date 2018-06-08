@@ -278,7 +278,8 @@ class AIPMaker():
 
 
     def make(self):
-        """ Creates the AIP structure.
+        """ Creates the AIP structure provided @self.source_dir does not equal 
+        @self.destination_dir.
 
         Returns:
             None 
@@ -286,6 +287,12 @@ class AIPMaker():
         Raises:
             IsADirectoryError: If @self.root already exists.
         """
+
+        # if @self.source_dir equals @self.destination_dir, return.
+        if self.source_dir == self.destination_dir:
+            msg = "Source and destination paths are the same; no data will be moved."
+            self.logger.warning(msg)
+            return
 
         # verify @self.root doesn't already exist.
         if os.path.isdir(self.root):

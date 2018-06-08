@@ -2,9 +2,6 @@
 with an optional METS file and an optional METS manifest file.
 
 Todo:
-    * How do I pass an optional to PLAC?
-        - Use "option" tuple.
-    * When validating existing AIPS: METS writing needs to be skipped too.
     * Why is "D:/" not a directory?
     * All etree.tostring's need to use the "encoding" arg.
     * Review this and module docstrings.
@@ -230,10 +227,7 @@ class Packager():
 
         # create AIP structure.
         self.aip_obj = self._aip_maker(self.account_id, self.source_dir, self.destination_dir)
-        if self.source_dir != self.destination_dir:
-            self.aip_obj.make()
-        else:
-            self.logger.info("Source path equals destination path; no files will be moved.")
+        self.aip_obj.make()
         is_aip_valid = self.aip_obj.validate()
 
         # if the AIP structure isn't valid, warn but continue on.
@@ -285,17 +279,14 @@ def main(account_id: "email account identifier",
         source_dir: ("path to email \"hot folder\""),
         destination_dir: ("AIP destination path"),
         silent: ("disable console logs", "flag", "s"),
-        mets_template: ("path to METS template")="",
-        manifest_template: ("path to METS manifest template")=\
+        mets_template: ("path to METS template", "option")="",
+        manifest_template: ("path to METS manifest template", "option")=\
                 "../mets_templates/MANIFEST.XML",
-        events_log: ("path to preservation metadata log")="",
-        rdf_xlsx: ("path to RDF/Dublin Core .xlsx file")=""):
+        events_log: ("path to preservation metadata log", "option")="",
+        rdf_xlsx: ("path to RDF/Dublin Core .xlsx file", "option")=""):
 
     "Creates a TOMES Archival Information Package.\
-    \nexample: `py -3 packager.py foo ../tests/sample_files/hot_folder ../tests/sample_files`\
-    \n\n\
-Validate an existing TOMES Archival Information Package.\
-    \nexample: `py -3 packager.py foo ../tests/sample_files ../tests/sample_files`"
+    \nexample: `py -3 packager.py foo ../tests/sample_files/hot_folder ../tests/sample_files`"
 
     # make sure logging directory exists.
     logdir = "log"
