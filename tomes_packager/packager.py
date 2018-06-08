@@ -4,7 +4,6 @@ with an optional METS file and an optional METS manifest file.
 Todo:
     * Review this and module docstrings.
         - Examples that reference files should use real sample files.
-    * Run autoflakes on this and lib/* and unit tests.
     * Work on PREMIS logging for DarcMail, PST Converter, and Tagger(DONE).
     * Add EventDetail phrases in NC template.    
     * Documentation and README.
@@ -22,7 +21,6 @@ import sys
 import time
 import yaml
 from datetime import datetime
-from lxml import etree
 from lib.aip_maker import AIPMaker
 from lib.directory_object import DirectoryObject
 from lib.premis_object import PREMISObject
@@ -203,6 +201,7 @@ class Packager():
         except Exception as err:
             self.logger.warning("Can't write METS file '{}' from template: {}".format(
                 filename, template))
+            self.logger.error(err)
             mets_obj = None
             is_valid = False
 

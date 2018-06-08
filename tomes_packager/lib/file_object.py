@@ -3,7 +3,6 @@
 """ This module contains a class for creating a read-only object representation of a file. """
 
 # import modules.
-import glob
 import hashlib
 import logging
 import logging.config

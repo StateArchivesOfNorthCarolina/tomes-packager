@@ -4,7 +4,6 @@
 """
 
 # import modules.
-import glob
 import logging
 import logging.config
 import os

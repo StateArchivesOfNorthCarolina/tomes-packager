@@ -92,7 +92,8 @@ class PREMISObject(object):
             timestamp = dateutil.parser.parse(timestamp).isoformat()
         except (TypeError, ValueError) as err:
             msg = "Invalid timestamp: {}".format(timestamp)
-            self.logger.error(msg)
+            self.logger.warning(msg)
+            self.logger.error(err)
             raise ValueError(msg)
         
         return timestamp
