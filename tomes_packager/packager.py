@@ -5,6 +5,7 @@ Todo:
     * Work on PREMIS logging for DarcMail, PST Converter, and Tagger(DONE).
     * Monthly reports.
     * Documentation.
+    * Verify requirements.txt isn't missing anything.
     * Review this and module docstrings.
         - Examples that reference files should use real sample files.
 """
@@ -18,6 +19,7 @@ __AUTHOR__ = "Nitin Arora",
 __AUTHOR_EMAIL__ = "nitin.a.arora@ncdcr.gov"
 
 # import modules.
+import sys; sys.path.append("..")
 import hashlib
 import logging
 import logging.config
@@ -27,11 +29,11 @@ import sys
 import time
 import yaml
 from datetime import datetime
-from lib.aip_maker import AIPMaker
-from lib.directory_object import DirectoryObject
-from lib.premis_object import PREMISObject
-from lib.mets_maker import METSMaker
-from lib.rdf_maker import RDFMaker
+from tomes_packager.lib.aip_maker import AIPMaker
+from tomes_packager.lib.directory_object import DirectoryObject
+from tomes_packager.lib.premis_object import PREMISObject
+from tomes_packager.lib.mets_maker import METSMaker
+from tomes_packager.lib.rdf_maker import RDFMaker
 
 
 class Packager():

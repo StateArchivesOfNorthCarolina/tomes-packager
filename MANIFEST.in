@@ -1,2 +1,3 @@
 include tomes_packager/lib/*.xsd
+include tomes_packager/lib/*.xsl
 include tomes_packager/mets_templates/*.*
