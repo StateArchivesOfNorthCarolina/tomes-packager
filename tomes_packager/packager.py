@@ -2,11 +2,10 @@
 with an optional METS file and an optional METS manifest file.
 
 Todo:
-    * No pip for install. Use "setup.py install" otherwise no data files.
-        - Update tagger's setup.py and edit it and Entities' documentation.md.
     * Finish setup.py.
         - Will it still find the template files?
-        - I think they need to go under "/tomes_packager"?
+        - I think they need to go under "/tomes_packager" if you want them 
+	included. Make sure to change test and CLI paths too.
     * Monthly reports.
     * Review this and module docstrings.
         - Examples that reference files should use real sample files.
