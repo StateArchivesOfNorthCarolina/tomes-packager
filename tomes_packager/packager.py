@@ -2,15 +2,11 @@
 with an optional METS file and an optional METS manifest file.
 
 Todo:
-    * Finish setup.py.
-        - Will it still find the template files?
-        - I think they need to go under "/tomes_packager" if you want them 
-	included. Make sure to change test and CLI paths too.
+    * Work on PREMIS logging for DarcMail, PST Converter, and Tagger(DONE).
     * Monthly reports.
+    * Documentation.
     * Review this and module docstrings.
         - Examples that reference files should use real sample files.
-    * Documentation.
-    * Work on PREMIS logging for DarcMail, PST Converter, and Tagger(DONE).
 """
 
 __NAME__ = "tomes_packager"
@@ -44,13 +40,11 @@ class Packager():
     
     Example:
         >>> from os.path import isfile
-        >>> pkgr = Packager("foo", 
-            "../tests/sample_files/hot_folder", 
-            "../tests/sample_files/", 
-            "../mets_templates/basic.xml",
-            "../mets_templates/MANIFEST.XML",
-            "../tests/sample_files/sample_events.log",
-            "../tests/sample_files/sample_rdf.xlsx")
+        >>> pkgr = Packager(account_id="foo", 
+            source_dir="../tests/sample_files/hot_folder",
+            destination_dir="../tests/sample_files/", 
+            events_log="../tests/sample_files/sample_events.log",
+            rdf_xlsx="../tests/sample_files/sample_rdf.xlsx")
         >>> pkgr.mets_path # "../tests/sample_files/foo/foo.mets.xml"
         >>> isfile(pkgr.mets_path) # False
         >>> pkgr.package() # True
@@ -62,20 +56,22 @@ class Packager():
         >>> repkg.package() # True
         >>> 
         >>> # to create a new METS file in the existing AIP, override @mets_path.
-        >>> repkg = Packager("foo", "../tests/sample_files", "../tests/sample_files", 
-                mets_template="../mets_templates/basic.xml")
+        >>> repkg = Packager("foo", "../tests/sample_files", "../tests/sample_files",
+            mets_template="mets_templates/nc_gov.xml")
         >>> repkg.mets_path = "../tests/sample_files/foo/mets2.xml"
         >>> repkg.package() # True
     """
 
 
-    def __init__(self, account_id, source_dir, destination_dir, mets_template="", 
-            manifest_template="", events_log="", rdf_xlsx="", charset="utf-8"):
+    def __init__(self, account_id, source_dir, destination_dir, 
+            mets_template="mets_templates/default.xml", 
+            manifest_template="mets_templates/MANIFEST.XML", events_log="", rdf_xlsx="", 
+            charset="utf-8"):
         """ Sets instance attributes.
 
         Attributes:
             - aip_dir (str): The path to the AIP.
-            - aip_obj (AIPMaker): The object versio of the AIP located at @destination_dir.
+            - aip_obj (AIPMaker): The object version of the AIP located at @destination_dir.
             - directory_obj (DirectoryObject): The object version of @destination_dir.
             - premis_obj (PREMISObject): The preservation metadata provided in @events_log.
             - mets_obj (METSMaker): The METS object created from @mets_template.
@@ -293,9 +289,9 @@ def main(account_id: "email account identifier",
         source_dir: ("path to email \"hot folder\""),
         destination_dir: ("AIP destination path"),
         silent: ("disable console logs", "flag", "s"),
-        mets_template: ("path to METS template", "option")="../mets_templates/basic.xml",
+        mets_template: ("path to METS template", "option")="mets_templates/default.xml",
         manifest_template: ("path to METS manifest template", "option")=\
-                "../mets_templates/MANIFEST.XML",
+                "mets_templates/MANIFEST.XML",
         events_log: ("path to preservation metadata log", "option")="",
         rdf_xlsx: ("path to RDF/Dublin Core .xlsx file", "option")=""):
 
