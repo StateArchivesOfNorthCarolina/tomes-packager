@@ -1,6 +1,8 @@
+Jinja2>=2.8
 lxml>=3.7.2
 openpyxl>=2.4.8
 plac>=0.9.6
 python-dateutil>=2.7.2
 PyYAML>=3.12
 rdflib>=4.2.2
+setuptools>=36

@@ -2,10 +2,9 @@
 with an optional METS file and an optional METS manifest file.
 
 Todo:
-    * Work on PREMIS logging for DarcMail, PST Converter, and Tagger(DONE).
     * Monthly reports.
     * Documentation.
-    * Verify requirements.txt isn't missing anything.
+        - Specify what constitutes a valid AIP w/ a tree graph.
     * Review this and module docstrings.
         - Examples that reference files should use real sample files.
 """
