@@ -3,7 +3,27 @@
 
 It is written in Python.
 
-Its purpose is to ???
+Its purpose is to create a TOMES archival information package (AIP) with the following structure:
+
+    [account_id]/
+    	eaxs/
+			attachments/*.*
+			xml/
+				[account_id].xml
+				[account_id]_tagged.xml
+		metadata/*.*
+    	mime/*.*
+		pst/
+			[account_id].pst
+		[account_id].mets.manifest
+		[account_id].mets.xml
+
+**??? TODO: ???**
+
+- meant to be used with TOMES workflow.
+- doesn't currently support more than one PST
+- Metadata/PST/METS are optional.
+- Needs a more complete explanation section.
 
 # External Dependencies
 TOMES Packager requires the following:
@@ -43,7 +63,7 @@ Sample files are located in the "./tests/sample_files" directory.
 The sample files can be used with the command line options of some of the unit tests.
 
 # Modules
-TOMES Packager consists of single-purpose high, level module, **packager.py**. This creates ???. It can be used as native Python class or as command line script.
+TOMES Packager consists of single-purpose high, level module, **packager.py**. This creates a TOMES archival information package (AIP). It can be used as native Python class or as command line script.
 
 ## Using packager.py with Python
 To get started, import the module and run help():
