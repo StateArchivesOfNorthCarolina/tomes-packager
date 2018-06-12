@@ -215,10 +215,10 @@ class DirectoryObject(object):
         # iterate through files and folders to create graph lines.
         def grapher(path=self):
 
-            line = ("  " * path.depth) + path.basename + "/"
+            line = ("|  " * path.depth) + path.basename + "/"
             yield line
             for fil in path.files():
-                line = ("  " * path.depth) + "  " + fil.basename
+                line = ("|  " * path.depth) + "|  " + fil.basename
                 yield line
             for folder in path.dirs():
                 for line in grapher(folder):
