@@ -6,17 +6,17 @@ It is written in Python.
 Its purpose is to create a TOMES archival information package (AIP) with the following structure:
 
     [account_id]/
-      eaxs/
-        attachments/*.*
-        xml/
-          [account_id].xml
-          [account_id]_tagged.xml
-      metadata/*.*
-      mime/*.*
-      pst/
-        [account_id].pst
-      [account_id].mets.manifest
-      [account_id].mets.xml
+    |  eaxs/
+    |  |  attachments/*.*
+    |  |  xml/
+    |  |  |  [account_id].xml
+    |  |  |  [account_id]_tagged.xml
+    |  metadata/*.*
+    |  mime/*.*
+    |  pst/
+    |  |  [account_id].pst
+    |  [account_id].mets.manifest
+    |  [account_id].mets.xml
 
 **??? TODO: ???**
 
