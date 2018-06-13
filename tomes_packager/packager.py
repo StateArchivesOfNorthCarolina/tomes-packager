@@ -4,7 +4,6 @@ with an optional METS file and an optional METS manifest file.
 Todo:
     * Monthly reports.
     * Documentation.
-        - Specify what constitutes a valid AIP w/ a tree graph.
     * Review this and module docstrings.
         - Examples that reference files should use real sample files.
 """
@@ -124,11 +123,11 @@ class Packager():
         self.charset = charset
 
         # set attributes for imported classes.
-        self._aip_maker = AIPMaker
-        self._directory_object = DirectoryObject
-        self._premis_object = PREMISObject
-        self._mets_maker = METSMaker
-        self._rdf_maker = RDFMaker
+        self._aip_maker_cls = AIPMaker
+        self._directory_object_cls = DirectoryObject
+        self._premis_object_cls = PREMISObject
+        self._mets_maker_cls = METSMaker
+        self._rdf_maker_cls = RDFMaker
 
         # creates atttibutes for constructed objects.
         self.aip_dir = self._join_paths(self.destination_dir, self.account_id)
@@ -183,24 +182,22 @@ class Packager():
 
         # create a DirectoryObject.
         if self.directory_obj is None:
-            self.directory_obj = self._directory_object(self.aip_dir)
+            self.directory_obj = self._directory_object_cls(self.aip_dir)
 
         # if needed, create a PREMISObject.
         if self.events_log != "" and self.premis_obj is None:
-            events = self._premis_object.load_file(self.events_log)
-            self.premis_obj = self._premis_object(events)
+            events = self._premis_object_cls.load_file(self.events_log)
+            self.premis_obj = self._premis_object_cls(events)
 
         # if needed, create an RDFObject.
         if self.rdf_xlsx != "" and self.rdf_obj is None:
-            self.rdf_obj = self._rdf_maker(self.rdf_xlsx, charset=self.charset)
+            self.rdf_obj = self._rdf_maker_cls(self.rdf_xlsx, charset=self.charset)
             self.rdf_obj.make()
 
-        # add @self to @kwargs so that it can be called in METS templates.
-        kwargs["SELF"] = self
-
-        # create the METS file from @template; determine validity.
+        # pass @self (as "SELF") into @template and render it; determine validity.
         try:
-            mets_obj = self._mets_maker(template, filename, charset=self.charset, **kwargs)
+            mets_obj = self._mets_maker_cls(template, filename, charset=self.charset, 
+                    SELF=self)
             mets_obj.make()
             if xsd_validation:
                 is_valid = mets_obj.validate()
@@ -231,7 +228,8 @@ class Packager():
         self.logger.info("Packaging: {}".format(self.aip_dir))
 
         # create AIP structure.
-        self.aip_obj = self._aip_maker(self.account_id, self.source_dir, self.destination_dir)
+        self.aip_obj = self._aip_maker_cls(self.account_id, self.source_dir, 
+                self.destination_dir)
         self.aip_obj.make()
         is_aip_valid = self.aip_obj.validate()
 
