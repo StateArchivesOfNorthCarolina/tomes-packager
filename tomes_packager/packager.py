@@ -1,11 +1,12 @@
 """ This module contains a class for constructing a TOMES archival information package (AIP)
-with an optional METS file and an optional METS manifest file.
+with a METS file and a METS manifest file.
 
 Todo:
     * Monthly reports.
     * Documentation.
     * Review this and module docstrings.
         - Examples that reference files should use real sample files.
+    * Tests all repos' sample commands after pip installing them.
 """
 
 __NAME__ = "tomes_packager"
@@ -35,8 +36,8 @@ from tomes_packager.lib.rdf_maker import RDFMaker
 
 
 class Packager():
-    """ A class for constructing a TOMES archival information package (AIP) with an optional 
-    METS file and an optional METS manifest file. 
+    """ A class for constructing a TOMES archival information package (AIP) with a METS file 
+    and a METS manifest file. 
     
     Example:
         >>> from os.path import isfile
@@ -90,9 +91,11 @@ class Packager():
             - source_dir (str): The folder path from which to transfer data.
             - destination_dir (str): The folder path in which to create the AIP structure.
             - mets_template (str): The file path for the METS template. This will be used to
-            render a METS file inside the AIP's root folder.
+            render a METS file inside the AIP's root folder. Pass in an empty string to bypass
+            file creation.
             - manifest_template (str): The file path for the METS manifest template. 
-            This will be used to render a METS manifest file inside the AIP's root folder.
+            This will be used to render a METS manifest file inside the AIP's root folder. 
+            Pass in an empty string to bypass file creation.
             - events_log (str): Optional preservation metadata file to pass into 
             @mets_template.
             - rdf_xlsx (str): The Excel 2010+ (.xlsx) file from which to create RDFs. 
@@ -214,9 +217,9 @@ class Packager():
 
 
     def package(self):
-        """ Creates the AIP structure and optional METS file. Note: if @self.source_dir and
-        @self.destination_dir are the same, then no files will be moved, however the AIP
-        will still be validated and optional METS files created.
+        """ Creates the AIP structure and METS file. Note: if @self.source_dir and
+        @self.destination_dir are the same, then no files will be moved, however the AIP will
+        still be validated and METS files created.
 
         Returns:
             bool: The return value.
