@@ -37,13 +37,26 @@ While Jinja templates are well-known to many Python developers, TOMES Packager m
 ### @SELF
 The `SELF` variable used in the included templates equates to the current instance of the `tomes_packager.packager.Packager` Python object.
 
-The `./tomes_packager/packager.py` module's docstring contains a list of object arguments and available attributes.
+The "./tomes_packager/packager.py" module's docstring contains a list of object arguments and available attributes.
 
 A quick glance at this information shows that an understanding of `SELF` also requires an understanding of the modules in the module's "lib" directory. In other words, some of the attributes of `SELF` are themselves instances of objects created by library sub-modules. Each sub-module has its own docstring and list of arguments and attributes.
 
 Review of the docstrings followed by further study of the included templates is recommended.
 
 ### Preservation and Descriptive Metadata
+Both the command line and Python interface to TOMES Packager allow for two types of data files to be consumed and passed into the METS templates:
+
+ 1. A **PREMIS log**: A plain-text file containing agent, event, and object metadata.
+	* For more information, see "./tomes\_packager/lib/premis\_object".
+	* For an example, see "./tests/sample\_files/sample_events.log".
+ 2. An **RDF .xlsx file**: An Excel 2007+ file with Dublin Core metadata.
+ 	* For more information, see "./tomes\_packager/lib/rdf\_maker".
+ 	* For an exsample, see "./tests/sample\_files/sample_rdf.xlsx".
+
+To create an AIP with sample PREMIS and RDF/Dublin Core metadata run
+	>>> from tomes_packager import packager
+	>>> help(packager)
+
 #### PREMIS compatible data
 ... `SELF.premis_obj`
 

@@ -45,7 +45,7 @@ class Packager():
         >>> pkgr = Packager(account_id="foo", 
             source_dir="../tests/sample_files/hot_folder",
             destination_dir="../tests/sample_files/", 
-            events_log="../tests/sample_files/sample_events.log",
+            premis_log="../tests/sample_files/sample_events.log",
             rdf_xlsx="../tests/sample_files/sample_rdf.xlsx")
         >>> pkgr.mets_path # "../tests/sample_files/foo/foo.mets.xml"
         >>> isfile(pkgr.mets_path) # False
@@ -67,7 +67,7 @@ class Packager():
 
     def __init__(self, account_id, source_dir, destination_dir, 
             mets_template="mets_templates/default.xml", 
-            manifest_template="mets_templates/MANIFEST.XML", events_log="", rdf_xlsx="", 
+            manifest_template="mets_templates/MANIFEST.XML", premis_log="", rdf_xlsx="", 
             charset="utf-8"):
         """ Sets instance attributes.
 
@@ -75,7 +75,7 @@ class Packager():
             - aip_dir (str): The path to the AIP.
             - aip_obj (AIPMaker): The object version of the AIP located at @destination_dir.
             - directory_obj (DirectoryObject): The object version of @destination_dir.
-            - premis_obj (PREMISObject): The preservation metadata provided in @events_log.
+            - premis_obj (PREMISObject): The preservation metadata provided in @premis_log.
             - mets_obj (METSMaker): The METS object created from @mets_template.
             - rdf_obj (RDFMaker): The RDF object created from @rdf_xlsx.
             - time_utc (function): Returns UTC time as ISO 8601.
@@ -97,7 +97,7 @@ class Packager():
             - manifest_template (str): The file path for the METS manifest template. 
             This will be used to render a METS manifest file inside the AIP's root folder. 
             Pass in an empty string to bypass file creation.
-            - events_log (str): Optional preservation metadata file to pass into 
+            - premis_log (str): Optional preservation metadata file to pass into 
             @mets_template.
             - rdf_xlsx (str): The Excel 2010+ (.xlsx) file from which to create RDFs. 
             - charset (str): The encoding for the rendered METS an RDF data.
@@ -120,7 +120,7 @@ class Packager():
         self.account_id = str(account_id) 
         self.source_dir = self._normalize_path(source_dir)
         self.destination_dir = self._normalize_path(destination_dir)
-        self.events_log = self._normalize_path(events_log)
+        self.premis_log = self._normalize_path(premis_log)
         self.mets_template = self._normalize_path(mets_template)
         self.manifest_template = self._normalize_path(manifest_template)
         self.rdf_xlsx = self._normalize_path(rdf_xlsx)
@@ -191,8 +191,8 @@ class Packager():
             self.directory_obj = self._directory_object_cls(self.aip_dir)
 
         # if needed, create a PREMISObject.
-        if self.events_log != "" and self.premis_obj is None:
-            events = self._premis_object_cls.load_file(self.events_log)
+        if self.premis_log != "" and self.premis_obj is None:
+            events = self._premis_object_cls.load_file(self.premis_log)
             self.premis_obj = self._premis_object_cls(events)
 
         # if needed, create an RDFObject.
@@ -260,7 +260,7 @@ class Packager():
             self.mets_obj, is_mets_valid = self.write_mets(self.mets_path, self.mets_template)
         else:
             self.logger.info("No METS template passed.")
-            for mets_addition in [self.events_log, self.rdf_xlsx]:
+            for mets_addition in [self.premis_log, self.rdf_xlsx]:
                 if mets_addition != "":
                     self.logger.warning("Ignoring: {}".format(mets_addition))
             is_mets_valid = True
@@ -302,7 +302,7 @@ def main(account_id: "email account identifier",
         mets_template: ("path to METS template", "option")="mets_templates/default.xml",
         manifest_template: ("path to METS manifest template", "option")=\
                 "mets_templates/MANIFEST.XML",
-        events_log: ("path to preservation metadata log", "option")="",
+        premis_log: ("path to preservation metadata log", "option")="",
         rdf_xlsx: ("path to RDF/Dublin Core .xlsx file", "option")=""):
 
     "Creates a TOMES Archival Information Package.\
@@ -328,7 +328,7 @@ def main(account_id: "email account identifier",
     
     # create class instance.
     packager = Packager(account_id, source_dir, destination_dir, mets_template, 
-            manifest_template, events_log, rdf_xlsx)
+            manifest_template, premis_log, rdf_xlsx)
     
     # package the email account.
     logging.info("Running CLI: " + " ".join(sys.argv))
