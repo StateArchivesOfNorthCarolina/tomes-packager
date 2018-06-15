@@ -8,34 +8,34 @@ Its purpose is to create a TOMES Archival Information Package (TOMES AIP).
 # AIP Structure
 A TOMES AIP consists of the following structure:
 
-    [account_id]/                      	
-    |  eaxs/                           	
-    |  |  attachments/*.*			   	# EAXS-encoded attachments
-    |  |  xml/						   	
-    |  |  |  [account_id].xml			# EAXS version of the account.
-    |  |  |  [account_id]_tagged.xml	# 'Tagged' version of EAXS.
-    |  metadata/*.*						# Optional data or administrative documents about the account (release forms, etc.)
-    |  mime/*.*							# EML or MBOX version of the account.
-    |  pst/								
-    |  |  [account_id].pst				# PST version of account (not required if account was exported as EML/MBOX).
-    |  [account_id].mets.manifest		# Optional AIP manifest. Created by TOMES Packager. 
-    |  [account_id].mets.xml			# Optional METS file with descriptive and/or preservation metadata. Created by TOMES Packager. 
+    [account_id]/                        
+    |  eaxs/                             
+    |  |  attachments/*.*             # EAXS-encoded attachments
+    |  |  xml/                 
+    |  |  |  [account_id].xml         # EAXS version of the account.
+    |  |  |  [account_id]_tagged.xml  # 'Tagged' version of EAXS.
+    |  metadata/*.*                   # Optional data or administrative documents about the account (release forms, etc.)
+    |  mime/*.*                       # EML or MBOX version of the account.
+    |  pst/                
+    |  |  [account_id].pst            # PST version of account (not required if account was exported as EML/MBOX).
+    |  [account_id].mets.manifest     # Optional AIP manifest. Created by TOMES Packager. 
+    |  [account_id].mets.xml          # Optional METS file with descriptive and/or preservation metadata. Created by TOMES Packager. 
 
 In order to create the AIP, TOMES Packager requires the source data to be located in a "hot folder" - a folder with account files for one or more email accounts.
 
-	{root}/								# Any folder name not containing whitespace.
-	|  eaxs/							# Each account subfolder contains any and all EAXS files for the account.
-	|  |  {account_id_01}/*.*
-	|  |  {account_id_02}/*.*
-	|  metadata/						# Each account subfolder contains any and all optionaal data files for the account.
-	|  |  {account_id_01}/*.*
-	|  |  {account_id_02}/*.*
-	|  mime/							# Each account subfolder contains any and all EML or MBOX files for the account.
-	|  |  {account_id_01}/*.*
-	|  |  {account_id_02}/*.*
-	|  pst/								# Contains a single, optional PST file for each account.
-	|  |  {account_id_01}.pst
-	|  {account_id_02}.pdf				# "Stray" account files are supported if the filename prefix matches the AIP account_id. This is NOT RECOMMENDED. Use the "metadata" folder instead.
+  {root}/                # Any folder name not containing whitespace.
+  |  eaxs/              # Each account subfolder contains any and all EAXS files for the account.
+  |  |  {account_id_01}/*.*
+  |  |  {account_id_02}/*.*
+  |  metadata/            # Each account subfolder contains any and all optionaal data files for the account.
+  |  |  {account_id_01}/*.*
+  |  |  {account_id_02}/*.*
+  |  mime/              # Each account subfolder contains any and all EML or MBOX files for the account.
+  |  |  {account_id_01}/*.*
+  |  |  {account_id_02}/*.*
+  |  pst/                # Contains a single, optional PST file for each account.
+  |  |  {account_id_01}.pst
+  |  {account_id_02}.pdf        # "Stray" account files are supported if the filename prefix matches the AIP account_id. This is NOT RECOMMENDED. Use the "metadata" folder instead.
 
 
 
@@ -43,8 +43,8 @@ In order to create the AIP, TOMES Packager requires the source data to be locate
 TOMES Packager requires the following:
 
 - [Python](https://www.python.org) 3.0+ (using 3.5+)
-	- See the "./requirements.txt" file for additional module dependencies.
-	- You will also want to install [pip](https://pypi.python.org/pypi/pip) for Python 3.
+  - See the "./requirements.txt" file for additional module dependencies.
+  - You will also want to install [pip](https://pypi.python.org/pypi/pip) for Python 3.
 
 If you want to use TOMES Packager to create Dublin Core/METS metadata, you will also need Microsoft Office 2007+ or another suite, such as [LibreOffice](https://www.libreoffice.org), capable of creating Excel 2007+ Excel files (.xlsx).
 
@@ -82,8 +82,8 @@ TOMES Packager consists of single-purpose high, level module, **packager.py**. T
 ## Using packager.py with Python
 To get started, import the module and run help():
 
-	>>> from tomes_packager import packager
-	>>> help(packager)
+  >>> from tomes_packager import packager
+  >>> help(packager)
 
 *Note: docstring and command line examples may reference sample and data files that are NOT included in the installed Python package. Please use appropriate paths to sample and data files as needed.*
 
