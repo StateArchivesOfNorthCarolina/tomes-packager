@@ -21,9 +21,11 @@ A TOMES AIP consists of the following structure:
     |  [account_id].mets.manifest     # Optional AIP manifest. Created by TOMES Packager. 
     |  [account_id].mets.xml          # Optional METS file with descriptive and/or preservation metadata. Created by TOMES Packager. 
 
-In order to create the AIP, TOMES Packager requires the source data to be located in a "hot folder" - a folder with account files for one or more email accounts.
+In order to create the AIP, TOMES Packager requires the source data to be located in a *hot-folder*  that contains account files for one or more email accounts.
 
-A hot folder can have any root folder provided that the folder name does not contain whitespaces.
+A hot-folder can have any root folder provided that the folder name does not contain whitespaces.
+
+The internal structure of the hot-folder must be as follows:
 
     {root}/
     |  eaxs/                          # Each account subfolder contains any and all EAXS files for the account.
@@ -38,7 +40,7 @@ A hot folder can have any root folder provided that the folder name does not con
     |  pst/                           # Contains a single, optional PST file for each account.
     |  |  {account_id_01}.pst
     |  {account_id_02}.pdf            # "Stray" account files are supported if the filename prefix exactly matches the AIP account_id.
-    |  {account_id_02}.xlsx            # This is NOT RECOMMENDED. Use the "metadata" folder instead.
+    |  {account_id_02}.xlsx           # This is NOT RECOMMENDED. Use the "metadata" folder instead.
 
 # External Dependencies
 TOMES Packager requires the following:
