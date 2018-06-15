@@ -20,18 +20,18 @@ Its purpose is to create a TOMES Archival Information Package (AIP) with the fol
 
 In order to create the TOMES AIP, TOMES Packager requires the source data to be located in a *hot-folder*  that contains account files for one or more email accounts.
 
-A hot-folder can have any root folder provided that the folder name does not contain whitespace.
+A hot-folder can have any root folder provided that the folder name does not contain whitespace. Likewise, account identifiers must not contain whitespace.
 
 The internal structure of the hot-folder must be as follows:
 
     {root}/
-    |  eaxs/                          # Each account subfolder contains any and all EAXS files for the account.
+    |  eaxs/                          # Each account subfolder contains any and all EAXS files and folders for the account.
     |  |  {account_id_01}/*.*
     |  |  {account_id_02}/*.*
-    |  metadata/                      # Each account subfolder contains any and all optional data files for the account.
+    |  metadata/                      # Each account subfolder contains any and all optional data files and folders for the account.
     |  |  {account_id_01}/*.*
     |  |  {account_id_02}/*.*
-    |  mime/                          # Each account subfolder contains any and all EML or MBOX files for the accout.
+    |  mime/                          # Each account subfolder contains any and all EML or MBOX files and folders for the account.
     |  |  {account_id_01}/*.*
     |  |  {account_id_02}/*.*
     |  pst/                           # Contains a single, optional PST file for each account.
