@@ -2,6 +2,7 @@
 with a METS file and a METS manifest file.
 
 Todo:
+    * Run rezip automatically in unittest.
     * Monthly reports.
     * Documentation.
     * Review this and module docstrings.
@@ -298,7 +299,9 @@ def main(account_id: "email account identifier",
         rdf_xlsx: ("path to RDF/Dublin Core .xlsx file", "option")=""):
 
     "Creates a TOMES Archival Information Package.\
-    \nexample: `py -3 packager.py foo ../tests/sample_files/hot_folder ../tests/sample_files`"
+    \nexample: `py -3 packager.py foo ../tests/sample_files/hot_folder ../tests/sample_files`\
+    \n\nNote: If \"../tests/sample_files/foo\" already exists, delete it and unzip\
+    \n\"../tests/sample_files/hot_folder.zip\" to reset the hot folder."
 
     # make sure logging directory exists.
     logdir = "log"

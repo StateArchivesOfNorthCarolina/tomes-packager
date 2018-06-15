@@ -3,27 +3,41 @@
 
 It is written in Python.
 
-Its purpose is to create a TOMES archival information package (AIP) with the following structure:
+Its purpose is to create a TOMES archival information package (AIP).
 
-    [account_id]/
-    |  eaxs/
-    |  |  attachments/*.*
-    |  |  xml/
-    |  |  |  [account_id].xml
-    |  |  |  [account_id]_tagged.xml
-    |  metadata/*.*
-    |  mime/*.*
-    |  pst/
-    |  |  [account_id].pst
-    |  [account_id].mets.manifest
-    |  [account_id].mets.xml
+# AIP Structure
+TOMES Packager creates AIP packages with the following structure:
 
-**??? TODO: ???**
+    [account_id]/                      	
+    |  eaxs/                           	
+    |  |  attachments/*.*			   	# EAXS-encoded attachments
+    |  |  xml/						   	
+    |  |  |  [account_id].xml			# EAXS version of the account.
+    |  |  |  [account_id]_tagged.xml	# 'Tagged' version of EAXS.
+    |  metadata/*.*						# Optional data or administrative documents about the account (release forms, etc.)
+    |  mime/*.*							# EML or MBOX version of the account.
+    |  pst/								
+    |  |  [account_id].pst				# PST version of account (not required if account was exported as EML/MBOX).
+    |  [account_id].mets.manifest		# Optional AIP manifest. Created by TOMES Packager. 
+    |  [account_id].mets.xml			# Optional METS file with descriptive and/or preservation metadata. Created by TOMES Packager. 
 
-- meant to be used with TOMES workflow.
-- doesn't currently support more than one PST
-- Metadata/PST/METS are optional.
-- Needs a more complete explanation section.
+In order to create the AIP, TOMES Packager requires the source data to be located in a "hot folder" - a folder with account files for one or more email accounts.
+
+	{root}/								# Any folder name not containing whitespace.
+	|  eaxs/							# Each account subfolder contains any and all EAXS files for the account.
+	|  |  {account_id_01}/*.*
+	|  |  {account_id_02}/*.*
+	|  metadata/						# Each account subfolder contains any and all optionaal data files for the account.
+	|  |  {account_id_01}/*.*
+	|  |  {account_id_02}/*.*
+	|  mime/							# Each account subfolder contains any and all EML or MBOX files for the account.
+	|  |  {account_id_01}/*.*
+	|  |  {account_id_02}/*.*
+	|  pst/								# Contains a single, optional PST file for each account.
+	|  |  {account_id_01}.pst
+	|  {account_id_02}.pdf				# "Stray" account files are supported if the filename prefix matches the AIP account_id. This is NOT RECOMMENDED. Use the "metadata" folder instead.
+
+
 
 # External Dependencies
 TOMES Packager requires the following:
