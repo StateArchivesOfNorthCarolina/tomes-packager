@@ -8,14 +8,14 @@ The justification for two METS files is that large AIP folders containing many f
 
 TOMES Packager uses *TOMES METS Templates* in order to receive information on how to construct a given METS or METS manifest file.
 
-Working with the templates requires a high level of comfort with not only METS, but also Python and the TOMES Packager Python module itself.
+Working with the templates requires a high level of comfort not only with METS, but also Python and the TOMES Packager Python module itself.
 
 ## Included templates
 Due to the complexity of creating the templates, three template files are included with TOMES Packager:
  
  1. **./tomes\_packager/mets\_templates/default.xml**
 	* The default template for METS files.
- 2. **./tomes\_packager/mets\_templates/default.xml**
+ 2. **./tomes\_packager/mets\_templates/nc_gov.xml**
  	* The default template for the State of North Carolina.
  3. **./tomes\_packager/mets\_templates/MANIFEST.XML**
  	* The default template for METS manifest files.

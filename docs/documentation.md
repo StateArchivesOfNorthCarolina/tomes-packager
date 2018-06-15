@@ -5,7 +5,7 @@ It is written in Python.
 
 Its purpose is to create a TOMES Archival Information Package (AIP) with an optional METS file and an optional METS manifest file.
 
-*For more information on the TOMES AIP structure and METS files, see "aip\_structure.md" and "mets\_files.md". Both files reside in the same folder as this document.*
+*For more information on the TOMES AIP structure and METS files, see the other ".md" files in the same folder as this document.*
 
 # External Dependencies
 TOMES Packager requires the following:
