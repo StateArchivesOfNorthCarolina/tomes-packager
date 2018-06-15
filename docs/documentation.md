@@ -23,7 +23,7 @@ A TOMES AIP consists of the following structure:
 
 In order to create the AIP, TOMES Packager requires the source data to be located in a *hot-folder*  that contains account files for one or more email accounts.
 
-A hot-folder can have any root folder provided that the folder name does not contain whitespaces.
+A hot-folder can have any root folder provided that the folder name does not contain whitespace.
 
 The internal structure of the hot-folder must be as follows:
 
@@ -31,7 +31,7 @@ The internal structure of the hot-folder must be as follows:
     |  eaxs/                          # Each account subfolder contains any and all EAXS files for the account.
     |  |  {account_id_01}/*.*
     |  |  {account_id_02}/*.*
-    |  metadata/                      # Each account subfolder contains any and all optionaal data files for the account.
+    |  metadata/                      # Each account subfolder contains any and all optional data files for the account.
     |  |  {account_id_01}/*.*
     |  |  {account_id_02}/*.*
     |  mime/                          # Each account subfolder contains any and all EML or MBOX files for the accout.
