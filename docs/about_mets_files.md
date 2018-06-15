@@ -1,4 +1,4 @@
-# Adding METS to packages
+# TOMES METS Files
 TOMES Packager supports the creation of two types of METS files:
 
  1. A METS file for descriptive, rights, and preservation metadata.
