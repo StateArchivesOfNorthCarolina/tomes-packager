@@ -34,13 +34,13 @@ The internal structure of the hot-folder must be as follows:
     |  metadata/                      # Each account subfolder contains any and all optionaal data files for the account.
     |  |  {account_id_01}/*.*
     |  |  {account_id_02}/*.*
-    |  mime/                          # Each account subfolder contains any and all EML or MBOX files for the account.
+    |  mime/                          # Each account subfolder contains any and all EML or MBOX files for the accout.
     |  |  {account_id_01}/*.*
     |  |  {account_id_02}/*.*
     |  pst/                           # Contains a single, optional PST file for each account.
     |  |  {account_id_01}.pst
     |  {account_id_02}.pdf            # "Stray" account files are supported if the filename prefix exactly matches the AIP account_id.
-    |  {account_id_02}.xlsx           # This is NOT RECOMMENDED. Use the "metadata" folder instead.
+    |  {account_id_02}.xlsx           # Stray files are NOT RECOMMENDED. Use the "metadata" folder instead.
 
 # External Dependencies
 TOMES Packager requires the following:
