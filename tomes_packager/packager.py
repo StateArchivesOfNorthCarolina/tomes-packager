@@ -108,8 +108,8 @@ class Packager():
         self.logger.addHandler(logging.NullHandler())
 
         # suppress verbose module logging.
-        logging.getLogger("lib.directory_object").setLevel(logging.INFO)
-        logging.getLogger("lib.file_object").setLevel(logging.WARNING)
+        logging.getLogger("tomes_packager.lib.directory_object").setLevel(logging.INFO)
+        logging.getLogger("tomes_packager.lib.file_object").setLevel(logging.WARNING)
 
         # convenience functions to clean up path notation.
         self._normalize_path = lambda p: os.path.normpath(p).replace(
