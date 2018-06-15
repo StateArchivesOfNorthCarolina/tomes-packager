@@ -16,7 +16,7 @@ Due to the complexity of creating the templates, three template files are includ
  1. **./tomes\_packager/mets\_templates/default.xml**
 	* The default TOMES template for METS files.
  2. **./tomes\_packager/mets\_templates/nc_gov.xml**
- 	* The default template for the State of North Carolina.
+ 	* A template for METS files per the State of North Carolina's requirements.
  3. **./tomes\_packager/mets\_templates/MANIFEST.XML**
  	* The default template for METS manifest files.
 
