@@ -82,8 +82,8 @@ TOMES Packager consists of single-purpose high, level module, **packager.py**. I
 ## Using packager.py with Python
 To get started, import the module and run help():
 
-  >>> from tomes_packager import packager
-  >>> help(packager)
+	>>> from tomes_packager import packager
+	>>> help(packager)
 
 *Note: docstring and command line examples may reference sample and data files that are NOT included in the installed Python package. Please use appropriate paths to sample and data files as needed.*
 
