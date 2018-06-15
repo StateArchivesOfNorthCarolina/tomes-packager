@@ -2,9 +2,9 @@
 with a METS file and a METS manifest file.
 
 Todo:
+    * Documentation.
     * Run rezip automatically in unittest.
     * Monthly reports.
-    * Documentation.
     * Review this and module docstrings.
         - Examples that reference files should use real sample files.
     * Tests all repos' sample commands after pip installing them.
@@ -171,7 +171,9 @@ class Packager():
             - template (str): The path to the METS Jinja template file.
             - xsd_validation (bool): Use True to validate the METS via the METS XSD. Use False
             to simply determine if the METS file was written or not.
-            - **kwargs: Any optional keyword arguments to pass into the METS @template.
+            - **kwargs: Any optional keyword arguments to pass into the METS @template. Note
+            that the key "SELF" is reserved as @self is automatically passed into the template
+            as "SELF".
         
         Returns:
             tuple: The return value.
@@ -198,10 +200,15 @@ class Packager():
             self.rdf_obj = self._rdf_maker_cls(self.rdf_xlsx, charset=self.charset)
             self.rdf_obj.make()
 
-        # pass @self (as "SELF") into @template and render it; determine validity.
+        # if "SELF" is in @kwargs, remove it.
+        if "SELF" in kwargs:
+            self.logger.warning("Removing reserved key 'SELF' from @kwargs.")
+            kwargs.pop("SELF")
+
+        # pass @self and @kwargs into @template and render it; determine validity.
         try:
             mets_obj = self._mets_maker_cls(template, filename, charset=self.charset, 
-                    SELF=self)
+                    SELF=self, **kwargs)
             mets_obj.make()
             if xsd_validation:
                 is_valid = mets_obj.validate()
