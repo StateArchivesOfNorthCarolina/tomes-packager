@@ -45,27 +45,23 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   %% endif %%
   </fileSec>
   <structMap>
-  <!--# To avoid length lists of files, <div> elements with <fprt> elements are commented out.
-  If desired, these can be uncommented and can replace the self-closing <div> elements.
-  #-->
+  <!--# To avoid length lists of files, <fprt> elements are commented out. #-->
     <div LABEL="{{ SELF.account_id }}">
-      <div ID="ROOT__folder" />
-      <!--#<div ID="ROOT__folder">
-      %% for file in SELF.directory_obj.files() %%
+      <div ID="ROOT__folder">
+      <!--#%% for file in SELF.directory_obj.files() %%
         %% if file.basename != SELF.manifest_path %%
         <fptr FILEID="_{{ file.index }}"/>
         %% endif %%
-      %% endfor %%
-      </div>#-->
+      %% endfor %%#-->
+      </div>
       %% for folder in SELF.directory_obj.dirs() %%
-      <div ID="{{ folder.name }}__folder" />
-      <!--#<div ID="{{ folder.name }}__folder">
-        %% for file in folder.rfiles() %%
+      <div ID="{{ folder.name }}__folder">
+        <!--#%% for file in folder.rfiles() %%
         %% if file.parent_object.basename != "attachments" and file.parent_object.parent_object.basename != "eaxs" %%
         <fptr FILEID="_{{ folder.name }}_{{ file.index }}"/>
         %% endif %%
-        %% endfor %%
-      </div>#-->
+        %% endfor %%#-->
+      </div>
       %% endfor %%
     </div>
   </structMap>
