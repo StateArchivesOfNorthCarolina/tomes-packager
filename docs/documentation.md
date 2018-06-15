@@ -3,10 +3,10 @@
 
 It is written in Python.
 
-Its purpose is to create a TOMES archival information package (AIP).
+Its purpose is to create a TOMES Archival Information Package (TOMES AIP).
 
 # AIP Structure
-TOMES Packager creates AIP packages with the following structure:
+A TOMES AIP consists of the following structure:
 
     [account_id]/                      	
     |  eaxs/                           	
