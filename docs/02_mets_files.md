@@ -51,16 +51,11 @@ Both the command line and Python interface to TOMES Packager allow for two types
 	* For an example, see "./tests/sample\_files/sample_events.log".
  2. An **RDF .xlsx file**: An Excel 2007+ file with Dublin Core metadata.
  	* For more information, see "./tomes\_packager/lib/rdf\_maker".
- 	* For an exsample, see "./tests/sample\_files/sample_rdf.xlsx".
+ 	* For an example and information on how to create valid metadata worksheets, see "./tests/sample\_files/sample_rdf.xlsx".
 
-To create an AIP with sample PREMIS and RDF/Dublin Core metadata run
+Using the Python interface, create an AIP with sample PREMIS and RDF/Dublin Core metadata:
+	
 	>>> from tomes_packager import packager
-	>>> help(packager)
+	>>> help(packager.Packager)
 
-#### PREMIS compatible data
-... `SELF.premis_obj`
-
-#### RDF/Dublin Core metadata
-... `SELF.rdf_obj`
-
-Excel rules ???
+Now run the first example from the docstring or pass in the equivalent parameters to the command line interface.
