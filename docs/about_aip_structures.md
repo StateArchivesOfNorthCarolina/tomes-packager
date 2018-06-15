@@ -1,4 +1,4 @@
-# TOMES Archival Information Package
+# TOMES Archival Information Packages
 A TOMES Archival Information Package (AIP) has the following structure:
 
     [account_id]/                        
