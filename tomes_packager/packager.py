@@ -45,6 +45,7 @@ class Packager():
         >>> pkgr = Packager(account_id="foo", 
             source_dir="../tests/sample_files/hot_folder",
             destination_dir="../tests/sample_files/", 
+            mets_template="mets_templates/nc_gov.xml",
             premis_log="../tests/sample_files/sample_events.log",
             rdf_xlsx="../tests/sample_files/sample_rdf.xlsx")
         >>> pkgr.mets_path # "../tests/sample_files/foo/foo.mets.xml"
@@ -58,9 +59,8 @@ class Packager():
         >>> repkg.package() # True
         >>> 
         >>> # to create a new METS file in the existing AIP, override @mets_path.
-        >>> repkg = Packager("foo", "../tests/sample_files", "../tests/sample_files",
-            mets_template="mets_templates/nc_gov.xml")
-        >>> repkg.mets_path = "../tests/sample_files/foo/mets2.xml"
+        >>> repkg = Packager("foo", "../tests/sample_files", "../tests/sample_files")
+        >>> repkg.mets_path = "../tests/sample_files/foo/mets_with_default_template.xml"
         >>> repkg.package() # True
     """
 
