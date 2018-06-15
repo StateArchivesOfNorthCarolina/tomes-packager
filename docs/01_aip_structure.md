@@ -6,7 +6,7 @@ A TOMES Archival Information Package (AIP) has the following structure:
     |  |  attachments/*.*             # EAXS-encoded attachments
     |  |  xml/                 
     |  |  |  [account_id].xml         # EAXS version of the account.
-    |  |  |  [account_id]_tagged.xml  # 'Tagged' version of EAXS.
+    |  |  |  [account_id]_tagged.xml  # "Tagged" version of EAXS.
     |  metadata/*.*                   # Optional data or administrative documents about the account (release forms, etc.)
     |  mime/*.*                       # EML or MBOX version of the account.
     |  pst/                
