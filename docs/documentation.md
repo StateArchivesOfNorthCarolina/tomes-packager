@@ -3,10 +3,7 @@
 
 It is written in Python.
 
-Its purpose is to create a TOMES Archival Information Package (TOMES AIP).
-
-# AIP Structure
-A TOMES AIP consists of the following structure:
+Its purpose is to create a TOMES Archival Information Package (AIP) with the following structure:
 
     [account_id]/                        
     |  eaxs/                             
@@ -21,7 +18,7 @@ A TOMES AIP consists of the following structure:
     |  [account_id].mets.manifest     # Optional AIP manifest. Created by TOMES Packager. 
     |  [account_id].mets.xml          # Optional METS file with descriptive and/or preservation metadata. Created by TOMES Packager. 
 
-In order to create the AIP, TOMES Packager requires the source data to be located in a *hot-folder*  that contains account files for one or more email accounts.
+In order to create the TOMES AIP, TOMES Packager requires the source data to be located in a *hot-folder*  that contains account files for one or more email accounts.
 
 A hot-folder can have any root folder provided that the folder name does not contain whitespace.
 
@@ -80,7 +77,7 @@ Sample files are located in the "./tests/sample_files" directory.
 The sample files can be used with the command line options of some of the unit tests.
 
 # Modules
-TOMES Packager consists of single-purpose high, level module, **packager.py**. This creates a TOMES archival information package (AIP). It can be used as native Python class or as command line script.
+TOMES Packager consists of single-purpose high, level module, **packager.py**. It can be used as native Python class or as command line script.
 
 ## Using packager.py with Python
 To get started, import the module and run help():
