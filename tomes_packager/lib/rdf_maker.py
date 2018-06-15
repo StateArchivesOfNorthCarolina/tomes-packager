@@ -101,8 +101,8 @@ class RDFMaker():
 
 
     def _get_worksheets(self):
-        """ Gets the worksheets in @self.xlsx_file. Each worksheet's name must contain only 
-        letters and underscores.
+        """ Gets the worksheets in @self.xlsx_file. Each worksheet's name must use only 
+        letters, underscores, and numbers provided the name does not start with a number.
                 
         Returns:
             list: The return value.
@@ -129,16 +129,16 @@ class RDFMaker():
             
             # only store worksheets with valid names.
             title = worksheet.title
-            title_plain = title.replace("_", "")
-            if title_plain.isalpha():
+            if title.isidentifier():
                 self.logger.info("Found candidate worksheet: {}".format(title))
                 worksheets.append(worksheet)
             else:
                 self.logger.warning("Worksheet '{}' has an invalid name; skipping.".format(
                     title))
-                illegal_chars = [c for c in title_plain if not c.isalpha()]
-                self.logger.debug("Illegal characters found in '{}': {}".format(title, 
-                    illegal_chars))
+                if title[0].isdigit():
+                    self.logger.debug("Worksheet names can't start with a number.")
+                if " " in title:
+                    self.logger.debug("Worksheet names can't contain whitespace.")
 
         return worksheets
  

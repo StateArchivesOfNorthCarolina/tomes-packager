@@ -23,11 +23,11 @@ class Test_RDFMaker(unittest.TestCase):
 
     
     def test__rdf_count(self):
-        """ Did I create only RDF document from the sample file? """
+        """ Did I create exactly two RDF documents from the sample file? """
 
         # @self.sample_file should only have one RDF-valid worksheet in it.
         total_rdfs = len(self.rm.rdfs)
-        self.assertTrue(total_rdfs == 1)
+        self.assertTrue(total_rdfs == 2)
 
 
     def test__rdf_validity(self):
