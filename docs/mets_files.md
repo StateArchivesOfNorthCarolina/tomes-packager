@@ -10,6 +10,7 @@ TOMES Packager uses *TOMES METS Templates* in order to receive information on ho
 
 Working with the templates requires a high level of comfort with not only METS, but also Python and the TOMES Packager Python module itself.
 
+## Included templates
 Due to the complexity of creating the templates, three template files are included with TOMES Packager:
  
  1. **./tomes\_packager/mets\_templates/default.xml**
@@ -21,7 +22,7 @@ Due to the complexity of creating the templates, three template files are includ
 
 If you want to modify the existing templates or create new ones, it is highly recommended that you study these templates in depth.
 
-## TOMES METS Templates
+## Understanding templates
 METS templates use the [Jinja](http://jinja.pocoo.org) template syntax and are automatically fed an instance of the `tomes_packager.packager.Packager` Python object as the variable `SELF`.
 
 ### Jinja syntax
@@ -36,7 +37,7 @@ While Jinja templates are well-known to many Python developers, TOMES Packager m
 ### @SELF
 The `SELF` variable used in the included templates equates to the current instance of the `tomes_packager.packager.Packager` Python object.
 
-The `tomes_packager/packager.py` module's docstring contains a list of object arguments and available attributes.
+The `./tomes_packager/packager.py` module's docstring contains a list of object arguments and available attributes.
 
 A quick glance at this information shows that an understanding of `SELF` also requires an understanding of the modules in the module's "lib" directory. In other words, some of the attributes of `SELF` are themselves instances of objects created by library sub-modules. Each sub-module has its own docstring and list of arguments and attributes.
 
