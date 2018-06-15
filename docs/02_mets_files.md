@@ -58,4 +58,4 @@ Using the Python interface, create an AIP with sample PREMIS and RDF/Dublin Core
 	>>> from tomes_packager import packager
 	>>> help(packager.Packager)
 
-Now run the first example from the docstring or pass in the equivalent parameters to the command line interface.
+Now run the first example from the docstring or pass in the equivalent parameters to the command line interface. Finally, inspect the ".mets.xml" in the created AIP.
