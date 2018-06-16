@@ -3,6 +3,7 @@ with a METS file and a METS manifest file.
 
 Todo:
     * Documentation.
+        - Check for "TODO"s.
     * Run rezip automatically in unittest.
     * Monthly reports.
     * Review this and module docstrings.
