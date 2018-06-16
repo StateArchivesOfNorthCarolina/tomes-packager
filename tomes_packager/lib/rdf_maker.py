@@ -133,12 +133,14 @@ class RDFMaker():
                 self.logger.info("Found candidate worksheet: {}".format(title))
                 worksheets.append(worksheet)
             else:
+                illegal_chars = [c for c in title if not c.isalnum() and c != "_"]
                 self.logger.warning("Worksheet '{}' has an invalid name; skipping.".format(
                     title))
                 if title[0].isdigit():
                     self.logger.debug("Worksheet names can't start with a number.")
-                if " " in title:
-                    self.logger.debug("Worksheet names can't contain whitespace.")
+                if len(illegal_chars) != 0:
+                    self.logger.debug("Worksheet names has illegal characters: {}".format(
+                        illegal_chars))
 
         return worksheets
  
@@ -155,7 +157,7 @@ class RDFMaker():
             Each key is a header row's text. Each value is the corresponding column letter.
         """
 
-        self.logger.info("Looking for metadata in worksheet: {}".format(worksheet.title))
+        self.logger.info("Getting headers in worksheet: {}".format(worksheet.title))
         
         # create dict with header data.
         headers = [(header.value, header.column) for header in worksheet[1:1]]
