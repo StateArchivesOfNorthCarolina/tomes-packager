@@ -11,7 +11,7 @@ Todo:
 
 __NAME__ = "tomes_packager"
 __FULLNAME__ = "TOMES Packager"
-__DESCRIPTION__ = "Part of the TOMES project: creates a TOMES archival information package (AIP)."
+__DESCRIPTION__ = "Part of the TOMES project: creates a TOMES Archival Information Package."
 __URL__ = "https://github.com/StateArchivesOfNorthCarolina/tomes-packager"
 __VERSION__ = "0.0.1"
 __AUTHOR__ = "Nitin Arora",
