@@ -2,7 +2,6 @@
 with a METS file and a METS manifest file.
 
 Todo:
-    * Monthly reports.
     * Documentation.
         - Check for "TODO"s.
     * Review this and module docstrings.
