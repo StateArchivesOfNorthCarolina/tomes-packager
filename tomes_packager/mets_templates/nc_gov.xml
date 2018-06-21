@@ -7,23 +7,17 @@ xmlns:premis="http://www.loc.gov/premis/v3">
 
     <agent ROLE="CREATOR" TYPE="ORGANIZATION">
       <name>State Archives of North Carolina</name>
-	  <!--# ?DSS?
-	  This is optional. We can delete this element. Do you want to say anything here?
-      <note></note>
-	  #-->
     </agent>
 
     <agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
       <name>TOMES Packager</name>
-	  <!--# ?DSS?
-	  Is the following OK?
-	  Nitin: update basic_mets.xml with this. #-->
       <note>Email archiving software developed through the Transforming Online Mail with Embedded Semantics (TOMES) project (https://www.ncdcr.gov/resources/records-management/tomes), a multi-state partnership that includes Kansas, Utah and North Carolina.</note>
     </agent>
 
   </metsHdr>
 
-  <!--# If RDF data has been passed into the template, use it. Otherwise use generic descriptive metadata. #-->
+  <!--# If RDF data has been passed into the template, use it. 
+  Otherwise, use generic descriptive metadata. #-->
   %% if SELF.rdf_obj.rdfs is defined %%
   %% for rdf in SELF.rdf_obj.rdfs %%
   <dmdSec ID="dmdSec__{{ rdf.name }}">
@@ -53,9 +47,7 @@ xmlns:premis="http://www.loc.gov/premis/v3">
   </dmdSec>
   %% endif %%
 
-  <!--# ?DSS?
-  Note for rights? #-->
-  <!--# Fixed rights statement for North Carolina. #-->
+  <!--# Affix rights statement for North Carolina. #-->
   <amdSec ID="amdSec__rights">
     <rightsMD ID="rights__GS_132_1">
       <mdWrap MDTYPE="PREMIS:RIGHTS">
@@ -112,7 +104,6 @@ xmlns:premis="http://www.loc.gov/premis/v3">
   </amdSec>
   %% endif %%
 
-  <!--# Create a PREMIS Object for each existing one in SELF. #-->
   <amdSec ID="amdSec__objects">
     <techMD ID="object__{{ SELF.account_id }}">
       <mdWrap MDTYPE="PREMIS:OBJECT">
@@ -136,9 +127,7 @@ xmlns:premis="http://www.loc.gov/premis/v3">
         </xmlData>
       </mdWrap>
     </techMD>
-    <!--# ??? #-->
-    <!--# ?DSS?
-    Review objects we talked about. #-->
+    <!--# Create a PREMIS Object for each existing one in SELF. #-->
     %% if SELF.premis_obj.objects is defined %%
     %% for object in SELF.premis_obj.objects %%
     <techMD ID="object__{{ object.name }}">
@@ -163,11 +152,8 @@ xmlns:premis="http://www.loc.gov/premis/v3">
   </amdSec>
   
   <!--# Create a PREMIS Event for each existing one in SELF. #-->
-  <!--# ?DSS?
-  Need descriptions for all events we talked about. See @DETAILS below.
-  #-->
   %% if SELF.premis_obj.events is defined and SELF.premis_obj.events|length > 0 %%
-  <!--# Create dict for <eventDail> based on event name. #-->
+  <!--# Create dict for <eventDail> based on the Event name. #-->
   %% set DETAILS = {"pst_to_mime": "PST converted to MIME.", "mime_to_eaxs": "MIME converted to EAXS.", "eaxs_to_tagged": "Created tagged EAXS."} %%
   <amdSec ID="amdSec__events">
     %% for event in SELF.premis_obj.events %%

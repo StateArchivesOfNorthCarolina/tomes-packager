@@ -2,10 +2,9 @@
 with a METS file and a METS manifest file.
 
 Todo:
+    * Monthly reports.
     * Documentation.
         - Check for "TODO"s.
-    * Run rezip automatically in unittest.
-    * Monthly reports.
     * Review this and module docstrings.
         - Examples that reference files should use real sample files.
 """
