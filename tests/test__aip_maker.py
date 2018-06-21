@@ -9,6 +9,7 @@ import shutil
 import unittest
 from zipfile import ZipFile
 from tomes_packager.lib.aip_maker import *
+from sample_files.reset_hot_folder import reset
 
 # enable logging.
 logging.basicConfig(level=logging.DEBUG)
@@ -20,39 +21,20 @@ SAMPLE_FOLDER = "sample_files"
 HOT_FILE = os.path.join(SAMPLE_FOLDER, "hot_folder.zip")
 HOT_FOLDER = os.path.join(SAMPLE_FOLDER, "hot_folder")
 
-# deletes a folder and re-unzips @HOT_FILE into @SAMPLE_FOLDER.
-def cleanup(folder):
-
-    # remove @folder.
-    try:
-        shutil.rmtree(folder)
-    except Exception as err:
-        logging.warning("Can't delete test folder: {}".format(folder))
-        logging.error(err)
-
-    # unzip @HOT_FILE to @SAMPLE_FOLDER.
-    logging.info("Deleting AIP: {}".format(folder))
-    with ZipFile(HOT_FILE) as zf:
-        try:
-            zf.extractall(SAMPLE_FOLDER)
-        except Exception as err:
-            logging.warning("Can't unzip: {}".format(HOT_FILE))
-            logging.error(err)
-    
-    return
-
 
 class Test_AIPMaker(unittest.TestCase):
 
 
     def setUp(self):
 
+        # reset hot folder.
+        reset()
+
         # set attributes.
         self.sample_folder = SAMPLE_FOLDER
         self.hot_file = HOT_FILE
         self.hot_folder = HOT_FOLDER
         self.accounts = ACCOUNTS
-        self.cleanup = cleanup
 
 
     def test__aip_validity(self):
@@ -65,9 +47,9 @@ class Test_AIPMaker(unittest.TestCase):
         am = AIPMaker(account, self.hot_folder, self.sample_folder)    
         am.make()
 
-        # see if AIP is valid.
+        # see if AIP is valid; reset hot folder.
         self.assertTrue(am.validate())
-        self.cleanup(am.root)
+        reset()
 
 
 # CLI.
@@ -87,9 +69,9 @@ def main(account_id:("email account identifier", "positional", None, str, ACCOUN
         logging.warning("Can't make AIP for: {}".format(account_id))
         logging.error(err)
 
-    # if needed, run @cleanup().
+    # if specified, delete package.
     if delete_aip:
-        cleanup(am.root)
+        reset()
 
     # print if the AIP is/was valid.
     if is_valid:
