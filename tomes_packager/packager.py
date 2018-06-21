@@ -8,7 +8,6 @@ Todo:
     * Monthly reports.
     * Review this and module docstrings.
         - Examples that reference files should use real sample files.
-    * Tests all repos' sample commands after pip installing them.
 """
 
 __NAME__ = "tomes_packager"
@@ -296,7 +295,7 @@ class Packager():
 
 
 # CLI.
-def main(account_id: "email account identifier", 
+def main(account_id: ("email account identifier"), 
         source_dir: ("path to email \"hot folder\""),
         destination_dir: ("AIP destination path"),
         silent: ("disable console logs", "flag", "s"),

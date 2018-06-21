@@ -29,26 +29,26 @@ A hot-folder can have any root folder provided that the folder name does not con
 
 The internal structure of the hot-folder must be as follows:
 
-    {root}/
+    [root]/
     |  eaxs/                          # Each account subfolder contains any and all EAXS files and folders for the account.
-    |  |  {account_id_01}/*.*
-    |  |  {account_id_02}/*.*
+    |  |  [account_id_01]/*.*
+    |  |  [account_id_02]/*.*
     |  metadata/                      # Each account subfolder contains any and all optional data files and folders for the account.
-    |  |  {account_id_01}/*.*
-    |  |  {account_id_02}/*.*
+    |  |  [account_id_01]/*.*
+    |  |  [account_id_02]/*.*
     |  mime/                          # Each account subfolder contains any and all EML or MBOX files and folders for the account.
-    |  |  {account_id_01}/*.*
-    |  |  {account_id_02}/*.*
+    |  |  [account_id_01]/*.*
+    |  |  [account_id_02]/*.*
     |  pst/                           # Contains a single, optional PST file for each account.
-    |  |  {account_id_01}.pst
-    |  {account_id_02}.pdf            # "Stray" account files are supported if the filename prefix exactly matches the AIP account_id.
-    |  {account_id_02}.xlsx           # Stray files are NOT RECOMMENDED. Use the "metadata" folder instead.
+    |  |  [account_id_01].pst
+    |  [account_id_02].pdf            # "Stray" account files are supported if the filename prefix exactly matches the AIP account_id.
+    |  [account_id_02].xlsx           # Stray files are NOT RECOMMENDED. Use the "metadata" folder instead.
 
 ### METS Files
 TOMES Packager supports the creation of two types of METS files:
 
  1. A METS file for descriptive, rights, and preservation metadata.
- 2. A METS manifest file to store information about all files within the final TOMES Archival Information Package (AIP).
+ 2. A METS manifest file to store information about all files within the final AIP.
 
 The justification for two METS files is that large AIP folders containing many files (EML and attachment files) can easily render a METS file too large to manually inspect, edit, or even open in GUI text and XML editors.
 
@@ -129,7 +129,7 @@ To get started, import the module and run help():
 	* Change the "account\_id" parameter value from "foo" to "bar".
 	* Append `-rdf-xlsx="../tests/sample_files/sample_rdf.xlsx"` to the command.
 6. Inspect the created AIP at "./tests/sample\_files/bar" and its METS files.
-	* Inspect the source Excel file and compare its data to that in the ".mets.xml" file.
+	* Inspect the source .xlsx file and compare its data to that in the ".mets.xml" file.
 7. Delete the following temporary AIP and hot-folder paths:
 	* "./tests/sample\_files/foo".
 	* "./tests/sample\_files/bar".
