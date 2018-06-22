@@ -30,9 +30,9 @@ class METSMaker():
         """ Sets instance attributes.
         
         Args:
-            - mets_template (str): The file path for the METS template file using Jinja
-            templates. Note that the Jinja template start AND stopping strings are set to "%%"
-            instead of the defaults. Also, XML comments beginning and ending with "<!--#" and
+            - mets_template (str): The file path for the Jinja METS template file. Note that 
+            the Jinja template start AND stopping strings are set to "%%" instead of the 
+            defaults. Also, XML comments beginning and ending with "<!--#" and
             "#-->" will not be outputted and may be used as in-line template documentation.
             - filepath (str): The file path to which to write the METS.
             - charset (str): The encoding for the rendered METS file.
@@ -94,7 +94,8 @@ class METSMaker():
         """ Appends a validation statement to @mets_el.
 
         Args:
-            - mets_el (lxml.etree._Element): The METS XML to beautify.
+            - mets_el (lxml.etree._Element): The METS XML to which to append a validation
+            statement.
             - is_valid (bool): True if the METS file is valid. Otherwise, False.
             
         Returns:
@@ -124,7 +125,8 @@ class METSMaker():
     def validate(self):
         """ Validates @self.filepath against @self.xsd. In addition, a validation comment is
         appended to the METS file. The METS file is also beautified. Note: this reads the METS
-        file into memory and rewrites it. DO NOT use this method on very large METS files.
+        file into memory and rewrites it. Files over 10 megabytes are disallowed and will
+        automatically result in a return of False.
 
         Returns:
             bool: The return value. True if and only if the METS file could be validated and 
@@ -181,9 +183,9 @@ class METSMaker():
             mets_el = self._evaluate_mets(mets_el, is_valid)
         else:
             mets_el = self._evaluate_mets(mets_el, None)
-        mets_el = self._beautify_mets(mets_el) 
+        mets_el = self._beautify_mets(mets_el)
         mets = etree.tostring(mets_el, pretty_print=True, encoding=self.charset)
-        mets = mets.decode(self.charset)    
+        mets = mets.decode(self.charset)
         
         # rewrite @self.filepath with the updated METS.
         with open(self.filepath, "w", encoding=self.charset) as xf:
@@ -193,7 +195,7 @@ class METSMaker():
 
 
     def make(self):
-        """ Renders @self.mets_template via Jinja to return a METS XML document provided
+        """ Renders @self.mets_template via Jinja and returns a METS XML document provided
         @self.filepath is not an existing file.
             
         Returns:
@@ -226,7 +228,7 @@ class METSMaker():
             self.logger.error(err)
             raise ValueError(err)
         
-        # render @self.mets_template; write results to @self.filepath.
+        # render @self.mets_template as a stream; write results to @self.filepath.
         self.logger.info("Creating METS file: {}".format(self.filepath))        
         try:
             mets = template.stream(*self.args, **self.kwargs)

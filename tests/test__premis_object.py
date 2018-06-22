@@ -17,7 +17,7 @@ class Test_PREMISObject(unittest.TestCase):
     def setUp(self):
 
         # set attributes.
-        self.sample_file = "sample_files/sample_events.log"
+        self.sample_file = "sample_files/sample_premis.log"
         self.events = PREMISObject.load_file(self.sample_file)
         self.premis = PREMISObject(self.events)
 
@@ -48,7 +48,7 @@ class Test_PREMISObject(unittest.TestCase):
 def main(events_log:("events log file")):
     
     "Converts an events log file to a PREMISObject and prints the data to screen as JSON.\
-    \nexample: `py -3 test__premis_object.py sample_files/sample_events.log`"
+    \nexample: `py -3 test__premis_object.py sample_files/sample_premis.log`"
 
     # convert @events_log to a PREMISObject.
     events = PREMISObject.load_file(events_log)

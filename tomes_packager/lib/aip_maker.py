@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """ This module contains a class for constructing the basic file and folder structure for a 
-TOMES archival information package (AIP). """
+TOMES AIP. """
 
 # import modules.
 import glob
@@ -12,8 +12,7 @@ import shutil
 
 
 class AIPMaker():
-    """ A class for constructing the basic file and folder structure for a TOMES archival 
-    information package (AIP).
+    """ A class for constructing the basic file and folder structure for a TOMES AIP.
     
     Attributes:
         - root (str): The root path of the created AIP structure.
@@ -25,7 +24,7 @@ class AIPMaker():
         self.make().
         - metadata_dir (str): The optional "/metadata" folder within the AIP or None if empty 
         after self.make().
-        - transfers (dict): The log of file or folder transfers with keys: "attempted", 
+        - transfers (dict): The log of file and folder transfers with keys: "attempted", 
         "passed", and "failed". Each key's value is a list.
         - transfer_stats (function): Returns a dict for each key in @transfers. The value
         of each key is the number of items for that key in @transfers.
@@ -56,7 +55,7 @@ class AIPMaker():
         self.logger = logging.getLogger(__name__)
         self.logger.addHandler(logging.NullHandler())
 
-        # verify source_dir and destination_dir are folders.
+        # verify @source_dir and @destination_dir are folders.
         if not os.path.isdir(source_dir):
             msg = "Can't find source: {}".format(source_dir)
             self.logger.error(msg)
@@ -88,7 +87,7 @@ class AIPMaker():
         self.mime_dir = self._join_paths(self.root, "mime")
         self.eaxs_dir = self._join_paths(self.root, "eaxs")
 
-        # track data regarding transfer attempts.
+        # set attributes for tracking transfer attempts.
         self.transfers = {"attempted": [], "passed": [], "failed": []}
         self.transfer_stats = lambda: dict((k, len(self.transfers[k])) 
                 for k in self.transfers)
@@ -155,8 +154,8 @@ class AIPMaker():
         Args:
             - source_dir (str): The folder path from which to move data.
             - destination_dir (str): The folder path into which to move data.
-            - is_files (bool): Use True to move files (as described above). Use False to move
-            subfolders.
+            - find_files (bool): Use True to move only matching files (as described above).
+            Otherwise, use False.
         
         Returns:
            None
@@ -178,8 +177,8 @@ class AIPMaker():
             data_glob = glob.glob(source_dir + "/*")
             data = [self._normalize_path(f) for f in data_glob]
 
-        # if @data is empty set the corresponsing folder attribute to None, otherwise store 
-        # what data should be moved in @self.transfers.
+        # if @data is empty, set the corresponsing folder attribute in @self to None. 
+        # Otherwise, store the name of the data to move in @self.transfers.
         if len(data) == 0:
             self.logger.info("Can't find any candidate data to move.")
             for key in self.__dict__:
@@ -215,7 +214,7 @@ class AIPMaker():
 
 
     def validate(self):
-        """ Determine if the AIP structure appears to be valid.
+        """ Determines if the AIP structure appears to be valid.
 
         Returns:
             bool: The return value.
@@ -247,7 +246,7 @@ class AIPMaker():
         if not test:
             self.logger.warning("Failed transfers: {}".format(self.transfers["failed"]))
 
-        # test if MIME and EAXS folders exists in AIP and aren't empty.
+        # test if MIME and EAXS folders exist in the AIP and aren't empty.
         for required_folder in [self.mime_dir, self.eaxs_dir]:
             
             test = os.path.isdir(required_folder)
@@ -272,7 +271,7 @@ class AIPMaker():
         if is_valid:
             self.logger.info("AIP structure appears to be valid.")
         else:
-            self.logger.warning("AIP structure appears to invalid.")
+            self.logger.warning("AIP structure appears to be invalid.")
          
         return is_valid
 

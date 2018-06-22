@@ -17,9 +17,9 @@ class DirectoryObject(object):
     Attributes:
         - isdir (bool): True.
         - isfile (bool): False.
-        - abspath (str): The absolute version of @self.path.
         - name (str): The relative path to @self.root_object.
-        - basename (str): The plain directory name.
+        - basename (str): The plain version of @self.path.
+        - abspath (str): The absolute version of @self.path.
         - depth (int): The distance from @self.root_object.
         - created (str): The creation date as ISO 8601.
         - modified (str): The modified date as ISO 8601.
@@ -42,7 +42,7 @@ class DirectoryObject(object):
             - parent_object (DirectoryObject): The parent folder to which @path belongs.
             - root_object (DirectoryObject): The root or "master" folder under which the @path
             folder and its @parent_object reside.
-            - depth (int): ???
+            - depth (int): The distance from @self.root_object.
 
         Raises:
             - NotADirectoryError: If @path is not an actual folder path.
@@ -58,7 +58,7 @@ class DirectoryObject(object):
         # normalize @path and log status.
         path = self._normalize_path(path)
         if root_object is None:
-            self.logger.info("Initializing DirectoryObject for: {}".format(path))            
+            self.logger.info("Initializing root DirectoryObject for: {}".format(path))
         else:
             self.logger.debug("Initializing DirectoryObject for: {}".format(path))            
 

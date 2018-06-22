@@ -1,6 +1,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <!-- 
 An XML beautifer that is better than only using Python's lxml.etree.tostring(pretty_print=True).
+Without this transformation, rendered METS files might have extraneous blank lines and/or sub-optimal indents.
 
 For more information, see: 
 	http://blog.humaneguitarist.org/2011/11/12/pretty-printing-xml-with-python-lxml-and-xslt/

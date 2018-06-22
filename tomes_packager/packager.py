@@ -1,11 +1,10 @@
-""" This module contains a class for constructing a TOMES archival information package (AIP)
+""" This module contains a class for constructing a TOMES Archival Information Package (AIP)
 with a METS file and a METS manifest file.
 
 Todo:
+    * Proofread "test" folder (already did the other folders).
     * Documentation.
         - Check for "TODO"s.
-    * Review this and module docstrings.
-        - Examples that reference files should use real sample files.
 """
 
 __NAME__ = "tomes_packager"
@@ -35,7 +34,7 @@ from tomes_packager.lib.rdf_maker import RDFMaker
 
 
 class Packager():
-    """ A class for constructing a TOMES archival information package (AIP) with a METS file 
+    """ A class for constructing a TOMES Archival Information Package (AIP) with a METS file 
     and a METS manifest file. 
     
     Example:
@@ -44,7 +43,7 @@ class Packager():
             source_dir="../tests/sample_files/hot_folder",
             destination_dir="../tests/sample_files/", 
             mets_template="mets_templates/nc_gov.xml",
-            premis_log="../tests/sample_files/sample_events.log",
+            premis_log="../tests/sample_files/sample_premis.log",
             rdf_xlsx="../tests/sample_files/sample_rdf.xlsx")
         >>> pkgr.mets_path # "../tests/sample_files/foo/foo.mets.xml"
         >>> isfile(pkgr.mets_path) # False
@@ -73,7 +72,7 @@ class Packager():
             - aip_dir (str): The path to the AIP.
             - aip_obj (AIPMaker): The object version of the AIP located at @destination_dir.
             - directory_obj (DirectoryObject): The object version of @destination_dir.
-            - premis_obj (PREMISObject): The preservation metadata provided in @premis_log.
+            - premis_obj (PREMISObject): The preservation metadata created from @premis_log.
             - mets_obj (METSMaker): The METS object created from @mets_template.
             - rdf_obj (RDFMaker): The RDF object created from @rdf_xlsx.
             - time_utc (function): Returns UTC time as ISO 8601.
@@ -95,17 +94,19 @@ class Packager():
             - manifest_template (str): The file path for the METS manifest template. 
             This will be used to render a METS manifest file inside the AIP's root folder. 
             Pass in an empty string to bypass file creation.
-            - premis_log (str): Optional preservation metadata file to pass into 
-            @mets_template.
-            - rdf_xlsx (str): The Excel 2010+ (.xlsx) file from which to create RDFs. 
-            - charset (str): The encoding for the rendered METS an RDF data.
+            - premis_log (str): Optional preservation metadata data file to pass into 
+            METS templates.
+            - rdf_xlsx (str): Optional Excel 2010+ (.xlsx) RDF/Dublin Core file to pass into 
+            METS templates.
+            - charset (str): The encoding for the rendered METS file/s and the RDF XML in
+            @rdf_obj.
         """
 
         # set logger; suppress logging by default.
         self.logger = logging.getLogger(__name__)
         self.logger.addHandler(logging.NullHandler())
 
-        # suppress verbose module logging.
+        # suppress verbose sub-module logging.
         logging.getLogger("tomes_packager.lib.directory_object").setLevel(logging.INFO)
         logging.getLogger("tomes_packager.lib.file_object").setLevel(logging.WARNING)
 
@@ -160,15 +161,16 @@ class Packager():
             self.charset)).hexdigest()[:7]
 
 
-    def write_mets(self, filename, template, xsd_validation=True, **kwargs):
-        """ Writes a METS file to the given @path using the given METS @template.
+    def write_mets(self, filename, template, xsd_validation=False, **kwargs):
+        """ Writes a METS file to the given @filename path using the given METS @template.
 
         Args:
             - filename (str): The relative file path for the outputted METS file. The file 
             will be placed inside the AIP directory.
             - template (str): The path to the METS Jinja template file.
             - xsd_validation (bool): Use True to validate the METS via the METS XSD. Use False
-            to simply determine if the METS file was written or not.
+            to simply determine if the METS file was written or not (i.e. for files too large
+            to validate).
             - **kwargs: Any optional keyword arguments to pass into the METS @template. Note
             that the key "SELF" is reserved as @self is automatically passed into the template
             as "SELF".
@@ -213,7 +215,7 @@ class Packager():
             else:
                 is_valid = os.path.isfile(mets_obj.filepath)
         except Exception as err:
-            self.logger.warning("Can't write METS file '{}' from template: {}".format(
+            self.logger.warning("Can't complete METS file '{}' from template: {}".format(
                 filename, template))
             self.logger.error(err)
             mets_obj = None
@@ -224,16 +226,15 @@ class Packager():
 
     def package(self):
         """ Creates the AIP structure and METS file. Note: if @self.source_dir and
-        @self.destination_dir are the same, then no files will be moved, however the AIP will
-        still be validated and METS files created.
+        @self.destination_dir are the same then no files will be moved, but the AIP will still
+        be validated and METS files will be created.
 
         Returns:
             bool: The return value.
-            True if the overall AIP structure and any METS files appear to be valid. 
-            Otherwise, False.
+            True if the overall AIP structure appears to be valid AND any optional METS files
+            appear to be valid. Otherwise, False.
         """
 
-        # set AIP path.
         self.logger.info("Packaging: {}".format(self.aip_dir))
 
         # create AIP structure.
@@ -255,19 +256,17 @@ class Packager():
         # if needed, set the METS file path and make the METS file.
         if self.mets_template != "":
             self.logger.info("Creating main METS file for AIP.")
-            self.mets_obj, is_mets_valid = self.write_mets(self.mets_path, self.mets_template)
+            self.mets_obj, is_mets_valid = self.write_mets(self.mets_path, self.mets_template,
+                    True)
         else:
             self.logger.info("No METS template passed.")
-            for mets_addition in [self.premis_log, self.rdf_xlsx]:
-                if mets_addition != "":
-                    self.logger.warning("Ignoring: {}".format(mets_addition))
             is_mets_valid = True
 
         # if needed, write the METS manifest.
         if self.manifest_template != "":
             self.logger.info("Creating METS manifest file for AIP.")            
             self._manifest_obj, is_manifest_valid = self.write_mets(self.manifest_path, 
-                    self.manifest_template, False)
+                    self.manifest_template)
         else:
             self.logger.info("No manifest template passed.")            
             is_manifest_valid = True

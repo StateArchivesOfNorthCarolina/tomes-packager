@@ -153,7 +153,7 @@ xmlns:premis="http://www.loc.gov/premis/v3">
   
   <!--# Create a PREMIS Event for each existing one in SELF. #-->
   %% if SELF.premis_obj.events is defined and SELF.premis_obj.events|length > 0 %%
-  <!--# Create dict for <eventDail> based on the Event name. #-->
+  <!--# Create dict for <eventDetail> based on the Event name. #-->
   %% set DETAILS = {"pst_to_mime": "PST converted to MIME.", "mime_to_eaxs": "MIME converted to EAXS.", "eaxs_to_tagged": "Created tagged EAXS."} %%
   <amdSec ID="amdSec__events">
     %% for event in SELF.premis_obj.events %%
@@ -188,7 +188,7 @@ xmlns:premis="http://www.loc.gov/premis/v3">
   %% endif %%
   
   <structMap>
-      <div ID="{{ SELF.account_id }}" LABEL="State of North Carolina Email Account" />
+      <div ID="{{ SELF.account_id }}" LABEL="State of North Carolina Email Account." />
   </structMap>
 
 </mets>

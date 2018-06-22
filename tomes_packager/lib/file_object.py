@@ -18,13 +18,13 @@ class FileObject(object):
         - isfile (bool): True.
         - isdir (bool): False.
         - name (str): The relative path to @self.root_object's path.
-        - basename (str): The absolute path.
+        - basename (str): The plain version of @self.path.
         - abspath (str): The absolute version of @self.path.
         - created (str): The creation date as ISO 8601.
         - modified (str): The modified date as ISO 8601.
         - size (int): The size in bytes.
         - mimetype (function): Returns the mimetype.
-        - checksum (function): Returns the checksum value.
+        - checksum (function): Returns the checksum value (default: SHA-256).
     """
 
 
@@ -42,7 +42,7 @@ class FileObject(object):
 
         Raises:
             - FileNotFoundError: If @path is not an actual file path.
-            - ValueError: If @checksum_algorithm is illegal.
+            - ValueError: If @checksum_algorithm is not supported.
         """
  
         # set logger; suppress logging by default.
@@ -93,10 +93,12 @@ class FileObject(object):
         """
         
         self.logger.debug("Guessing MIME type for: {}".format(self.abspath))
-        mimetype = mimetypes.guess_type(self.abspath)[0]
+        mimetype = mimetypes.guess_type(self.abspath)
         
         if mimetype is None:
             mimetype = "application/octet-stream"
+        else:
+            mimetype = mimetype[0]
 
         self.logger.debug("MIME type: {}".format(mimetype))
         return mimetype
@@ -114,7 +116,7 @@ class FileObject(object):
             the block size would be 1280 (20 * 64).
         
         Returns:
-            str: The return value..
+            str: The return value.
         """
         
         self.logger.debug("Calculating {} checksum value for: {}".format(
@@ -126,9 +128,9 @@ class FileObject(object):
         
         # verify that @checksum_algorithm is legal.
         if checksum_algorithm not in checksum_map:
-            self.logger.warning("Algorithm '{}' is not valid; must be one of: {}".format(
+            self.logger.warning("Algorithm '{}' is not supported; must be one of: {}".format(
                 checksum_algorithm, list(checksum_map)))
-            msg = "Illegal checksum algorithm: {}".format(checksum_algorithm)
+            msg = "Unsupported checksum algorithm: {}".format(checksum_algorithm)
             self.logger.err(msg)
             raise ValueError(msg)
 

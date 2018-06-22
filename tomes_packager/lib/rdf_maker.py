@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
-"""
-This module contains a class for creating RDF/Dublin Core XML metadata from a Microsoft Excel
-2010 file (.xlsx). """
+""" This module contains a class for creating RDF/Dublin Core XML metadata from a Microsoft 
+Excel 2010 file (.xlsx). """
 
 # import modules.
 import hashlib
@@ -21,19 +20,14 @@ class RDFMaker():
     (.xlsx).
 
     Attributes:
-        - rdfs (list): A list of RDF objects, each with three attributes:
-            1. name: The name of a corresponding worksheet in @self.xlsx_file.
-            2. element: The RDF XML version of the worksheet as an lxml.etree._Element. 
-            3. xml: The RDF XML as a string.
+        - rdfs (list): A list of RDF objects. See .make() for more information.
         
     Example:
         >>> xlsx = "../../tests/sample_files/sample_rdf.xlsx"
         >>> rm = RDFMaker(xlsx)
         >>> rm.make()
         >>> for rdf in rm.rdfs:
-        >>>     print(rdf.name) # worksheet name.
-        >>>     #rdf.element # RDF XML version of the worksheet as an lxml.etree._Element. 
-        >>>     print(rdf.xml) # RDF XML as a string.
+        >>>     print(rdf.xml)
     """
 
 
@@ -42,7 +36,7 @@ class RDFMaker():
         """ Sets instance attributes.
 
         Args:
-            - xlsx_file (str): The Excel file from which to get worksheets to convert to RDF.
+            - xlsx_file (str): The Excel file from which to read RDF/Dublin Core metadata.
             - element_header (str): The worksheet header string for Dublin Core element names.
             - value_header (str): The worksheet header string for Dublin Core element values.
             - charset (str): The encoding to use for RDF XML strings.
@@ -139,7 +133,7 @@ class RDFMaker():
                 if title[0].isdigit():
                     self.logger.debug("Worksheet names can't start with a number.")
                 if len(illegal_chars) != 0:
-                    self.logger.debug("Worksheet names has illegal characters: {}".format(
+                    self.logger.debug("Worksheet name has illegal characters: {}".format(
                         illegal_chars))
 
         return worksheets
@@ -169,8 +163,8 @@ class RDFMaker():
 
 
     def _validate_header(self, header_map):
-        """ Determines if @header_map contains the required headers: @self.element_header
-        and @self.value_header.
+        """ Determines if @header_map contains the required headers @self.element_header and
+        @self.value_header.
         
         Args:
             - header_map (dict): Each key is a header row's text. Each value is the 
@@ -207,7 +201,7 @@ class RDFMaker():
         
         Args:
             - worksheet (openpyxl.worksheet.worksheet.Worksheet): The worksheet from which to
-            build and RDF XML element.
+            build an RDF XML element.
             
         Returns:
             lxml.etree._Element: The return value.
@@ -230,7 +224,7 @@ class RDFMaker():
             column = [cell.value for cell in worksheet[header_column][1:]]
             metadata.append(column)
 
-        # create and identifier bash using the checksum of the metadata itself along with the
+        # create identifier hash using the checksum of the metadata itself along with the
         # current timestamp.
         rdf_id = "{}".format(metadata) + datetime.utcnow().isoformat()
         rdf_id = rdf_id.encode(self.charset)
@@ -262,7 +256,7 @@ class RDFMaker():
                     nsmap=self.ns_map)
             rdf_description.append(dc_el)            
 
-            # set @element text to @value.
+            # set text @value for @dc_el.
             value = str(value)
             try:
                 dc_el.text = value
@@ -354,7 +348,7 @@ class RDFMaker():
 
             # only append valid RDF to @rdfs.
             if self.validate(rdf_obj.xml):
-                self.logger.info("Found valid RDF data from worksheet.")
+                self.logger.info("Found valid RDF data in worksheet.")
                 rdfs.append(rdf_obj)
             else:
                 self.logger.warning("No valid RDF data found in worksheet.")
