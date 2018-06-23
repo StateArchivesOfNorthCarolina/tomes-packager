@@ -6,7 +6,6 @@
 import hashlib
 import logging
 import logging.config
-import math
 import mimetypes
 import os
 from datetime import datetime
@@ -145,7 +144,7 @@ class FileObject(object):
         self.logger.debug("File chunks to read: {}".format(remaining_chunks))
 
         # calculate number of times to log progress.
-        divider = round(math.log10(remaining_chunks * 10))
+        divider = len(str(remaining_chunks))
         logging_interval = round(remaining_chunks/divider)
 
         # get checksum per "https://stackoverflow.com/a/1131255". 
