@@ -6,6 +6,7 @@
 import hashlib
 import logging
 import logging.config
+import math
 import mimetypes
 import os
 from datetime import datetime
@@ -141,6 +142,12 @@ class FileObject(object):
 
         # calculate attempts needed to get checksum. 
         remaining_chunks = round(self.size/block_size)
+        self.logger.debug("Data chunks to read: {}".format(remaining_chunks))
+
+        # calculate number of times to log progress.
+        total_digits =  round(math.log10(remaining_chunks))
+        logging_interval = 10 ** (total_digits -1) if total_digits > 1 else 1
+        self.logger.debug("Logging interval: {}".format(logging_interval))
 
         # get checksum per "https://stackoverflow.com/a/1131255". 
         data = open(self.abspath, "rb")
@@ -153,8 +160,8 @@ class FileObject(object):
             sha.update(chunk)
             remaining_chunks -= 1
 
-            # log every 10th read.
-            if remaining_chunks > 0 and (remaining_chunks % 10) == 0:
+            # log updates.
+            if remaining_chunks > 0 and (remaining_chunks % logging_interval) == 0:
                 self.logger.debug("Remaining file chunks to read: {}".format(
                     remaining_chunks))
 
