@@ -54,9 +54,9 @@ class Test_AIPMaker(unittest.TestCase):
 
 # CLI.
 def main(account_id:("email account identifier", "positional", None, str, ACCOUNTS), 
-        delete_aip:("delete the AIP and reset sample_files/hot_folder", "flag", "d")=False):
+        delete_aip:("delete the created AIP", "flag", "d")=False):
     
-    "Creates AIP folder from data in source directory \"sample_files/hot_folder\".\
+    "Creates an AIP folder from data in source directory \"sample_files/hot_folder\".\
     \nexample: `py -3 test__aip_maker.py foo`"
 
     # create and self-validate an AIP.
@@ -69,15 +69,15 @@ def main(account_id:("email account identifier", "positional", None, str, ACCOUN
         logging.warning("Can't make AIP for: {}".format(account_id))
         logging.error(err)
 
-    # if specified, delete package.
-    if delete_aip:
-        reset()
-
     # print if the AIP is/was valid.
     if is_valid:
         print("AIP is valid.")
     else:
         print("AIP is not valid.")
+
+    # if specified, delete package.
+    if delete_aip:
+        reset()
 
 
 if __name__ == "__main__":

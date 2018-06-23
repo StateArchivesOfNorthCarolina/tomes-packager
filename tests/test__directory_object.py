@@ -9,7 +9,7 @@ import unittest
 from tomes_packager.lib.directory_object import *
 
 # enable logging.
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.DEBUG)
 
 
 class Test_DirectoryObject(unittest.TestCase):
@@ -25,7 +25,7 @@ class Test_DirectoryObject(unittest.TestCase):
     def test__dirs(self):
         """ Does @self.dir_obj.dirs yield the same folders as glob? """
 
-        # get folder basenames via glob and DirectoryObject.dirs.
+        # get folder basenames via glob and @DirectoryObject.dirs.
         glob_dirs = [os.path.basename(f) for f in glob.glob("**", recursive=False) 
                 if os.path.isdir(f)]
         obj_dirs = [f.basename for f in self.dir_obj.dirs()]
@@ -37,7 +37,7 @@ class Test_DirectoryObject(unittest.TestCase):
     def test__rdirs(self):
         """ Does @self.dir_obj.rdirs yield the same folders as glob? """
 
-        # get folder basenames via glob and DirectoryObject.rdirs.
+        # get folder basenames via glob and @DirectoryObject.rdirs.
         glob_dirs = [os.path.basename(f) for f in glob.glob("**", recursive=True) 
                 if os.path.isdir(f)]
         obj_dirs = [f.basename for f in self.dir_obj.rdirs()]
@@ -49,7 +49,7 @@ class Test_DirectoryObject(unittest.TestCase):
     def test__files(self):
         """ Does @self.dir_obj.files yield the same files as glob? """
 
-        # get folder basenames via glob and DirectoryObject.dirs.
+        # get file basenames via glob and @DirectoryObject.files.
         glob_files = [os.path.basename(f) for f in glob.glob("**", recursive=False) 
                 if os.path.isfile(f)]
         obj_files = [f.basename for f in self.dir_obj.files()]
@@ -61,7 +61,7 @@ class Test_DirectoryObject(unittest.TestCase):
     def test__rfiles(self):
         """ Does @self.dir_obj.rfiles yield the same files as glob? """
 
-        # get folder basenames via glob and DirectoryObject.dirs.
+        # get file basenames via glob and @DirectoryObject.rfiles.
         glob_files = [os.path.basename(f) for f in glob.glob("**", recursive=True) 
                 if os.path.isfile(f)]
         obj_files = [f.basename for f in self.dir_obj.rfiles()]

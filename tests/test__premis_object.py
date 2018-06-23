@@ -29,7 +29,7 @@ class Test_PREMISObject(unittest.TestCase):
 
 
     def test__required_attributes(self):
-        """ Are the requried attributes "entity" and "alias" present in @self.premis.agents, 
+        """ Are the required attributes "entity" and "alias" present in @self.premis.agents, 
         @self.premis.events, and @self.premis.objects?  """
         
         # test for required attributes.
@@ -45,13 +45,13 @@ class Test_PREMISObject(unittest.TestCase):
 
 
 # CLI.
-def main(events_log:("events log file")):
+def main(premis_log:("PREMIS log file")):
     
-    "Converts an events log file to a PREMISObject and prints the data to screen as JSON.\
+    "Converts a PREMIS log file to a PREMISObject and prints the data to screen as JSON.\
     \nexample: `py -3 test__premis_object.py sample_files/sample_premis.log`"
 
-    # convert @events_log to a PREMISObject.
-    events = PREMISObject.load_file(events_log)
+    # convert @premis_log to a PREMISObject.
+    events = PREMISObject.load_file(premis_log)
     premis = PREMISObject(events)
     
     # function to convert event data to JSON.

@@ -23,9 +23,8 @@ class Test_RDFMaker(unittest.TestCase):
 
     
     def test__rdf_count(self):
-        """ Did I create exactly two RDF documents from the sample file? """
+        """ Do exactly two RDF documents get created from the sample file? """
 
-        # @self.sample_file should only have one RDF-valid worksheet in it.
         total_rdfs = len(self.rm.rdfs)
         self.assertTrue(total_rdfs == 2)
 
@@ -41,13 +40,13 @@ class Test_RDFMaker(unittest.TestCase):
 # CLI.
 def main(rdf_xlsx: "RDF/Dublin Core .xlsx file"):
     
-    "Converts RDF/Dublin Core .xlsx file to XML and prints it to screen.\
+    "Converts an RDF/Dublin Core .xlsx file to XML and prints it to screen.\
     \nexample: `py -3 test__rdf_maker.py sample_files/sample_rdf.xlsx`"
 	
     # create root XML element.
     root = etree.Element("root")
 
-    # create RDF object and append all etree._Element's to @root.
+    # create the RDF object and append all etree._Element's to @root.
     rm = RDFMaker(rdf_xlsx)
     rm.make()
     for rdf in rm.rdfs:
