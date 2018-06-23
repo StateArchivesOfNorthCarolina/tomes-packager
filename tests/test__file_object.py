@@ -12,7 +12,7 @@ from tomes_packager.lib.directory_object import *
 from tomes_packager.lib.file_object import *
 
 # enable logging.
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.WARNING)
 
 
 class Test_FileObject(unittest.TestCase):
