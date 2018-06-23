@@ -12,12 +12,11 @@ from zipfile import ZipFile
 
 
 # enable logging.
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-logger.setLevel("INFO")
 
 
-# rest hot foler.
+# reset hot foler.
 def reset():
     
     # set path to hot folder.
