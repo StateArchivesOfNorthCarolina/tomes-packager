@@ -2,7 +2,6 @@
 with a METS file and a METS manifest file.
 
 Todo:
-    * Proofread "test" folder (already did the other folders).
     * Documentation.
         - Check for "TODO"s.
 """
