@@ -3,7 +3,7 @@
 
 It is written in Python.
 
-Its purpose is to create a TOMES Archival Information Package (AIP) with an optional METS file and an optional METS manifest file.
+Its purpose is to create a TOMES Archival Information Package (AIP) with an optional [METS](https://www.loc.gov/standards/mets/) file and an optional METS manifest file.
 
 ## AIP Structure and Content
 A TOMES AIP has the following structure:
