@@ -93,8 +93,11 @@ class FileObject(object):
         """
         
         self.logger.debug("Guessing MIME type for: {}".format(self.abspath))
+       
+        # get mimetype.
         mimetype = mimetypes.guess_type(self.abspath)
         
+        # if no type was detected, fallback to a default.
         if mimetype is None:
             mimetype = "application/octet-stream"
         else:
@@ -163,6 +166,7 @@ class FileObject(object):
                 self.logger.debug("Remaining file chunks to read: {}".format(
                     remaining_chunks))
 
+        # convert checksum to digest string.
         checksum = sha.hexdigest()
 
         self.logger.debug("{} checksum: {}".format(checksum_algorithm, checksum))
