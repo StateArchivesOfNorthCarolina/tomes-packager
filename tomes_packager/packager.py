@@ -2,8 +2,6 @@
 with a METS file and a METS manifest file.
 
 Todo:
-    * Move all plac imports to top (ps there are dupe imports too).
-        - This applies to all 3 repos and unittests.
     * Documentation.
         - Check for "TODO"s.
 """
