@@ -54,5 +54,4 @@ def main(template: "METS template file", output_file: "output METS XML file"):
 
 
 if __name__ == "__main__":
-
     plac.call(main)

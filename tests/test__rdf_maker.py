@@ -61,5 +61,4 @@ def main(rdf_xlsx: "RDF/Dublin Core .xlsx file"):
 
 
 if __name__ == "__main__":
-
     plac.call(main)

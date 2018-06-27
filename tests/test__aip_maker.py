@@ -82,5 +82,4 @@ def main(account_id:("email account identifier", "positional", None, str, ACCOUN
 
 
 if __name__ == "__main__":
-
     plac.call(main)

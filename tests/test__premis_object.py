@@ -65,5 +65,4 @@ def main(premis_log:("PREMIS log file")):
 
 
 if __name__ == "__main__":
-
     plac.call(main)

@@ -86,5 +86,4 @@ def main(folder:("folder path")):
 
 
 if __name__ == "__main__":
-
     plac.call(main)

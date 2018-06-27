@@ -337,6 +337,5 @@ def main(account_id: ("email account identifier"),
         sys.exit(err.__repr__())
         
 
-if __name__ == "__main__":
-    
+if __name__ == "__main__":    
     plac.call(main)
