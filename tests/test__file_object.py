@@ -6,6 +6,7 @@ import hashlib
 import json
 import logging
 import os
+import plac
 import unittest
 import warnings
 from tomes_packager.lib.directory_object import *
@@ -83,5 +84,4 @@ def main(filepath:("file path")):
 
 if __name__ == "__main__":
 
-    import plac
     plac.call(main)

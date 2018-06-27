@@ -4,6 +4,7 @@
 import sys; sys.path.append("..")
 import json
 import logging
+import plac
 import unittest
 from tomes_packager.lib.premis_object import *
 
@@ -65,5 +66,4 @@ def main(premis_log:("PREMIS log file")):
 
 if __name__ == "__main__":
 
-    import plac
     plac.call(main)

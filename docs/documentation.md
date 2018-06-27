@@ -50,7 +50,7 @@ TOMES Packager supports the creation of two types of METS files:
  1. A METS file for descriptive, rights, and preservation metadata.
  2. A METS manifest file to store information about all files within the final AIP.
 
-The justification for two METS files is that large AIP folders containing many files (EML and attachment files) can easily render a METS file too large to manually inspect, edit, or even open in GUI text and XML editors.
+The justification for two METS files is that large AIP folders containing many files (e.g. EML and attachment files) can easily render a METS file too large to manually inspect, edit, or even open in GUI text and XML editors.
 
 TOMES Packager uses *TOMES METS Templates* in order to receive information on how to construct a given METS or METS manifest file.
 

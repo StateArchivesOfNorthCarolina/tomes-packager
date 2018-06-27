@@ -4,6 +4,7 @@
 import sys; sys.path.append("..")
 import logging
 import os
+import plac
 import random
 import shutil
 import unittest
@@ -82,5 +83,4 @@ def main(account_id:("email account identifier", "positional", None, str, ACCOUN
 
 if __name__ == "__main__":
 
-    import plac
     plac.call(main)

@@ -5,6 +5,7 @@ import sys; sys.path.append("..")
 import glob
 import logging
 import os
+import plac
 import unittest
 from tomes_packager.lib.directory_object import *
 
@@ -86,5 +87,4 @@ def main(folder:("folder path")):
 
 if __name__ == "__main__":
 
-    import plac
     plac.call(main)

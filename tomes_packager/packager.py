@@ -2,6 +2,8 @@
 with a METS file and a METS manifest file.
 
 Todo:
+    * Move all plac imports to top (ps there are dupe imports too).
+        - This applies to all 3 repos and unittests.
     * Documentation.
         - Check for "TODO"s.
 """
@@ -339,5 +341,4 @@ def main(account_id: ("email account identifier"),
 
 if __name__ == "__main__":
     
-    import plac
     plac.call(main)

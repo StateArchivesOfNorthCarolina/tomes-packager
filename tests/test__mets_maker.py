@@ -3,6 +3,7 @@
 # import modules.
 import sys; sys.path.append("..")
 import logging
+import plac
 import tempfile
 import unittest
 from datetime import datetime
@@ -54,5 +55,4 @@ def main(template: "METS template file", output_file: "output METS XML file"):
 
 if __name__ == "__main__":
 
-    import plac
     plac.call(main)

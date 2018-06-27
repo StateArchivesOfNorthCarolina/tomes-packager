@@ -3,6 +3,7 @@
 # import modules.
 import sys; sys.path.append("..")
 import logging
+import plac
 import unittest
 from lxml import etree
 from tomes_packager.lib.rdf_maker import *
@@ -61,5 +62,4 @@ def main(rdf_xlsx: "RDF/Dublin Core .xlsx file"):
 
 if __name__ == "__main__":
 
-    import plac
     plac.call(main)
