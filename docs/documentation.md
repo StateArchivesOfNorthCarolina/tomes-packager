@@ -147,12 +147,10 @@ To get started, import the module and run help():
 4. Run the example command with the following changes:
 	* Change the "account\_id" parameter value from "foo" to "bar".
 	* Append the following parameters:
-		* `-mets-template="mets_templates/nc_gov.xml"`
 		* `-premis-log="../tests/sample_files/sample_premis.log"`
 		* `-rdf-xlsx="../tests/sample_files/sample_rdf.xlsx"`
 5. Inspect the created AIP at "./tests/sample\_files/bar".
 	* Compare the data in the METS file, "../tests/sample_files/bar.mets.xml", to the source data in the RDF and PREMIS log files that were passed in.
-	* Inspect the METS template that was passed in to see how the RDF and PREMIS data were incorporated.
 
 *Note: You can reset the hot-folder by running "../tests/sample\_files/reset\_hot\_folder.py". This will delete the "foo" and "bar" AIP folders.*
 

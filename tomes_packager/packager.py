@@ -49,11 +49,10 @@ class Packager():
         >>> 
         >>> # to create a new METS file in the existing AIP, override @mets_path.
         >>> repkg = Packager("foo", "../tests/sample_files", "../tests/sample_files",
-                mets_template="mets_templates/nc_gov.xml",
                 manifest_template="",
                 premis_log="../tests/sample_files/sample_premis.log",
                 rdf_xlsx="../tests/sample_files/sample_rdf.xlsx")
-        >>> repkg.mets_path = "../tests/sample_files/foo/mets_with_nc_template.xml"
+        >>> repkg.mets_path = "../tests/sample_files/foo/new_mets.xml"
         >>> repkg.package() # True
     """
 
