@@ -78,7 +78,7 @@ In addition to RDF/Dublin Core metadata that can be consumed via a .xlsx file, T
 
 A PREMIS log file is a plain-text file containing agent, event, and object metadata.
 
-Each log line is a YAML string, with an ISO timestamp as the key. The key's value is a set of key/value pairs with the required keys "name" and "entity".
+Each log line is a YAML string with an ISO timestamp as the key. Its value is a set of key/value pairs with the required keys "name" and "entity".
 
 Per the docstring for "./tomes\_packager/lib/premis\_object.py":
 
