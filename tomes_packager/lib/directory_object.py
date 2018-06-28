@@ -118,7 +118,7 @@ class DirectoryObject(object):
             generator: The return value.
         """
 
-        self.logger.debug("Creating FileObject(s) in: {}".format(self.path))
+        self.logger.info("Creating FileObject(s) in: {}".format(self.path))
   
         # iterate through folders and yield FileObject(s).
         def gen_files():
@@ -164,7 +164,7 @@ class DirectoryObject(object):
             generator: The return value.
         """
 
-        self.logger.debug("Creating DirectoryObject(s) in: {}".format(self.path))
+        self.logger.info("Creating DirectoryObject(s) in: {}".format(self.path))
   
         # iterate through folders and yield DirectoryObject(s).
         def gen_dirs():

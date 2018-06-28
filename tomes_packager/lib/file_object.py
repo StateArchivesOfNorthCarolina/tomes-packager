@@ -92,7 +92,7 @@ class FileObject(object):
             str: The return value.
         """
         
-        self.logger.debug("Guessing MIME type for: {}".format(self.abspath))
+        self.logger.info("Guessing MIME type for: {}".format(self.abspath))
        
         # get mimetype.
         mimetype = mimetypes.guess_type(self.abspath)
@@ -103,7 +103,7 @@ class FileObject(object):
         else:
             mimetype = mimetype[0]
 
-        self.logger.debug("MIME type: {}".format(mimetype))
+        self.logger.info("MIME type: {}".format(mimetype))
         return mimetype
 
 
@@ -122,7 +122,7 @@ class FileObject(object):
             str: The return value.
         """
         
-        self.logger.debug("Calculating {} checksum value for: {}".format(
+        self.logger.info("Calculating {} checksum value for: {}".format(
             checksum_algorithm, self.abspath)) 
 
         # set checksum function map.
@@ -169,7 +169,7 @@ class FileObject(object):
         # convert checksum to digest string.
         checksum = sha.hexdigest()
 
-        self.logger.debug("{} checksum: {}".format(checksum_algorithm, checksum))
+        self.logger.info("{} checksum: {}".format(checksum_algorithm, checksum))
         return checksum
 
         
