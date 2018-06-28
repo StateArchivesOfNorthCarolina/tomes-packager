@@ -244,7 +244,7 @@ class Packager():
             self.logger.info("No METS or manifest templates passed; skipping METS creation.")
             return is_aip_valid
 
-        # if needed, set the METS file path and make the METS file.
+        # if needed, write the METS file.
         if self.mets_template != "":
             self.logger.info("Creating main METS file for AIP.")
             self.mets_obj, is_mets_valid = self.write_mets(self.mets_path, self.mets_template,
