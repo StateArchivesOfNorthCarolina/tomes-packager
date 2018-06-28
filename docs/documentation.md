@@ -67,9 +67,24 @@ Due to the complexity of creating the templates, three template files are includ
 *For more detailed information on METS templates, see the "mets_templates.md" file located in the same directory as this documentation file.*
 
 #### Adding RDF/Dublin Core to METS
-???TODO???: Info here. Keep it simple.
+Both the "default.xml" and "nc_gov.xml" templates support ingest of Dublin Core metadata from an ".xlsx" file. The Dublin Core will be wrapped as RDF.
 
-*For an example and information on how to create valid metadata worksheets, see "./tests/sample\_files/sample_rdf.xlsx".*
+The ".xlsx" file must be passed as a parameter to TOMES Packager via Python or the command line interface.
+
+*For information on how to create valid metadata worksheets, see "./tests/sample\_files/sample_rdf.xlsx".*
+
+#### Adding Preservation Metadata
+In addition to RDF/Dublin Core metadata that can be consumed via a .xlsx file, TOMES Packager also allow for preservation data to be consumed and passed into a METS templates via a PREMIS log file.
+
+A PREMIS log file is a plain-text file containing agent, event, and object metadata. Each line is a YAML string, with an ISO timestamp as the key. The key's value is a set of key/value pairs with the required keys "name" and "entity".
+
+Per the docstring for "./tomes\_packager/lib/premis\_object.py":
+
+> The value for "name" can be any token, although whitespace is not technically banned. The only value options for "entity" are: "agent", "event", or "object". Additional attributes may also exist.
+
+The log file must be passed as a parameter to TOMES Packager via Python or the command line interface.
+
+*For an example log, see "./tests/sample\_files/sample_events.log".*
 
 # External Dependencies
 TOMES Packager requires the following:
@@ -127,13 +142,15 @@ To get started, import the module and run help():
 4. Inspect the created AIP at "./tests/sample\_files/foo" and its METS files.
 5. Run the command from Step 3 with the following changes:
 	* Change the "account\_id" parameter value from "foo" to "bar".
-	* Append `-rdf-xlsx="../tests/sample_files/sample_rdf.xlsx"` to the command.
-6. Inspect the created AIP at "./tests/sample\_files/bar" and its METS files.
-	* Inspect the source .xlsx file and compare its data to that in the ".mets.xml" file.
-7. Delete the following temporary AIP and hot-folder paths:
-	* "./tests/sample\_files/foo".
-	* "./tests/sample\_files/bar".
-	* "./tests/sample\_files/hot\_folder".
+	* Append the following parameters:
+		* `-mets-template="mets_templates/nc_gov.xml"`
+		* `-premis-log="../tests/sample_files/sample_premis.log"`
+		* `-rdf-xlsx="../tests/sample_files/sample_rdf.xlsx"`
+6. Inspect the created AIP at "./tests/sample\_files/bar".
+	* Compare the data in the METS file, "../tests/sample_files/bar.mets.xml", to the source data in the RDF and PREMIS log files that were passed in.
+	* Inspect the METS template that was passed in to see how the RDF and PREMIS data were incorporated.
+
+*Note: You can reset the hot-folder by running "../tests/sample\_files/reset\_hot\_folder.py". This will delete the "foo" and "bar" AIP folders.*
 
 -----
 *[1] Depending on your system configuration, you might need to specify "python3", etc. instead of "py -3" from the command line. Similar differences might apply for PIP.*
