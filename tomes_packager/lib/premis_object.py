@@ -47,7 +47,9 @@ class PREMISObject(object):
             as its value with required attributes "name" (str) and "entity" (str). The value
             for "name" can be any token, although whitespace is not technically banned. The
             only value options for "entity" are: "agent", "event", or "object". Additional 
-            attributes may also exist.
+            attributes may also exist. Note that the attribute "timestamp" is reserved as it
+            is created automatically. Its value will be equal to the key itself, i.e. the ISO
+            timestamp. 
 
         Raises:
             - TypeError: If @premis_list is not a list.

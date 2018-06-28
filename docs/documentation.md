@@ -78,11 +78,13 @@ In addition to RDF/Dublin Core metadata that can be consumed via a .xlsx file, T
 
 A PREMIS log file is a plain-text file containing agent, event, and object metadata.
 
+The general idea behind the PREMIS log file is that it will be a concatenation of one-to-many special logging files outputted by various software components of the TOMES project. In other words, these components will output PREMIS compatible log files containing information about themselves (agents), the actions they performed (events), and the data acted upon or created as a result of such actions (objects).
+
 Each log line is a YAML string with an ISO timestamp as the key. Its value is a set of key/value pairs with the required keys "name" and "entity".
 
 Per the docstring for "./tomes\_packager/lib/premis\_object.py":
 
-> The value for "name" can be any token, although whitespace is not technically banned. The only value options for "entity" are: "agent", "event", or "object". Additional attributes may also exist.
+> The value for "name" can be any token, although whitespace is not technically banned. The only value options for "entity" are: "agent", "event", or "object". Additional attributes may also exist. Note that the attribute "timestamp" is reserved as it is created automatically. Its value will be equal to the key itself, i.e. the ISO timestamp. 
 
 The log file must be passed as a parameter to TOMES Packager via Python or the command line interface.
 
