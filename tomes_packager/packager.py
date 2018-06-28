@@ -1,10 +1,5 @@
 """ This module contains a class for constructing a TOMES Archival Information Package (AIP)
-with a METS file and a METS manifest file.
-
-Todo:
-    * Documentation.
-        - Check for "TODO"s.
-"""
+with a METS file and a METS manifest file. """
 
 __NAME__ = "tomes_packager"
 __FULLNAME__ = "TOMES Packager"
@@ -39,24 +34,26 @@ class Packager():
     Example:
         >>> from os.path import isfile
         >>> pkgr = Packager(account_id="foo", 
-            source_dir="../tests/sample_files/hot_folder",
-            destination_dir="../tests/sample_files/", 
-            mets_template="mets_templates/nc_gov.xml",
-            premis_log="../tests/sample_files/sample_premis.log",
-            rdf_xlsx="../tests/sample_files/sample_rdf.xlsx")
+                source_dir="../tests/sample_files/hot_folder",
+                destination_dir="../tests/sample_files/")
         >>> pkgr.mets_path # "../tests/sample_files/foo/foo.mets.xml"
         >>> isfile(pkgr.mets_path) # False
         >>> pkgr.package() # True
         >>> pkgr.aip_dir #  "../tests/sample_files/foo"
         >>> isfile(pkgr.mets_path) # True
         >>> 
-        >>> # to validate the existing AIP, pass in the same path for source and destination.
-        >>> repkg = Packager("foo", "../tests/sample_files", "../tests/sample_files")
-        >>> repkg.package() # True
+        >>> # to validate an existing AIP without moving files, pass in the parent directory
+        >>> # as both the source and destination.
+        >>> validation = Packager("foo", "../tests/sample_files", "../tests/sample_files")
+        >>> validation.package() # True
         >>> 
         >>> # to create a new METS file in the existing AIP, override @mets_path.
-        >>> repkg = Packager("foo", "../tests/sample_files", "../tests/sample_files")
-        >>> repkg.mets_path = "../tests/sample_files/foo/mets_with_default_template.xml"
+        >>> repkg = Packager("foo", "../tests/sample_files", "../tests/sample_files",
+                mets_template="mets_templates/nc_gov.xml",
+                manifest_template="",
+                premis_log="../tests/sample_files/sample_premis.log",
+                rdf_xlsx="../tests/sample_files/sample_rdf.xlsx")
+        >>> repkg.mets_path = "../tests/sample_files/foo/mets_with_nc_template.xml"
         >>> repkg.package() # True
     """
 
