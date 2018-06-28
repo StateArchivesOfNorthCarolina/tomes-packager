@@ -73,7 +73,7 @@ The ".xlsx" file must be passed as a parameter to TOMES Packager via Python or t
 
 *For information on how to create valid metadata worksheets, see "./tests/sample\_files/sample_rdf.xlsx".*
 
-#### Adding Preservation Metadata
+#### Adding Preservation Metadata to METS
 In addition to RDF/Dublin Core metadata that can be consumed via a .xlsx file, TOMES Packager also allow for preservation data to be consumed and passed into a METS templates via a PREMIS log file.
 
 A PREMIS log file is a plain-text file containing agent, event, and object metadata.
