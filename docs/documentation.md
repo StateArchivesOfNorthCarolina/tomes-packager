@@ -55,26 +55,28 @@ The justification for two METS files is that large AIP folders containing many f
 TOMES Packager uses *TOMES METS Templates* in order to receive information on how to construct a given METS or METS manifest file.
 
 #### Included METS templates
-Due to the complexity of creating the templates, three template files are included with TOMES Packager:
+Due to the complexity of creating templates, the following template files are included with TOMES Packager:
  
  1. **./tomes\_packager/mets\_templates/default.xml**
-	* The default TOMES template for METS files.
- 2. **./tomes\_packager/mets\_templates/nc\_gov.xml**
- 	* A METS file template created according to the State of North Carolina's requirements.
- 3. **./tomes\_packager/mets\_templates/MANIFEST.XML**
+	* The default TOMES template for METS files with support for descriptive and preservation metadata. *See the sections below on adding descriptive and preservation metadata.*
+ 2. **./tomes\_packager/mets\_templates/basic.xml**
+	* Supports descriptive metadata only.
+ 3. **./tomes\_packager/mets\_templates/nc\_gov.xml**
+ 	* Created according to the State of North Carolina's requirements.
+ 4. **./tomes\_packager/mets\_templates/MANIFEST.XML**
  	* The default template for METS manifest files.
 
 *For more detailed information on METS templates, see the "mets_templates.md" file located in the same directory as this documentation file.*
 
-#### Adding Dublin Core to METS
-Both the "default.xml" and "nc_gov.xml" templates support ingest of Dublin Core metadata from an ".xlsx" file. The Dublin Core will be wrapped as RDF/XML.
+#### Adding Descriptive Metadata to METS
+The included METS templates support ingest of Dublin Core metadata from an ".xlsx" file. The Dublin Core will be wrapped as RDF/XML.
 
 The ".xlsx" file must be passed as a parameter to TOMES Packager via Python or the command line interface.
 
 *For more information, see "./tests/sample\_files/sample_rdf.xlsx".*
 
 #### Adding Preservation Metadata to METS
-In addition to RDF/Dublin Core metadata that can be consumed via a .xlsx file, TOMES Packager also allow for preservation data to be consumed and passed into a METS templates via a PREMIS log file.
+In addition to RDF/Dublin Core metadata that can be consumed via a .xlsx file, TOMES Packager also allow for preservation data to be consumed and passed into supporting METS templates via a PREMIS log file.
 
 A PREMIS log file is a plain-text file containing agent, event, and object metadata.
 
