@@ -137,18 +137,16 @@ To get started, import the module and run help():
 *Note: docstring and command line examples may reference sample and data files that are NOT included in the installed Python package. Please use appropriate paths to sample and data files as needed.*
 
 ## Using packager.py from the command line
-1. Unzip "./tests/sample\_files/hot\_folder.zip".
-	* This creates a temporary hot-folder, "./tests/sample\_files/hot\_folder".
-2. From the "./tomes\_packager" directory do: `py -3 packager.py -h` to see an example command.
-3. Run the example command.
-4. Inspect the created AIP at "./tests/sample\_files/foo" and its METS files.
-5. Run the command from Step 3 with the following changes:
+1. From the "./tomes\_packager" directory do: `py -3 packager.py -h` to see an example command.
+2. Run the example command.
+3. Inspect the created AIP at "./tests/sample\_files/foo" and its METS files.
+4. Run the example command with the following changes:
 	* Change the "account\_id" parameter value from "foo" to "bar".
 	* Append the following parameters:
 		* `-mets-template="mets_templates/nc_gov.xml"`
 		* `-premis-log="../tests/sample_files/sample_premis.log"`
 		* `-rdf-xlsx="../tests/sample_files/sample_rdf.xlsx"`
-6. Inspect the created AIP at "./tests/sample\_files/bar".
+5. Inspect the created AIP at "./tests/sample\_files/bar".
 	* Compare the data in the METS file, "../tests/sample_files/bar.mets.xml", to the source data in the RDF and PREMIS log files that were passed in.
 	* Inspect the METS template that was passed in to see how the RDF and PREMIS data were incorporated.
 
