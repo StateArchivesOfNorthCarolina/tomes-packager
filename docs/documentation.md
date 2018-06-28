@@ -66,7 +66,7 @@ Due to the complexity of creating the templates, three template files are includ
 
 *For more detailed information on METS templates, see the "mets_templates.md" file located in the same directory as this documentation file.*
 
-#### Adding RDF/Dublin Core to METS
+#### Adding Dublin Core to METS
 Both the "default.xml" and "nc_gov.xml" templates support ingest of Dublin Core metadata from an ".xlsx" file. The Dublin Core will be wrapped as RDF/XML.
 
 The ".xlsx" file must be passed as a parameter to TOMES Packager via Python or the command line interface.
