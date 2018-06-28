@@ -1,6 +1,7 @@
 <mets xmlns="http://www.loc.gov/METS/" 
 xmlns:xlink="http://www.w3.org/1999/xlink" 
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:premis="http://www.loc.gov/premis/v3">
 
   <!--# Create a basic METS header. #-->
   <metsHdr CREATEDATE="{{ SELF.time_utc() }}">
@@ -35,7 +36,111 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     </mdWrap>
   </dmdSec>
   %% endif %%
- 
+  
+  <!--# Create a PREMIS Agent for each existing one in SELF. #-->
+  %% if SELF.premis_obj.agents is defined and SELF.premis_obj.agents|length > 0 %%
+  <amdSec ID="amdSec__agents">
+    %% for agent in SELF.premis_obj.agents %%
+    <techMD ID="agent__{{ agent.name }}">
+      <mdWrap MDTYPE="PREMIS:AGENT">
+        <xmlData>
+          <premis:premis>
+            <premis:agent>
+              <premis:agentIdentifier>
+                <premis:agentIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local">local</premis:agentIdentifierType>
+                <premis:agentIdentifierValue>{{ agent.name }}</premis:agentIdentifierValue>
+              </premis:agentIdentifier>
+              <premis:agentIdentifier>
+                <premis:agentIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/uri">uri</premis:agentIdentifierType>
+                <premis:agentIdentifierValue>{{ agent.uri }}</premis:agentIdentifierValue>
+              </premis:agentIdentifier>
+              <premis:agentName>{{ agent.fullname }}</premis:agentName>
+              <premis:agentType>software</premis:agentType>
+              <premis:agentVersion>{{ agent.version }}</premis:agentVersion>
+            </premis:agent>
+          </premis:premis>
+        </xmlData>
+      </mdWrap>
+    </techMD>
+    %% endfor %%
+  </amdSec>
+  %% endif %%
+
+  <amdSec ID="amdSec__objects">
+    <techMD ID="object__{{ SELF.account_id }}">
+      <mdWrap MDTYPE="PREMIS:OBJECT">
+        <xmlData>
+          <premis:object>
+            <premis:objectIdentifier>
+              <premis:objectIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local.html">local</premis:objectIdentifierType>
+              <premis:objectIdentifierValue>{{ SELF.account_id }}</premis:objectIdentifierValue>
+            </premis:objectIdentifier>
+            <premis:objectCategory>representation</premis:objectCategory>
+            <premis:preservationLevel>
+              <premis:preservationLevelValue>logical preservation</premis:preservationLevelValue>
+              <premis:preservationLevelRole valueURI="http://id.loc.gov/vocabulary/preservation/preservationLevelRole/int">int</premis:preservationLevelRole>
+              <premis:preservationLevelRationale>institutional policy</premis:preservationLevelRationale>
+            </premis:preservationLevel>
+          </premis:object>
+        </xmlData>
+      </mdWrap>
+    </techMD>
+    <!--# Create a PREMIS Object for each existing one in SELF. #-->
+    %% if SELF.premis_obj.objects is defined %%
+    %% for object in SELF.premis_obj.objects %%
+    <techMD ID="object__{{ object.name }}">
+      <mdWrap MDTYPE="PREMIS:OBJECT">
+        <xmlData>
+          <premis:object>
+            <premis:objectIdentifier>
+              <premis:objectIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local.html">local</premis:objectIdentifierType>
+              <premis:objectIdentifierValue>{{ object.name }}</premis:objectIdentifierValue>
+            </premis:objectIdentifier>
+            <premis:objectCategory>{{ object.category }}</premis:objectCategory>
+          </premis:object>
+        </xmlData>
+      </mdWrap>
+    </techMD>
+    %% endfor %%
+  %% endif %%
+  </amdSec>
+  
+  <!--# Create a PREMIS Event for each existing one in SELF. #-->
+  %% if SELF.premis_obj.events is defined and SELF.premis_obj.events|length > 0 %%
+  <!--# Create dict for <eventDetail> based on the Event name. #-->
+  %% set DETAILS = {"pst_to_mime": "PST converted to MIME.", "mime_to_eaxs": "MIME converted to EAXS.", "eaxs_to_tagged": "EAXS converted to tagged EAXS."} %%
+  <amdSec ID="amdSec__events">
+    %% for event in SELF.premis_obj.events %%
+    <digiprovMD ID="event__{{ event.name }}">
+      <mdWrap MDTYPE="PREMIS:EVENT">
+        <xmlData>
+          <premis:event>
+            <premis:eventIdentifier>
+              <premis:eventIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local">local</premis:eventIdentifierType>
+              <premis:eventIdentifierValue>{{ event.name }}</premis:eventIdentifierValue>
+            </premis:eventIdentifier>
+            <premis:eventType valueURI="http://id.loc.gov/vocabulary/preservation/eventType/cre">cre</premis:eventType>
+            <premis:eventDateTime>{{ event.timestamp }}</premis:eventDateTime>
+            <premis:eventDetailInformation>
+              <premis:eventDetail>{{ DETAILS[event.name] }}</premis:eventDetail>
+            </premis:eventDetailInformation>
+            <premis:linkingAgentIdentifier>
+              <premis:linkingAgentIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local">local</premis:linkingAgentIdentifierType>
+              <premis:linkingAgentIdentifierValue>{{ event.agent }}</premis:linkingAgentIdentifierValue>
+              <premis:linkingAgentRole valueURI="http://id.loc.gov/vocabulary/preservation/eventRelatedAgentRole/exe">exe</premis:linkingAgentRole>
+            </premis:linkingAgentIdentifier>
+            <premis:linkingObjectIdentifier>
+              <premis:linkingObjectIdentifierType valueURI="http://id.loc.gov/vocabulary/identifiers/local">local</premis:linkingObjectIdentifierType>
+              <premis:linkingObjectIdentifierValue>{{ event.object }}</premis:linkingObjectIdentifierValue>
+            </premis:linkingObjectIdentifier>
+          </premis:event>
+        </xmlData>
+      </mdWrap>
+    </digiprovMD>
+    %% endfor %%
+  </amdSec>
+  %% endif %%
+  
   <!--# Create a basic METS <structMap> element. #-->
   <structMap>
       <div ID="{{ SELF.account_id }}" LABEL="Email account." />

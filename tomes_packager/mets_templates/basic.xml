@@ -1,0 +1,44 @@
+<mets xmlns="http://www.loc.gov/METS/" 
+xmlns:xlink="http://www.w3.org/1999/xlink" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <!--# Create a basic METS header. #-->
+  <metsHdr CREATEDATE="{{ SELF.time_utc() }}">
+    <agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
+      <name>TOMES Packager</name>
+    </agent>
+  </metsHdr>
+  
+  <!--# If RDF data has been passed into the template, use it. Otherwise use generic descriptive metadata. #-->
+  %% if SELF.rdf_obj.rdfs is defined %%
+  %% for rdf in SELF.rdf_obj.rdfs %%
+  <dmdSec ID="dmdSec__{{ rdf.name }}">
+    <mdWrap MDTYPE="DC">
+      <xmlData>
+        {{ rdf.xml }}
+      </xmlData>
+    </mdWrap>
+  </dmdSec>
+  %% endfor %%
+  %% else %% 
+  <dmdSec ID="dmdSec__000">
+    <mdWrap MDTYPE="DC">
+      <xmlData>
+        <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+          <rdf:Description rdf:ID="_{{ SELF.time_hash() }}">
+            <dc:title>Email account: {{ SELF.account_id }}</dc:title>
+            <dc:date>{{ SELF.time_local() }}</dc:date>
+            <dc:identifier>{{ SELF.account_id }}</dc:identifier>
+          </rdf:Description>
+        </rdf:RDF>
+      </xmlData>
+    </mdWrap>
+  </dmdSec>
+  %% endif %%
+
+  <!--# Create a basic METS <structMap> element. #-->
+  <structMap>
+      <div ID="{{ SELF.account_id }}" LABEL="Email account." />
+  </structMap>
+
+</mets>
