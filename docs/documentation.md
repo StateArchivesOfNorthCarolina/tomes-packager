@@ -90,7 +90,7 @@ Per the docstring for "./tomes\_packager/lib/premis\_object.py":
 
 The log file must be passed as a parameter to TOMES Packager via Python or the command line interface.
 
-*For an example log, see "./tests/sample\_files/sample_events.log".*
+*For an example log, see "./tests/sample\_files/sample_premis.log".*
 
 # External Dependencies
 TOMES Packager requires the following:
