@@ -71,7 +71,7 @@ Both the "default.xml" and "nc_gov.xml" templates support ingest of Dublin Core 
 
 The ".xlsx" file must be passed as a parameter to TOMES Packager via Python or the command line interface.
 
-*For information on how to create valid metadata worksheets, see "./tests/sample\_files/sample_rdf.xlsx".*
+*For more information, see "./tests/sample\_files/sample_rdf.xlsx".*
 
 #### Adding Preservation Metadata to METS
 In addition to RDF/Dublin Core metadata that can be consumed via a .xlsx file, TOMES Packager also allow for preservation data to be consumed and passed into a METS templates via a PREMIS log file.
