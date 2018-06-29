@@ -1,5 +1,10 @@
 """ This module contains a class for constructing a METS file from a given METS template 
-file. """
+file. 
+
+TODO:
+    * The outputted files don't appear to have the correct encoding. For now, avoiding an
+    issue by not including the XML declaration.
+"""
 
 # import modules.
 import jinja2
@@ -16,8 +21,9 @@ class METSMaker():
         Example:
             >>> from os.path import isfile
             >>> from datetime import datetime
-            >>> mm = METSMaker("../../tests/sample_files/sample_mets_template.xml", "foo.xml",
-            >>>     TIMESTAMP = lambda: datetime.now().isoformat() + "Z")
+            >>> mm = METSMaker("../../tests/sample_files/sample_mets_template.xml", 
+                    "foo.xml",
+                    TIMESTAMP = lambda: datetime.now().isoformat() + "Z")
             >>> isfile(mm.filepath) # False            
             >>> mm.make() # writes "foo.xml" METS file.
             >>> mm.validate() # True
