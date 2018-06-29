@@ -1,5 +1,5 @@
 # METS templates
-Working with TOMES METS templates requires a high level of comfort not only with METS/XML, but also Python and the TOMES Packager Python module itself.
+Working with TOMES METS Templates requires a high level of comfort not only with METS/XML, but also Python and the TOMES Packager Python module itself.
 
 If you want to modify the included templates or create new ones, it is highly recommended that you study the included templates in depth.
 

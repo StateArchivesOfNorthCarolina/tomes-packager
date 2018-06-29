@@ -58,7 +58,7 @@ TOMES Packager uses *TOMES METS Templates* in order to receive information on ho
 Due to the complexity of creating templates, the following template files are included with TOMES Packager:
  
  1. **./tomes\_packager/mets\_templates/default.xml**
-	* The default TOMES template for METS files with support for descriptive and preservation metadata. *See the sections below on adding descriptive and preservation metadata.*
+	* The default template for METS files with support for descriptive and preservation metadata. *See the sections below on adding descriptive and preservation metadata.*
  2. **./tomes\_packager/mets\_templates/basic.xml**
 	* Supports descriptive metadata only.
  3. **./tomes\_packager/mets\_templates/nc\_gov.xml**
@@ -66,7 +66,7 @@ Due to the complexity of creating templates, the following template files are in
  4. **./tomes\_packager/mets\_templates/MANIFEST.XML**
  	* The default template for METS manifest files.
 
-*For more detailed information on METS templates, see the "mets_templates.md" file located in the same directory as this documentation file.*
+*For more detailed information on TOMES METS Templates, see the "mets_templates.md" file located in the same directory as this documentation file.*
 
 #### Adding Descriptive Metadata to METS
 The included METS templates support ingest of Dublin Core metadata from an ".xlsx" file. The Dublin Core will be wrapped as RDF/XML.
