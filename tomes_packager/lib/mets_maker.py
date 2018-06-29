@@ -82,8 +82,14 @@ class METSMaker():
       
         self.logger.info("Beautifying METS XML.")
       
-        # beautify @mets_el.
+        # load XSLT.
         beautifier = etree.parse(self._beautifier)
+        
+        # update encoding.
+        beautifier.find("{http://www.w3.org/1999/XSL/Transform}output").set("encoding", 
+                self.charset.upper())
+        
+        # beautify @mets_el.
         transform = etree.XSLT(beautifier)
         mets_el = transform(mets_el)
         
@@ -231,8 +237,8 @@ class METSMaker():
         # render @self.mets_template as a stream; write results to @self.filepath.
         self.logger.info("Creating METS file: {}".format(self.filepath))        
         try:
-            mets = template.stream(*self.args, **self.kwargs)
-            with open(self.filepath, "w") as f:
+            mets = template.stream(encoding=self.charset, *self.args, **self.kwargs)
+            with open(self.filepath, "w", encoding=self.charset) as f:
                 i = 0
                 for line in mets:
                     f.write(line)
