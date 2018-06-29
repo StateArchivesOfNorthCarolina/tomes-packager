@@ -88,6 +88,8 @@ Per the docstring for "./tomes\_packager/lib/premis\_object.py":
 
 > The value for "name" can be any token, although whitespace is not technically banned. The only value options for "entity" are: "agent", "event", or "object". Additional attributes may also exist. Note that the attribute "timestamp" is reserved as it is created automatically. Its value will be equal to the key itself, i.e. the ISO timestamp. 
 
+Additionally, any keys referenced in a given METS template would also be required.
+
 The log file must be passed as a parameter to TOMES Packager via Python or the command line interface.
 
 *For an example log, see "./tests/sample\_files/sample_premis.log".*
