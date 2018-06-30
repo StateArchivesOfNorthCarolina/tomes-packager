@@ -15,6 +15,8 @@ While Jinja templates are well-known to many Python developers, TOMES Packager m
 	 * `<!-- But this will. -->`
 	 * `<!-- # And so will this (because the hash marks aren't flush with the hyphens). # -->`
 
+*Note: Do not add XML declarations (`<?xml version="1.0"?>`, etc.) to templates.*
+
 ### @SELF
 The `SELF` variable used in the included templates equates to the current instance of the `tomes_packager.packager.Packager` Python object.
 
