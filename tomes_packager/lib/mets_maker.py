@@ -239,11 +239,10 @@ class METSMaker():
         self.logger.info("Creating METS file: {}".format(self.filepath))        
         try:
             mets = template.stream(encoding=self.charset, *self.args, **self.kwargs)
-            with open(self.filepath, "w", encoding=self.charset) as f:
+            with open(self.filepath, "w", encoding=self.charset, 
+                    errors="xmlcharrefreplace") as f:
                 i = 0
                 for line in mets:
-                    line = line.encode(self.charset, errors="xmlcharrefreplace").decode(
-                            self.charset)
                     f.write(line)
                     if (i + 1) % 100 == 0:
                         self.logger.debug("Current write operation: {}".format(i))
