@@ -1,10 +1,5 @@
 """ This module contains a class for constructing a METS file from a given METS template 
-file. 
-
-TODO:
-    * The outputted files don't appear to have the correct encoding. For now, avoiding an
-    issue by not including the XML declaration.
-"""
+file. """
 
 # import modules.
 import jinja2
@@ -91,9 +86,9 @@ class METSMaker():
         # load XSLT.
         beautifier = etree.parse(self._beautifier)
         
-        # update encoding.
+        # update XSLT's "encoding" attribute.
         beautifier.find("{http://www.w3.org/1999/XSL/Transform}output").set("encoding", 
-                self.charset.upper())
+                self.charset)
         
         # beautify @mets_el.
         transform = etree.XSLT(beautifier)
@@ -247,6 +242,8 @@ class METSMaker():
             with open(self.filepath, "w", encoding=self.charset) as f:
                 i = 0
                 for line in mets:
+                    line = line.encode(self.charset, errors="xmlcharrefreplace").decode(
+                            self.charset)
                     f.write(line)
                     if (i + 1) % 100 == 0:
                         self.logger.debug("Current write operation: {}".format(i))
