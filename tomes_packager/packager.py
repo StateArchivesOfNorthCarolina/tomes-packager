@@ -123,7 +123,7 @@ class Packager():
         self._mets_maker_cls = METSMaker
         self._rdf_maker_cls = RDFMaker
 
-        # creates atttibutes for constructed objects.
+        # set attributes for constructed objects.
         self.aip_dir = self._join_paths(self.destination_dir, self.account_id)
         self.aip_obj = None
         self.directory_obj = None
