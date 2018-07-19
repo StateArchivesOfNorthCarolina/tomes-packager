@@ -31,8 +31,8 @@ class AIPMaker():
         
 
     Example:
-        >>> sample_dir = "../../tests/sample_files/"
-        >>> aip = AIPMaker("foo", sample_dir + "/hot_folder", sample_dir)
+        >>> sample_dir = "../../tests/sample_files"
+        >>> aip = AIPMaker("foo", os.path.join(sample_dir, "hot_folder"), sample_dir)
         >>> aip.make() # returns path to the new "foo" AIP folder.
         >>> aip.validate() # True
     """
@@ -170,11 +170,11 @@ class AIPMaker():
 
         # per @find_files, determine what data to move.
         if find_files:
-            data_glob = glob.glob(source_dir + "/*.*")
+            data_glob = glob.glob(os.path.join(source_dir, "*.*"))
             data = [self._normalize_path(f) for f in data_glob
                     if os.path.splitext(os.path.basename(f))[0] == self.account_id]
         else:
-            data_glob = glob.glob(source_dir + "/*")
+            data_glob = glob.glob(os.path.join(source_dir, "*"))
             data = [self._normalize_path(f) for f in data_glob]
 
         # if @data is empty, set the corresponsing folder attribute in @self to None. 

@@ -62,7 +62,7 @@ def main(account_id:("email account identifier", "positional", None, str, ACCOUN
 
     # create and self-validate an AIP.
     try:
-        am = AIPMaker(account_id, "sample_files/hot_folder", "sample_files/")    
+        am = AIPMaker(account_id, os.path.join("sample_files", "hot_folder"), "sample_files")    
         am.make()
         is_valid = am.validate()
     except Exception as err:

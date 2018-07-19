@@ -35,7 +35,7 @@ class Packager():
         >>> from os.path import isfile
         >>> pkgr = Packager(account_id="foo", 
                 source_dir="../tests/sample_files/hot_folder",
-                destination_dir="../tests/sample_files/")
+                destination_dir="../tests/sample_files")
         >>> pkgr.mets_path # "../tests/sample_files/foo/foo.mets.xml"
         >>> isfile(pkgr.mets_path) # False
         >>> pkgr.package() # True
