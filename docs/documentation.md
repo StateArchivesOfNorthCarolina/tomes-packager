@@ -1,4 +1,5 @@
 # Introduction
+
 **TOMES Packager** is part of the [TOMES](https://www.ncdcr.gov/resources/records-management/tomes) project.
 
 It is written in Python.
@@ -57,23 +58,23 @@ TOMES Packager uses *TOMES METS Templates* in order to receive information on ho
 #### Included METS templates
 Due to the complexity of creating templates, the following template files are included with TOMES Packager:
  
- 1. **./tomes\_packager/mets\_templates/default.xml**
+ 1. `./tomes_packager/mets_templates/default.xml`
 	* The default template for METS files with support for descriptive and preservation metadata. *See the sections below on adding descriptive and preservation metadata.*
- 2. **./tomes\_packager/mets\_templates/basic.xml**
+ 2. `./tomes_packager/mets_templates/basic.xml`
 	* Supports descriptive metadata only.
- 3. **./tomes\_packager/mets\_templates/nc\_gov.xml**
+ 3. `./tomes_packager/mets_templates/nc_gov.xml`
  	* Created according to the State of North Carolina's requirements.
- 4. **./tomes\_packager/mets\_templates/MANIFEST.XML**
+ 4. `./tomes_packager/mets_templates/MANIFEST.XML`
  	* The default template for METS manifest files.
 
-*For more detailed information on TOMES METS Templates, see the "mets_templates.md" file located in the same directory as this documentation file.*
+*For more detailed information on TOMES METS Templates, see the `mets_templates.md` file located in the same directory as this documentation file.*
 
 #### Adding Descriptive Metadata to METS
-The included METS templates support ingest of Dublin Core metadata from an ".xlsx" file. The Dublin Core will be wrapped as RDF/XML.
+The included METS templates support ingest of Dublin Core metadata from a single ".xlsx" file. The Dublin Core will be wrapped as RDF/XML.
 
 The ".xlsx" file must be passed as a parameter to TOMES Packager via Python or the command line interface.
 
-*For more information, see "./tests/sample\_files/sample_rdf.xlsx".*
+*For more information, see `./tests/sample_files/sample_rdf.xlsx`.*
 
 #### Adding Preservation Metadata to METS
 Preservation data can be consumed and passed into supporting METS templates via a PREMIS log file.
@@ -84,7 +85,7 @@ The general idea behind the PREMIS log file is that it will be a concatenation o
 
 Each log line is a YAML string with an ISO timestamp as the key. Its value is a set of key/value pairs with the required keys "name" and "entity".
 
-Per the docstring for "./tomes\_packager/lib/premis\_object.py":
+Per the docstring for `./tomes_packager/lib/premis_object.py`:
 
 > The value for "name" can be any token, although whitespace is not technically banned. The only value options for "entity" are: "agent", "event", or "object". Additional attributes may also exist. Note that the attribute "timestamp" is reserved as it is created automatically. Its value will be equal to the key itself, i.e. the ISO timestamp. 
 
@@ -92,13 +93,13 @@ Additionally, any keys referenced in a given METS template would also be require
 
 The log file must be passed as a parameter to TOMES Packager via Python or the command line interface.
 
-*For an example log, see "./tests/sample\_files/sample_premis.log".*
+*For an example log, see `./tests/sample_files/sample_premis.log`.*
 
 # External Dependencies
 TOMES Packager requires the following:
 
 - [Python](https://www.python.org) 3.0+ (using 3.5+)
-  - See the "./requirements.txt" file for additional module dependencies.
+  - See the `./requirements.txt` file for additional module dependencies.
   - You will also want to install [pip](https://pypi.python.org/pypi/pip) for Python 3.
 
 If you want to use TOMES Packager to create Dublin Core/METS metadata, you will also need Microsoft Office 2007+ or another suite, such as [LibreOffice](https://www.libreoffice.org), capable of creating Excel 2007+ Excel files (.xlsx).
@@ -106,7 +107,7 @@ If you want to use TOMES Packager to create Dublin Core/METS metadata, you will 
 # Installation
 After installing the external dependencies above, you'll need to install some required Python packages.
 
-The required packages are listed in the "./requirements.txt" file and can easily be installed via PIP <sup>[1]</sup>: `pip3 install -r requirements.txt`
+The required packages are listed in the `./requirements.txt` file and can easily be installed via PIP <sup>[1]</sup>: `pip3 install -r requirements.txt`
 
 You should now be able to use TOMES Packager from the command line or as a locally importable Python module.
 
@@ -117,22 +118,22 @@ Running `pip3 uninstall tomes_packager` will uninstall the TOMES Packager packag
 # Unit Tests
 While not true unit tests that test each function or method of a given module or class, basic unit tests help with testing overall module workflows.
 
-Unit tests reside in the "./tests" directory and start with "test__".
+Unit tests reside in the `./tests` directory and start with "test__".
 
 ## Running the tests
-To run all the unit tests do <sup>[1]</sup>: `py -3 -m unittest` from within the "./tests" directory. 
+To run all the unit tests do <sup>[1]</sup>: `py -3 -m unittest` from within the `./tests` directory. 
 
 ## Using the command line
 All of the unit tests have command line options.
 
 To see the options and usage examples simply call the scripts with the `-h` option: `py -3 test__[rest of filename].py -h` and try the example.
 
-Sample files are located in the "./tests/sample\_files" directory.
+Sample files are located in the `./tests/sample_files` directory.
 
 The sample files can be used with the command line options of some of the unit tests.
 
 # Modules
-TOMES Packager consists of single-purpose high, level module, **packager.py**. It can be used as native Python class or as command line script.
+TOMES Packager consists of single-purpose high, level module, `packager.py`. It can be used as native Python class or as command line script.
 
 ## Using packager.py with Python
 To get started, import the module and run help():
@@ -143,18 +144,18 @@ To get started, import the module and run help():
 *Note: docstring and command line examples may reference sample and data files that are NOT included in the installed Python package. Please use appropriate paths to sample and data files as needed.*
 
 ## Using packager.py from the command line
-1. From the "./tomes\_packager" directory do: `py -3 packager.py -h` to see an example command.
+1. From the `./tomes_packager` directory do: `py -3 packager.py -h` to see an example command.
 2. Run the example command.
-3. Inspect the created AIP at "./tests/sample\_files/foo" and its METS files.
+3. Inspect the created AIP at `./tests/sample_files/foo` and its METS files.
 4. Run the example command with the following changes:
-	* Change the "account\_id" parameter value from "foo" to "bar".
+	* Change the `account_id` parameter value from `foo` to `bar`.
 	* Append the following parameters:
 		* `-premis-log="../tests/sample_files/sample_premis.log"`
 		* `-rdf-xlsx="../tests/sample_files/sample_rdf.xlsx"`
-5. Inspect the created AIP at "./tests/sample\_files/bar".
-	* Compare the data in the METS file, "../tests/sample_files/bar.mets.xml", to the source data in the RDF and PREMIS log files that were passed in.
+5. Inspect the created AIP at `./tests/sample_files/bar`.
+	* Compare the data in the METS file, `../tests/sample_files/bar.mets.xml`, to the source data in the RDF and PREMIS log files that were passed in.
 
-*Note: You can reset the hot-folder by running "../tests/sample\_files/reset\_hot\_folder.py". This will delete the "foo" and "bar" AIP folders.*
+*Note: You can reset the hot-folder by running `../tests/sample_files/reset_hot_folder.py`. This will delete the `foo` and `bar` AIP folders.*
 
 -----
 *[1] Depending on your system configuration, you might need to specify "python3", etc. instead of "py -3" from the command line. Similar differences might apply for PIP.*

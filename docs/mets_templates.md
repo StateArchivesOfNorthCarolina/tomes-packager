@@ -20,8 +20,8 @@ While Jinja templates are well-known to many Python developers, TOMES Packager m
 ### @SELF
 The `SELF` variable used in the included templates equates to the current instance of the `tomes_packager.packager.Packager` Python object.
 
-The "./tomes_packager/packager.py" module's docstring contains a list of object arguments and available attributes.
+The `./tomes_packager/packager.py` module's docstring contains a list of object arguments and available attributes.
 
-A quick glance at this information shows that an understanding of `SELF` also requires an understanding of the modules in the "./tomes\_packager/lib" directory. In other words, some of the attributes of `SELF` are themselves instances of objects created by sub-modules.
+A quick glance at this information shows that an understanding of `SELF` also requires an understanding of the modules in the `./tomes_packager/lib` directory. In other words, some of the attributes of `SELF` are themselves instances of objects created by sub-modules.
 
 Each sub-module has its own docstring and list of arguments and attributes. Review of the sub-module docstrings followed by further study of the included templates is recommended.
