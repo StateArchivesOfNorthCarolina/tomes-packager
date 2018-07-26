@@ -42,7 +42,7 @@ class Test_RDFMaker(unittest.TestCase):
 def main(rdf_xlsx: "RDF/Dublin Core .xlsx file"):
     
     "Converts an RDF/Dublin Core .xlsx file to XML and prints it to screen.\
-    \nexample: `py -3 test__rdf_maker.py sample_files/sample_rdf.xlsx`"
+    \nexample: `python3 test__rdf_maker.py sample_files/sample_rdf.xlsx`"
 	
     # create root XML element.
     root = etree.Element("root")

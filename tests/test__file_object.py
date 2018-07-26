@@ -60,7 +60,7 @@ class Test_FileObject(unittest.TestCase):
 def main(filepath:("file path")):
     
     "Converts a file to a FolderObject and prints its attributes to screen as JSON.\
-    \nexample: `py -3 test__file_object.py sample_files/sample_rdf.xlsx`"
+    \nexample: `python3 test__file_object.py sample_files/sample_rdf.xlsx`"
 
     # convert @filepath to a FileObject.
     dir_obj = DirectoryObject(os.path.dirname(filepath))

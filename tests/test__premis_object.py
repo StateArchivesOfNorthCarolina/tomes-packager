@@ -49,7 +49,7 @@ class Test_PREMISObject(unittest.TestCase):
 def main(premis_log:("PREMIS log file")):
     
     "Converts a PREMIS log file to a PREMISObject and prints the data to screen as JSON.\
-    \nexample: `py -3 test__premis_object.py sample_files/sample_premis.log`"
+    \nexample: `python3 test__premis_object.py sample_files/sample_premis.log`"
 
     # convert @premis_log to a PREMISObject.
     events = PREMISObject.load_file(premis_log)

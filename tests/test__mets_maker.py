@@ -44,7 +44,7 @@ class Test_MetsMaker(unittest.TestCase):
 def main(template: "METS template file", output_file: "output METS XML file"):
     
     "Renders METS template with callable \"TIMESTAMP()\" variable to a METS XML file.\
-    \nexample: `py -3 test__mets_maker.py sample_files/sample_mets_template.xml out.xml`"
+    \nexample: `python3 test__mets_maker.py sample_files/sample_mets_template.xml out.xml`"
 
     # create and self-validate METS file.
     mm = METSMaker(template, output_file, 

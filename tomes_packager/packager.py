@@ -294,9 +294,9 @@ def main(account_id: ("email account identifier"),
         rdf_xlsx: ("path to RDF/Dublin Core .xlsx file", "option")=""):
 
     "Creates a TOMES Archival Information Package.\
-    \nexample: `py -3 packager.py foo ../tests/sample_files/hot_folder ../tests/sample_files`\
+    \nexample: `python3 packager.py foo ../tests/sample_files/hot_folder ../tests/sample_files`\
     \n\nNote: If \"../tests/sample_files/foo\" already exists, run\
-    \n`py -3 ../tests/sample_files/reset_hot_folder.py` to reset the hot folder."
+    \n`python3 ../tests/sample_files/reset_hot_folder.py` to reset the hot folder."
 
     # make sure logging directory exists.
     logdir = "log"

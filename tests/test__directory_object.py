@@ -75,7 +75,7 @@ class Test_DirectoryObject(unittest.TestCase):
 def main(folder:("folder path")):
     
     "Converts a folder to a DirectoryObject and prints a visualization to screen.\
-    \nexample: `py -3 test__directory_object.py sample_files`"
+    \nexample: `python3 test__directory_object.py sample_files`"
 
     # convert @folder to a DirectoryObject.
     dir_obj = DirectoryObject(folder)

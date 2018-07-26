@@ -58,7 +58,7 @@ def main(account_id:("email account identifier", "positional", None, str, ACCOUN
         delete_aip:("delete the created AIP", "flag", "d")=False):
     
     "Creates an AIP folder from data in source directory \"sample_files/hot_folder\".\
-    \nexample: `py -3 test__aip_maker.py foo`"
+    \nexample: `python3 test__aip_maker.py foo`"
 
     # create and self-validate an AIP.
     try:
