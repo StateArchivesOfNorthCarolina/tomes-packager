@@ -70,7 +70,7 @@ class AIPMaker():
         self.source_dir = source_dir
         self.destination_dir = destination_dir
         
-        # convenience functions to join paths and normalize them.
+        # convenience functions to clean up path notation.
         self._normalize_sep = lambda p: p.replace(os.sep, os.altsep) if (
                 os.altsep == "/") else p
         self._normalize_path = lambda p: self._normalize_sep(os.path.relpath(p))  
