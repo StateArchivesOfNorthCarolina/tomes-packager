@@ -52,8 +52,10 @@ class DirectoryObject(object):
         self.logger = logging.getLogger(__name__)
         self.logger.addHandler(logging.NullHandler())
 
-        # convenience function to clean up path notation.
-        self._normalize_path = lambda p: os.path.normpath(p).replace("\\", "/")  
+        # convenience functions to clean up path notation.
+        self._normalize_sep = lambda p: p.replace(os.sep, os.altsep) if (
+                os.altsep == "/") else p
+        self._normalize_path = lambda p: self._normalize_sep(os.path.normpath(p))  
         
         # normalize @path and log status.
         path = self._normalize_path(path)

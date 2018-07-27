@@ -71,7 +71,9 @@ class AIPMaker():
         self.destination_dir = destination_dir
         
         # convenience functions to join paths and normalize them.
-        self._normalize_path = lambda p: os.path.relpath(p).replace("\\", "/")  
+        self._normalize_sep = lambda p: p.replace(os.sep, os.altsep) if (
+                os.altsep == "/") else p
+        self._normalize_path = lambda p: self._normalize_sep(os.path.relpath(p))  
         self._join_paths = lambda *p: self._normalize_path(os.path.join(*p))
         
         # set source attributes.

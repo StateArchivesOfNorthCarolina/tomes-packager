@@ -103,8 +103,10 @@ class Packager():
         self.logger.addHandler(logging.NullHandler())
 
         # convenience functions to clean up path notation.
-        self._normalize_path = lambda p: os.path.normpath(p).replace(
-                "\\", "/") if p != "" else ""
+        self._normalize_sep = lambda p: p.replace(os.sep, os.altsep) if (
+                os.altsep == "/") else p
+        self._normalize_path = lambda p: self._normalize_sep(os.path.normpath(p)) if (
+                p != "") else ""
         self._join_paths = lambda *p: self._normalize_path(os.path.join(*p))
 
         # set attributes.

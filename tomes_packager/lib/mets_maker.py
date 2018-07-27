@@ -54,7 +54,9 @@ class METSMaker():
             raise FileNotFoundError(msg)
 
         # convenience functions to clean up path notation.
-        self._normalize_path = lambda p: os.path.normpath(p).replace("\\", "/")
+        self._normalize_sep = lambda p: p.replace(os.sep, os.altsep) if (
+                os.altsep == "/") else p
+        self._normalize_path = lambda p: self._normalize_sep(os.path.normpath(p))  
         self._join_paths = lambda *p: self._normalize_path(os.path.join(*p))
 
         # set attributes.            
