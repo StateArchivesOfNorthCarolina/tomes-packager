@@ -69,6 +69,7 @@ class Packager():
             - directory_obj (DirectoryObject): The object version of @destination_dir.
             - premis_obj (PREMISObject): The preservation metadata created from @premis_log.
             - mets_obj (METSMaker): The METS object created from @mets_template.
+            - manifest_obj (METSMaker): The METS object created from @manifest_template.
             - rdf_obj (RDFMaker): The RDF object created from @rdf_xlsx.
             - time_utc (function): Returns UTC time as ISO 8601.
             - time_local (function): Returns local time as ISO 8601 with UTC offset.
@@ -129,7 +130,7 @@ class Packager():
         self.directory_obj = None
         self.premis_obj = None
         self.mets_obj = None
-        self._manifest_obj = None
+        self.manifest_obj = None
         self.rdf_obj = None           
 
         # set METS paths.
@@ -154,8 +155,6 @@ class Packager():
 
     def write_mets(self, filename, template, xsd_validation=False, **kwargs):
         """ Writes a METS file to the given @filename path using the given METS @template.
-        If needed, also sets @self.directory_obj, @self.premis_obj, and @self.rdf_obj if they
-        are not already set.
 
         Args:
             - filename (str): The relative file path for the outputted METS file. The file 
@@ -178,20 +177,6 @@ class Packager():
 
         self.logger.info("Writing METS file '{}' from template: {}".format(
             filename, template))
-
-        # create a DirectoryObject.
-        if self.directory_obj is None:
-            self.directory_obj = self._directory_object_cls(self.aip_dir)
-
-        # if needed, create a PREMISObject.
-        if self.premis_log != "" and self.premis_obj is None:
-            events = self._premis_object_cls.load_file(self.premis_log)
-            self.premis_obj = self._premis_object_cls(events)
-
-        # if needed, create an RDFObject.
-        if self.rdf_xlsx != "" and self.rdf_obj is None:
-            self.rdf_obj = self._rdf_maker_cls(self.rdf_xlsx, charset=self.charset)
-            self.rdf_obj.make()
 
         # if "SELF" is in @kwargs, remove it.
         if "SELF" in kwargs:
@@ -246,6 +231,20 @@ class Packager():
             self.logger.info("No METS or manifest templates passed; skipping METS creation.")
             return is_aip_valid
 
+        # create a DirectoryObject.
+        if self.directory_obj is None:
+            self.directory_obj = self._directory_object_cls(self.aip_dir)
+
+        # if needed, create a PREMISObject.
+        if self.premis_log != "" and self.premis_obj is None:
+            events = self._premis_object_cls.load_file(self.premis_log)
+            self.premis_obj = self._premis_object_cls(events)
+
+        # if needed, create an RDFObject.
+        if self.rdf_xlsx != "" and self.rdf_obj is None:
+            self.rdf_obj = self._rdf_maker_cls(self.rdf_xlsx, charset=self.charset)
+            self.rdf_obj.make()
+            
         # if needed, write the METS file.
         if self.mets_template != "":
             self.logger.info("Creating main METS file for AIP.")
@@ -258,7 +257,7 @@ class Packager():
         # if needed, write the METS manifest.
         if self.manifest_template != "":
             self.logger.info("Creating METS manifest file for AIP.")            
-            self._manifest_obj, is_manifest_valid = self.write_mets(self.manifest_path, 
+            self.manifest_obj, is_manifest_valid = self.write_mets(self.manifest_path, 
                     self.manifest_template)
         else:
             self.logger.info("No manifest template passed.")            
