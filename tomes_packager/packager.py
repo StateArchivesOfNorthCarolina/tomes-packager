@@ -232,16 +232,15 @@ class Packager():
             return is_aip_valid
 
         # create a DirectoryObject.
-        if self.directory_obj is None:
-            self.directory_obj = self._directory_object_cls(self.aip_dir)
+        self.directory_obj = self._directory_object_cls(self.aip_dir)
 
         # if needed, create a PREMISObject.
-        if self.premis_log != "" and self.premis_obj is None:
+        if self.premis_log != "":
             events = self._premis_object_cls.load_file(self.premis_log)
             self.premis_obj = self._premis_object_cls(events)
 
         # if needed, create an RDFObject.
-        if self.rdf_xlsx != "" and self.rdf_obj is None:
+        if self.rdf_xlsx != "":
             self.rdf_obj = self._rdf_maker_cls(self.rdf_xlsx, charset=self.charset)
             self.rdf_obj.make()
             
