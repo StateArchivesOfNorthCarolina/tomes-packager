@@ -154,6 +154,8 @@ class Packager():
 
     def write_mets(self, filename, template, xsd_validation=False, **kwargs):
         """ Writes a METS file to the given @filename path using the given METS @template.
+        If needed, also sets @self.directory_obj, @self.premis_obj, and @self.rdf_obj if they
+        are not already set.
 
         Args:
             - filename (str): The relative file path for the outputted METS file. The file 
