@@ -74,7 +74,9 @@ The included METS templates support ingest of Dublin Core metadata from a single
 
 The ".xlsx" file must be passed as a parameter to TOMES Packager via Python or the command line interface.
 
-*For more information, see `./tests/sample_files/sample_rdf.xlsx`.*
+Metadata templates created for TOMES are stored in the `metadata_templates` directory.
+
+*See `./tests/sample_files/sample_rdf.xlsx`. for information on how to create a valid template.*
 
 #### Adding Preservation Metadata to METS
 Preservation data can be consumed and passed into supporting METS templates via a PREMIS log file.
