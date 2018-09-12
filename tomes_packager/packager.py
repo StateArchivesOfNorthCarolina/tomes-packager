@@ -109,8 +109,15 @@ class Packager():
                 p != "") else ""
         self._join_paths = lambda *p: self._normalize_path(os.path.join(*p))
 
+        # set @account_id; log a warning if it isn't a valid identifier.
+        self.account_id = str(account_id)
+        if not self.account_id.isidentifier():
+            non_id_chars = [c for c in self.account_id if not c.isalnum() and c != "_"]
+            msg = "@account_id contains non-identifier characters: {}; problems may arise."
+            msg = msg.format(non_id_chars)
+            self.logger.warning(msg)
+        
         # set attributes.
-        self.account_id = str(account_id) 
         self.source_dir = self._normalize_path(source_dir)
         self.destination_dir = self._normalize_path(destination_dir)
         self.premis_log = self._normalize_path(premis_log)
