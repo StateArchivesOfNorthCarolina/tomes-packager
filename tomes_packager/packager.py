@@ -75,6 +75,8 @@ class Packager():
             - time_local (function): Returns local time as ISO 8601 with UTC offset.
             - time_hash (function) Returns the last 7 characters of the SHA-256 version of
             time_utc().
+           - string_hash (function) Returns the last 7 characters of the SHA-256 version of
+            of the required string argument.
             - mets_path (str): The file path for the METS file. If needed, this can be 
             manually overridden prior to running .package().
             - manifest_path (str): The file path for the METS manifest file. As with 
@@ -155,11 +157,12 @@ class Packager():
             self.manifest_path = self._join_paths(self.destination_dir, self.account_id,
                     manifest_path)
 
-        # set template-accessible time functions.
+        # set template-accessible functions.
         self.time_utc = lambda: datetime.utcnow().isoformat() + "Z"
         self.time_local = lambda: time.strftime("%Y-%m-%dT%H:%M:%S%z")
         self.time_hash = lambda: hashlib.sha256(self.time_utc().encode(
             self.charset)).hexdigest()[:7]
+        self.string_hash = lambda s: hashlib.sha256(s.encode(self.charset)).hexdigest()[:7]
 
 
     def write_mets(self, filename, template, xsd_validation=False, **kwargs):
