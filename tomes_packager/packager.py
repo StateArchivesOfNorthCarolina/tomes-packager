@@ -75,8 +75,8 @@ class Packager():
             - time_local (function): Returns local time as ISO 8601 with UTC offset.
             - time_hash (function) Returns the last 7 characters of the SHA-256 version of
             time_utc().
-           - string_hash (function) Returns an underscore followed by the last 7 characters of
-           the SHA-256 version of a required string argument.
+           - string_hash (function) Returns an "h" followed by the last 7 characters of the 
+           SHA-256 version of a required string argument.
             - mets_path (str): The file path for the METS file. If needed, this can be 
             manually overridden prior to running .package().
             - manifest_path (str): The file path for the METS manifest file. As with 
@@ -162,7 +162,7 @@ class Packager():
         self.time_local = lambda: time.strftime("%Y-%m-%dT%H:%M:%S%z")
         self.time_hash = lambda: hashlib.sha256(self.time_utc().encode(
             self.charset)).hexdigest()[:7]
-        self.string_hash = lambda s: "_" + hashlib.sha256(s.encode(self.charset)).hexdigest(
+        self.string_hash = lambda s: "h" + hashlib.sha256(s.encode(self.charset)).hexdigest(
                 )[:7]
 
 
