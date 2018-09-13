@@ -104,8 +104,9 @@ xmlns:premis="http://www.loc.gov/premis/v3">
   </amdSec>
   %% endif %%
 
+  <!--#  Note that the "account_id" value is hashed in order to ensure a valid xml:id for the <techMD> element's "ID" attribute. #-->
   <amdSec ID="amdSec__objects">
-    <techMD ID="object__{{ SELF.account_id }}">
+    <techMD ID="object__{{ SELF.string_hash(SELF.account_id) }}">
       <mdWrap MDTYPE="PREMIS:OBJECT">
         <xmlData>
           <premis:object>
