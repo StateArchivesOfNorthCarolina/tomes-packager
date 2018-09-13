@@ -141,9 +141,10 @@ xmlns:premis="http://www.loc.gov/premis/v3">
   </amdSec>
   %% endif %%
   
-  <!--# Create a basic METS <structMap> element. #-->
+  <!--# Create a basic METS <structMap> element. 
+  Note that the "account_id" value is hashed in order to ensure a valid xml:id for the "ID" attribute. #-->
   <structMap>
-      <div ID="{{ SELF.account_id }}" LABEL="Email account." />
+      <div ID="{{ SELF.string_hash(SELF.account_id) }}" LABEL="{{ SELF.account_id }}" />
   </structMap>
 
 </mets>
