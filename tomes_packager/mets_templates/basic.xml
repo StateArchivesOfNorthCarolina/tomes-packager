@@ -10,8 +10,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   </metsHdr>
   
   <!--# If RDF data has been passed into the template, use it. Otherwise use generic descriptive metadata. #-->
-  %% if SELF.rdf_obj.rdfs is defined %%
-  %% for rdf in SELF.rdf_obj.rdfs %%
+  {% if SELF.rdf_obj.rdfs is defined %}
+  {% for rdf in SELF.rdf_obj.rdfs %}
   <dmdSec ID="dmdSec__{{ rdf.name }}">
     <mdWrap MDTYPE="DC">
       <xmlData>
@@ -19,8 +19,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       </xmlData>
     </mdWrap>
   </dmdSec>
-  %% endfor %%
-  %% else %% 
+  {% endfor %}
+  {% else %} 
   <dmdSec ID="dmdSec__000">
     <mdWrap MDTYPE="DC">
       <xmlData>
@@ -34,7 +34,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       </xmlData>
     </mdWrap>
   </dmdSec>
-  %% endif %%
+  {% endif %}
 
   <!--# Create a basic METS <structMap> element. 
   Note that the "account_id" value is hashed in order to ensure a valid xml:id for the "ID" attribute. #-->

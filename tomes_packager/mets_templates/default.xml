@@ -11,8 +11,8 @@ xmlns:premis="http://www.loc.gov/premis/v3">
   </metsHdr>
   
   <!--# If RDF data has been passed into the template, use it. Otherwise use generic descriptive metadata. #-->
-  %% if SELF.rdf_obj.rdfs is defined %%
-  %% for rdf in SELF.rdf_obj.rdfs %%
+  {% if SELF.rdf_obj.rdfs is defined %}
+  {% for rdf in SELF.rdf_obj.rdfs %}
   <dmdSec ID="dmdSec__{{ rdf.name }}">
     <mdWrap MDTYPE="DC">
       <xmlData>
@@ -20,8 +20,8 @@ xmlns:premis="http://www.loc.gov/premis/v3">
       </xmlData>
     </mdWrap>
   </dmdSec>
-  %% endfor %%
-  %% else %% 
+  {% endfor %}
+  {% else %} 
   <dmdSec ID="dmdSec__000">
     <mdWrap MDTYPE="DC">
       <xmlData>
@@ -35,12 +35,12 @@ xmlns:premis="http://www.loc.gov/premis/v3">
       </xmlData>
     </mdWrap>
   </dmdSec>
-  %% endif %%
+  {% endif %}
   
   <!--# Create a PREMIS Agent for each existing one in SELF. #-->
-  %% if SELF.premis_obj.agents is defined and SELF.premis_obj.agents|length > 0 %%
+  {% if SELF.premis_obj.agents is defined and SELF.premis_obj.agents|length > 0 %}
   <amdSec ID="amdSec__agents">
-    %% for agent in SELF.premis_obj.agents %%
+    {% for agent in SELF.premis_obj.agents %}
     <techMD ID="agent__{{ agent.name }}">
       <mdWrap MDTYPE="PREMIS:AGENT">
         <xmlData>
@@ -62,9 +62,9 @@ xmlns:premis="http://www.loc.gov/premis/v3">
         </xmlData>
       </mdWrap>
     </techMD>
-    %% endfor %%
+    {% endfor %}
   </amdSec>
-  %% endif %%
+  {% endif %}
 
   <!--#  Note that the "account_id" value is hashed in order to ensure a valid xml:id for the <techMD> element's "ID" attribute. #-->
   <amdSec ID="amdSec__objects">
@@ -87,8 +87,8 @@ xmlns:premis="http://www.loc.gov/premis/v3">
       </mdWrap>
     </techMD>
     <!--# Create a PREMIS Object for each existing one in SELF. #-->
-    %% if SELF.premis_obj.objects is defined %%
-    %% for object in SELF.premis_obj.objects %%
+    {% if SELF.premis_obj.objects is defined %}
+    {% for object in SELF.premis_obj.objects %}
     <techMD ID="object__{{ object.name }}">
       <mdWrap MDTYPE="PREMIS:OBJECT">
         <xmlData>
@@ -102,16 +102,16 @@ xmlns:premis="http://www.loc.gov/premis/v3">
         </xmlData>
       </mdWrap>
     </techMD>
-    %% endfor %%
-  %% endif %%
+    {% endfor %}
+  {% endif %}
   </amdSec>
   
   <!--# Create a PREMIS Event for each existing one in SELF. #-->
-  %% if SELF.premis_obj.events is defined and SELF.premis_obj.events|length > 0 %%
+  {% if SELF.premis_obj.events is defined and SELF.premis_obj.events|length > 0 %}
   <!--# Create dict for <eventDetail> based on the Event name. #-->
-  %% set DETAILS = {"pst_to_mime": "PST converted to MIME.", "mime_to_eaxs": "MIME converted to EAXS.", "eaxs_to_tagged": "EAXS converted to tagged EAXS."} %%
+  {% set DETAILS = {"pst_to_mime": "PST converted to MIME.", "mime_to_eaxs": "MIME converted to EAXS.", "eaxs_to_tagged": "EAXS converted to tagged EAXS."} %}
   <amdSec ID="amdSec__events">
-    %% for event in SELF.premis_obj.events %%
+    {% for event in SELF.premis_obj.events %}
     <digiprovMD ID="event__{{ event.name }}">
       <mdWrap MDTYPE="PREMIS:EVENT">
         <xmlData>
@@ -138,9 +138,9 @@ xmlns:premis="http://www.loc.gov/premis/v3">
         </xmlData>
       </mdWrap>
     </digiprovMD>
-    %% endfor %%
+    {% endfor %}
   </amdSec>
-  %% endif %%
+  {% endif %}
   
   <!--# Create a basic METS <structMap> element. #-->
   <structMap>

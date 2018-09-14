@@ -9,8 +9,7 @@ METS templates use the [Jinja](http://jinja.pocoo.org) template syntax and are a
 ### Jinja syntax
 While Jinja templates are well-known to many Python developers, TOMES Packager makes the following modifications to the standard Jinja syntax:
 
- 1. **Both** opening and closing block strings, `{%` and `%}`, are replaced by `%%`.
- 2. XML comments with closing and opening hash marks will not appear in rendered templates and should be used for comments about the template. Normal XML comments will appear in the rendered templates and should be used for comments about the METS data itself. In other words:
+ 1. XML comments with encasing hash marks will not appear in rendered templates and should be used for comments about the template. But normal XML comments will appear in the rendered templates and should be used for comments about the METS data itself. In other words:
 	 * `<!--# This will not appear in a rendered template. #-->`
 	 * `<!-- But this will. -->`
 	 * `<!-- # And so will this (because the hash marks aren't flush with the hyphens). # -->`

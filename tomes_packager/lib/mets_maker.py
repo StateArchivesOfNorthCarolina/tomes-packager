@@ -230,7 +230,6 @@ class METSMaker():
         # create the Jinja renderer.
         try:
             template = jinja2.Template(mets_template, trim_blocks=True, lstrip_blocks=True, 
-                    block_start_string="%%", block_end_string="%%", 
                     comment_start_string="<!--#", comment_end_string="#-->")
         except jinja2.exceptions.TemplateSyntaxError as err:
             self.logger.warning("METS template syntax is invalid.")
