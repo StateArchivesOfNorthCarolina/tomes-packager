@@ -5,7 +5,4 @@
 - Add documentation on how to re-package contents (data already in the correct folder structure), e.g.:
 	- `python3 packager.py foo ../tests/sample_files/ ../tests/sample_files/`
 	- In other words, pass the parent folder of the containing AIP directory `foo` for both the source and destination folders.
-- Consider completely disabling the file/folder moving functionality. In other words, it's currently based on how the Docker UI stores its output. It probably isn't a good idea to have Packager accommodate the user interface.
-	- Documentation can be used to help command line users of various TOMES software place outputs in the correct AIP structure.
-	- A graphical user interface could automatically create the correct AIP structure in the first place.
-	- In other words, Packager should perhaps only validate an existing AIP structure and create METS files.
+- Consider completely disabling the file/folder moving functionality. In other words, it's currently based on how the Docker UI stores its output. It probably isn't a good idea to have Packager accommodate the user interface. Documentation can be used to help command line users of various TOMES software place outputs in the correct AIP structure. A graphical user interface could automatically create the correct AIP structure in the first place. In other words, Packager should perhaps only validate an existing AIP structure and create METS files.
