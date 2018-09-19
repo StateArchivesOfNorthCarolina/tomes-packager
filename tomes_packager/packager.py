@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """ This module contains a class for constructing a TOMES Archival Information Package (AIP)
 with a METS file and a METS manifest file. """
 
