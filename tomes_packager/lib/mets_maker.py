@@ -120,7 +120,7 @@ class METSMaker():
         if is_valid is None:
             msg = "WARNING: METS file could not be validated as of {}.".format(now())
         elif not is_valid:
-            msg = "CRITICAL: this METS file is invalid as of {}.".format(now())
+            msg = "ERROR: this METS file is invalid as of {}.".format(now())
         else:
             msg = "NOTE: this METS file is valid as of {}.".format(now())
  
