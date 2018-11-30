@@ -9,6 +9,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <metsHdr CREATEDATE="{{ SELF.time_utc() }}">
     <agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
       <name>TOMES Packager</name>
+	  <note>https://github.com/StateArchivesOfNorthCarolina/tomes-packager</note>
+      <note>Part of the Transforming Online Mail with Embedded Semantics (TOMES) project (https://www.ncdcr.gov/resources/records-management/tomes), a multi-state partnership that includes Kansas, Utah and North Carolina.</note>
     </agent>
   </metsHdr>
   <fileSec>

@@ -11,7 +11,8 @@ xmlns:premis="http://www.loc.gov/premis/v3">
 
     <agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
       <name>TOMES Packager</name>
-      <note>Email archiving software developed through the Transforming Online Mail with Embedded Semantics (TOMES) project (https://www.ncdcr.gov/resources/records-management/tomes), a multi-state partnership that includes Kansas, Utah and North Carolina.</note>
+	  <note>https://github.com/StateArchivesOfNorthCarolina/tomes-packager</note>
+      <note>Part of the Transforming Online Mail with Embedded Semantics (TOMES) project (https://www.ncdcr.gov/resources/records-management/tomes), a multi-state partnership that includes Kansas, Utah and North Carolina.</note>
     </agent>
 
   </metsHdr>
