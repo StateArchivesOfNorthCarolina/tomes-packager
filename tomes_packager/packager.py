@@ -83,6 +83,8 @@ class Packager():
             manually overridden prior to running .package().
             - manifest_path (str): The file path for the METS manifest file. As with 
             @mets_path, this can be manually overridden.
+            - packager_obj (module): The TOMES Packager.package module itself. This provides
+            access to global metadata. Example: ".packager_obj.__VERSION__".
         
         Args:
             - account_id (str): The email account's base identifier, i.e. the file prefix.
@@ -129,6 +131,9 @@ class Packager():
         self.manifest_template = self._normalize_path(manifest_template)
         self.rdf_xlsx = self._normalize_path(rdf_xlsx)
         self.charset = charset
+
+        # set packager object.
+        self.packager_obj = sys.modules[__name__]
 
         # set attributes for imported classes.
         self._aip_maker_cls = AIPMaker

@@ -5,9 +5,9 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <!--# Create a basic METS header. #-->
   <metsHdr CREATEDATE="{{ SELF.time_utc() }}">
     <agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
-      <name>TOMES Packager</name>
-	  <note>https://github.com/StateArchivesOfNorthCarolina/tomes-packager</note>
-      <note>Part of the Transforming Online Mail with Embedded Semantics (TOMES) project (https://www.ncdcr.gov/resources/records-management/tomes), a multi-state partnership that includes Kansas, Utah and North Carolina.</note>
+      <name>{{ SELF.packager_obj.__FULLNAME__ }} (version: {{ SELF.packager_obj.__VERSION__ }})</name>
+	  <note>{{ SELF.packager_obj.__DESCRIPTION__ }}</note>
+      <note>{{ SELF.packager_obj.__URL__ }}</note>
     </agent>
   </metsHdr>
   
