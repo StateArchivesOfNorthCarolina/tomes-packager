@@ -5,9 +5,9 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <!--# Create a basic METS header. #-->
   <metsHdr CREATEDATE="{{ SELF.time_utc() }}">
     <agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="Software Agent">
-      <name>{{ SELF.packager_obj.__FULLNAME__ }} (version: {{ SELF.packager_obj.__VERSION__ }})</name>
-	  <note>{{ SELF.packager_obj.__DESCRIPTION__ }}</note>
-      <note>{{ SELF.packager_obj.__URL__ }}</note>
+      <name>{{ SELF.packager_mod.__FULLNAME__ }} (version: {{ SELF.packager_mod.__VERSION__ }})</name>
+	  <note>{{ SELF.packager_mod.__DESCRIPTION__ }}</note>
+      <note>{{ SELF.packager_mod.__URL__ }}</note>
     </agent>
   </metsHdr>
   
